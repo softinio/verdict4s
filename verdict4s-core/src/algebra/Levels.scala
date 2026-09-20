@@ -1,0 +1,93 @@
+package com.softinio.verdict4s.algebra
+
+import cats.Eq
+import cats.Show
+import cats.data.NonEmptyChain
+import cats.data.ValidatedNec
+import cats.syntax.all.*
+import com.softinio.verdict4s.Verdict4sError
+import io.github.iltotore.iron.*
+
+/** The ordered rubric of a Score question, plus how to read a level back.
+  *
+  * Unlike [[Options]] this is a `List`, not a sorted map: the levels are
+  * ordered, and their position *is* their meaning — the service returns level
+  * indices as `"0"`, `"1"`, and so on, keyed to this order.
+  *
+  * @group Protocol
+  */
+final class Levels[A] private (
+    val descriptions: Levels.Descriptions,
+    private val values: Vector[A]
+):
+
+  /** The value at a level index, if the index is in range. */
+  def at(index: Int): Option[A] = values.lift(index)
+
+  /** The level index of a value, or -1 if it is not one of the levels. */
+  def indexOf(value: A): Int = values.indexOf(value)
+
+  /** How many levels this rubric has. */
+  def size: Int = values.size
+
+  override def toString: String = s"Levels(${size} levels)"
+
+object Levels:
+
+  /** The ordered level descriptions as they go on the wire.
+    *
+    * The refinement carries the API's own limit of 2 to 10 levels; a Score with
+    * one level cannot discriminate and is rejected at construction.
+    */
+  type Descriptions = List[Instructions] :| ScoreLevelsC
+
+  /** Levels described by plain text, in order from lowest to highest. */
+  def strings(
+      levels: Seq[String]
+  ): ValidatedNec[Verdict4sError.Validation, Levels[String]] =
+    levels.toList
+      .traverse(text)
+      .andThen(is => bounded(is).map(d => new Levels(d, levels.toVector)))
+
+  /** Just the wire-level descriptions, for a Score whose answer is read as a
+    * number rather than mapped back to a level value.
+    */
+  def descriptionsOf(
+      levels: Seq[String]
+  ): ValidatedNec[Verdict4sError.Validation, Descriptions] =
+    levels.toList.traverse(text).andThen(bounded)
+
+  /** Build from descriptions already known to be well formed.
+    *
+    * Used by the `enum` derivation, where the labels come from a `Mirror`.
+    */
+  private[verdict4s] def build[A](
+      descriptions: List[Instructions],
+      values: List[A]
+  ): ValidatedNec[Verdict4sError.Validation, Levels[A]] =
+    bounded(descriptions).map(d => new Levels(d, values.toVector))
+
+  private def bounded(
+      levels: List[Instructions]
+  ): ValidatedNec[Verdict4sError.Validation, Descriptions] =
+    levels
+      .refineEither[ScoreLevelsC]
+      .leftMap(_ =>
+        NonEmptyChain.one(
+          Verdict4sError.Validation(
+            "criteria",
+            s"a score question accepts 2 to 10 levels, got ${levels.size}"
+          )
+        )
+      )
+      .toValidated
+
+  private def text(
+      raw: String
+  ): ValidatedNec[Verdict4sError.Validation, Instructions] =
+    Instructions
+      .text(raw)
+      .leftMap(_.map(v => v.copy(field = "criteria")))
+
+  given [A]: Eq[Levels[A]] = Eq.by(_.descriptions.toList)
+  given [A]: Show[Levels[A]] = Show.fromToString
