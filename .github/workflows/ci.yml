@@ -1,0 +1,151 @@
+name: "CI"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Test ${{ matrix.platform }} / Scala ${{ matrix.scala-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scala-version: ["3.3.8", "3.9.0"]
+        platform: ["jvm", "js"]
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Cache Mill dependencies
+    - name: Cache Mill
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/mill
+          ~/.cache/coursier
+          out/
+        key: ${{ runner.os }}-mill-${{ matrix.platform }}-${{ matrix.scala-version }}-${{ hashFiles('build.mill') }}
+        restore-keys: |
+          ${{ runner.os }}-mill-${{ matrix.platform }}-${{ matrix.scala-version }}-
+          ${{ runner.os }}-mill-
+
+    # The JDK is not set here: `nix develop` supplies it (see devshell.toml),
+    # and the nixpkgs `mill` wrapper pins JAVA_HOME to its own JDK regardless.
+    # Print it so the version that actually ran is recorded in the log.
+    - name: Report toolchain
+      run: |
+        nix develop --command bash -c 'java -version; echo "JAVA_HOME=$JAVA_HOME"'
+
+    # Run every module's tests for this platform / Scala version.
+    # Scala.js tests run on the Node provided by the devshell.
+    - name: Run tests
+      run: |
+        nix develop --command mill "__.${{ matrix.platform }}[${{ matrix.scala-version }}].test"
+
+    # Check code formatting
+    - name: Check code formatting
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
+      run: |
+        nix develop --command mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
+
+    # Build documentation for every module
+    - name: Generate documentation
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
+      run: |
+        nix develop --command mill "__.jvm[3.9.0].docJar"
+
+    # Upload test results
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.platform }}-${{ matrix.scala-version }}
+        path: |
+          out/**/${{ matrix.platform }}/${{ matrix.scala-version }}/test/
+        retention-days: 7
+
+  jdk-compat:
+    name: JVM tests on Java ${{ matrix.jdk }} / Scala ${{ matrix.scala-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk: ["25"]
+        scala-version: ["3.3.8", "3.9.0"]
+    # The `tests` job above already covers Java 21 -- the version these
+    # artifacts target and the one the devshell's Mill runs on. This job checks
+    # the code also behaves on a newer runtime, which `--release 21` does not
+    # guarantee on its own.
+    env:
+      VERDICT4S_JVM: "temurin:${{ matrix.jdk }}"
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache Mill
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/mill
+          ~/.cache/coursier
+          out/
+        key: ${{ runner.os }}-mill-jdk${{ matrix.jdk }}-${{ matrix.scala-version }}-${{ hashFiles('build.mill') }}
+        restore-keys: |
+          ${{ runner.os }}-mill-jdk${{ matrix.jdk }}-${{ matrix.scala-version }}-
+          ${{ runner.os }}-mill-
+
+    - name: Report toolchain
+      run: |
+        nix develop --command bash -c 'java -version; echo "JAVA_HOME=$JAVA_HOME"'
+        echo "Mill will resolve and run tests on: $VERDICT4S_JVM"
+
+    - name: Run JVM tests
+      run: |
+        nix develop --command mill "__.jvm[${{ matrix.scala-version }}].test"
+
+  site:
+    name: Generate Site
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    # Cache Mill dependencies
+    - name: Cache Mill
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/mill
+          ~/.cache/coursier
+        key: ${{ runner.os }}-mill-docs-${{ hashFiles('build.mill') }}
+        restore-keys: |
+          ${{ runner.os }}-mill-docs-
+
+    # Generate site
+    - name: Generate site
+      run: |
+        nix develop --command mill --no-daemon docs.build
+
+    # Publish site
+    - name: Publish site
+      if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v4.0.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: site/target/docs/site
+        keep_files: true

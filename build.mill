@@ -1,0 +1,280 @@
+//| mill-jvm-version: system
+//| mvnDeps:
+//|   - com.goyeau::mill-git::0.3.2
+
+import mill.*
+import mill.scalalib.*
+import mill.scalajslib.*
+import mill.scalalib.publish.*
+import com.goyeau.mill.git.GitVersionedPublishModule
+
+val scalaVersions = Seq("3.3.8", "3.9.0")
+val scalaJSVer    = "1.22.0"
+
+val catsVersion       = "2.13.0"
+val catsEffectVersion = "3.7.1"
+val fs2Version        = "3.14.0"
+val circeVersion      = "0.14.16"
+val http4sVersion     = "0.23.37"
+val http4sDomVersion  = "0.2.12"
+val munitVer      = "1.3.6"
+val munitCeVer    = "2.2.1"
+
+/** Shared settings for every published module, on every platform.
+  *
+  * `PlatformScalaModule` drops the trailing `jvm`/`js` path segment, so both
+  * platforms of a module share one directory: `<module>/src` for common code
+  * and `<module>/src-jvm` / `<module>/src-js` for platform-specific code.
+  */
+trait Verdict4sModule
+    extends ScalaModule
+    with CrossScalaModule
+    with PlatformScalaModule
+    with GitVersionedPublishModule:
+
+  /** Title shown in the generated Scaladoc. */
+  def docTitle: String
+
+  /** Blurb for the published POM. */
+  def docDescription: String
+
+  /** All Scala 3.x releases are mutually binary compatible, so everything
+    * publishes under the `_3` suffix regardless of which 3.x compiled it.
+    */
+  override def artifactScalaVersion: T[String] = Task {
+    val v = crossScalaVersion
+    if v.startsWith("3.") then "3"
+    else v.split('.').take(2).mkString(".")
+  }
+
+  def scalacOptions =
+    val common = Seq("-explain", "-explain-types", "-deprecation", "-feature")
+    // `-Xkind-projector` landed after the 3.3 LTS line, which only has `-Ykind-projector`.
+    if crossScalaVersion.startsWith("3.3.") then common
+    else common :+ "-Xkind-projector:underscores"
+
+  def scalaDocOptions = Task {
+    val version = Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(publishVersion())
+    super.scalaDocOptions() ++ Seq(
+      "-project",
+      docTitle,
+      "-project-version",
+      version,
+      "-social-links:github::https://github.com/softinio/verdict4s",
+      "-groups",
+      "-external-mappings:" +
+        ".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/," +
+        ".*java.*::javadoc::https://docs.oracle.com/en/java/javase/21/docs/api/"
+    )
+  }
+
+  /** Emits `<info.versionScheme>early-semver</info.versionScheme>` into the POM.
+    * sbt reads it to decide whether a version bump is an eviction error or a
+    * warning; without it downstream users get noisier warnings against this
+    * library than against its peers. cats, fs2, http4s and circe all set it.
+    */
+  override def versionScheme: T[Option[VersionScheme]] = Task {
+    Some(VersionScheme.EarlySemVer)
+  }
+
+  def pomSettings = PomSettings(
+    description = docDescription,
+    organization = "com.softinio",
+    url = "https://github.com/softinio/verdict4s",
+    licenses = Seq(License.`Apache-2.0`),
+    versionControl = VersionControl.github("softinio", "verdict4s"),
+    developers = Seq(
+      Developer(
+        id = "softinio",
+        name = "Salar Rahmanian",
+        url = "https://www.softinio.com",
+        email = "code@softinio.com"
+      )
+    )
+  )
+
+/** JVM-only settings. `-release` and `javacOptions` are meaningless on Scala.js,
+  * so they live here rather than in the shared trait.
+  */
+trait Verdict4sJvmModule extends Verdict4sModule:
+
+  /** JDK used to compile and run the JVM modules.
+    *
+    * Empty means "whatever JDK Mill itself runs on", which in this devshell is
+    * the 21 that the nixpkgs `mill` wrapper pins -- the same version these
+    * artifacts target. CI sets this to exercise newer runtimes, because
+    * `--release 21` guarantees the API surface exists but not that the code
+    * behaves identically on a later JVM.
+    */
+  override def jvmVersion: T[String] = Task.Input {
+    Task.env.getOrElse("VERDICT4S_JVM", "")
+  }
+
+  def javacOptions = Seq("--release", "21")
+
+  override def scalacOptions = Task {
+    super.scalacOptions() ++ Seq("-release", "21")
+  }
+
+/** Scala.js-only settings. */
+trait Verdict4sJsModule extends Verdict4sModule with ScalaJSModule:
+  def scalaJSVersion = scalaJSVer
+
+// ---------------------------------------------------------------------------
+// verdict4s-core — sans-IO. Models, codecs, request building, response
+// parsing. No effect type, no HTTP client, no fs2: deliberately usable from
+// any effect system, or none at all.
+// ---------------------------------------------------------------------------
+
+object `verdict4s-core` extends Module:
+
+  trait Core extends Verdict4sModule:
+    def artifactName   = "verdict4s-core"
+    def docTitle       = "Verdict4s Core"
+    def docDescription =
+      "Effect-free core for verdict4s: models, JSON codecs, request building and response parsing for typed decision models."
+
+    def mvnDeps = Seq(
+      mvn"org.typelevel::cats-core::$catsVersion",
+      mvn"io.circe::circe-core::$circeVersion",
+      mvn"io.circe::circe-parser::$circeVersion"
+    )
+
+    trait CoreTests extends ScalaTests with TestModule.Munit:
+      def mvnDeps = Seq(mvn"org.scalameta::munit::$munitVer")
+
+  object jvm extends Cross[CoreJvm](scalaVersions)
+  trait CoreJvm extends Core with Verdict4sJvmModule:
+    object test extends CoreTests
+
+  object js extends Cross[CoreJs](scalaVersions)
+  trait CoreJs extends Core with Verdict4sJsModule:
+    object test extends CoreTests with ScalaJSTests
+
+// ---------------------------------------------------------------------------
+// verdict4s-client — tagless-final client over an http4s `Client[F]` the
+// caller supplies. Backend-agnostic: works with Ember, Fetch, Blaze, Netty,
+// JDK, or an in-memory fake.
+// ---------------------------------------------------------------------------
+
+object `verdict4s-client` extends Module:
+
+  trait Client extends Verdict4sModule:
+    def artifactName   = "verdict4s-client"
+    def docTitle       = "Verdict4s Client"
+    def docDescription =
+      "Backend-agnostic tagless-final client for verdict4s, built on an http4s Client[F] supplied by the caller."
+
+    def mvnDeps = Seq(
+      mvn"org.typelevel::cats-effect-kernel::$catsEffectVersion",
+      mvn"co.fs2::fs2-core::$fs2Version",
+      mvn"org.http4s::http4s-client::$http4sVersion",
+      mvn"org.http4s::http4s-circe::$http4sVersion"
+    )
+
+    trait ClientTests extends ScalaTests with TestModule.Munit:
+      def mvnDeps = Seq(
+        mvn"org.scalameta::munit::$munitVer",
+        mvn"org.typelevel::munit-cats-effect::$munitCeVer",
+        mvn"org.typelevel::cats-effect::$catsEffectVersion",
+        // `Client.fromHttpApp` + the dsl give an in-memory server, so the whole
+        // suite runs on JVM and Node without touching the network.
+        mvn"org.http4s::http4s-dsl::$http4sVersion"
+      )
+
+  object jvm extends Cross[ClientJvm](scalaVersions)
+  trait ClientJvm extends Client with Verdict4sJvmModule:
+    def moduleDeps = Seq(`verdict4s-core`.jvm(crossScalaVersion))
+    object test extends ClientTests
+
+  object js extends Cross[ClientJs](scalaVersions)
+  trait ClientJs extends Client with Verdict4sJsModule:
+    def moduleDeps = Seq(`verdict4s-core`.js(crossScalaVersion))
+    object test extends ClientTests with ScalaJSTests
+
+// ---------------------------------------------------------------------------
+// verdict4s — batteries included. Adds a default transport so callers do not
+// have to pick one: Ember on the JVM, Fetch on Scala.js (browser and Node).
+// ---------------------------------------------------------------------------
+
+object verdict4s extends Module:
+
+  trait Bundle extends Verdict4sModule:
+    def artifactName   = "verdict4s"
+    def docTitle       = "Verdict4s"
+    def docDescription =
+      "A Scala client for typed decision models, which answer questions about your program state with typed choices, scores, and probabilities instead of text. Supports TypeSafe AI's Jev."
+
+    def mvnDeps = Seq(mvn"org.typelevel::cats-effect::$catsEffectVersion")
+
+    trait BundleTests extends ScalaTests with TestModule.Munit:
+      def mvnDeps = Seq(
+        mvn"org.scalameta::munit::$munitVer",
+        mvn"org.typelevel::munit-cats-effect::$munitCeVer"
+      )
+
+  object jvm extends Cross[BundleJvm](scalaVersions)
+  trait BundleJvm extends Bundle with Verdict4sJvmModule:
+    def moduleDeps = Seq(`verdict4s-client`.jvm(crossScalaVersion))
+    override def mvnDeps = Task {
+      super.mvnDeps() ++ Seq(
+        mvn"co.fs2::fs2-io::$fs2Version",
+        mvn"org.http4s::http4s-ember-client::$http4sVersion"
+      )
+    }
+    object test extends BundleTests
+
+  object js extends Cross[BundleJs](scalaVersions)
+  trait BundleJs extends Bundle with Verdict4sJsModule:
+    def moduleDeps = Seq(`verdict4s-client`.js(crossScalaVersion))
+    override def mvnDeps = Task {
+      super.mvnDeps() ++ Seq(mvn"org.http4s::http4s-dom::$http4sDomVersion")
+    }
+    object test extends BundleTests with ScalaJSTests
+
+/** Documentation site (Laika + Helium theme, rendered from `docs/`).
+  *
+  * Both commands shell out to scala-cli (provided by the devshell) to run the
+  * scripts in `scripts/`.
+  *
+  *   - `mill docs.build` — build the site into `site/target/docs/site`
+  *   - `mill docs.preview` — build and serve the site at
+  *     http://localhost:4242
+  */
+object docs extends Module:
+  def build() = Task.Command {
+    val projectRoot = mill.api.BuildCtx.workspaceRoot
+    val outputDir   = "site/target/docs/site"
+
+    println("Building documentation site...")
+    println(s"  Input:  ${projectRoot / "docs"}")
+    println(s"  Output: ${projectRoot / os.RelPath(outputDir)}")
+
+    val scriptPath = projectRoot / "scripts" / "LaikaBuild.scala"
+
+    mill.api.BuildCtx.withFilesystemCheckerDisabled {
+      os.proc("scala-cli", "run", scriptPath.toString)
+        .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
+    }
+
+    println(s"Site built at: $outputDir")
+    PathRef(projectRoot / os.RelPath(outputDir))
+  }
+
+  def preview() = Task.Command {
+    val projectRoot = mill.api.BuildCtx.workspaceRoot
+    val port        = 4242
+
+    println("Starting preview server...")
+    println(s"  Input: ${projectRoot / "docs"}")
+    println(s"  URL:   http://localhost:$port")
+    println("  Press Ctrl+C to stop")
+
+    val scriptPath = projectRoot / "scripts" / "LaikaPreview.scala"
+
+    mill.api.BuildCtx.withFilesystemCheckerDisabled {
+      os.proc("scala-cli", "run", scriptPath.toString)
+        .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
+    }
+    ()
+  }

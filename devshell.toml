@@ -1,0 +1,48 @@
+# https://numtide.github.io/devshell
+# https://numtide.github.io/devshell/getting_started.html
+[[commands]]
+package = "mill"
+
+[[commands]]
+name = "testAll"
+command = "mill __.test"
+help = "Run the test suites for every module, on both JVM and Scala.js"
+
+[[commands]]
+name = "testJvm25"
+command = 'VERDICT4S_JVM=temurin:25 mill "__.jvm[_].test"'
+help = "Run the JVM test suites against Java 25, as CI does"
+
+[[commands]]
+name = "fmt"
+command = "mill mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources"
+help = "Format all source files with Scalafmt"
+
+[[commands]]
+name = "fmtCheck"
+command = "mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources"
+help = "Check formatting of all source files with Scalafmt"
+
+[[commands]]
+name = "buildDocs"
+command = "mill docs.build"
+help = "Build the Laika documentation site into site/target/docs/site"
+
+[[commands]]
+name = "previewDocs"
+command = "mill docs.preview"
+help = "Build and serve the documentation site at http://localhost:4242"
+
+[devshell]
+packages = [
+  "coursier",
+  # The nixpkgs `mill` wrapper hardcodes JAVA_HOME to its own JDK 21 and
+  # exports it shell-wide, so every Mill build, test and scaladoc run already
+  # happens on 21 whatever is listed here. Declaring 21 keeps `java -version`
+  # honest about what the build uses, and it matches the `--release 21` target.
+  # Testing on newer JDKs goes through VERDICT4S_JVM (see build.mill).
+  "jdk21",
+  # Scala.js tests run on Node.
+  "nodejs_22",
+  "scala-cli"
+]
