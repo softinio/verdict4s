@@ -211,6 +211,11 @@ object verdict4s extends Module:
 
     def mvnDeps = Seq(mvn"org.typelevel::cats-effect::$catsEffectVersion")
 
+    /** Nested `ScalaTests` inside a `PlatformScalaModule` *does* pick up the
+      * platform source directories on Mill 1.1.8, so `test/src-jvm` needs no
+      * wiring here. That is what lets the integration suite use `sys.env`,
+      * which does not exist on Scala.js, without ever reaching the JS build.
+      */
     trait BundleTests extends ScalaTests with TestModule.Munit:
       def mvnDeps = Seq(
         mvn"org.scalameta::munit::$munitVer",
