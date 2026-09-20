@@ -11,6 +11,7 @@ import cats.effect.*
 import laika.ast.Path.Root
 import laika.helium.Helium
 import laika.helium.config.*
+import laika.config.SyntaxHighlighting
 
 object LaikaBuild extends IOApp.Simple {
   def run: IO[Unit] = for {
@@ -38,7 +39,11 @@ object LaikaBuild extends IOApp.Simple {
     transformer = Transformer
       .from(Markdown)
       .to(HTML)
-      .using(Markdown.GitHubFlavor)
+      // GitHubFlavor only adds GFM parsing (tables, strikethrough, fenced
+      // blocks). Highlighting is a separate opt-in bundle; without it, fenced
+      // code renders as bare <pre><code> and Helium's CSS has no tokens to
+      // colour.
+      .using(Markdown.GitHubFlavor, SyntaxHighlighting)
       .parallel[IO]
       .withTheme(heliumTheme)
       .build
