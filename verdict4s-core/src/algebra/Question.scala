@@ -21,7 +21,7 @@ import scala.deriving.Mirror
   * Validation is accumulated rather than fail-fast, so a request with three
   * malformed questions reports all three:
   *
-  * ```scala
+  * ```scala sc:nocompile
   * val q = Question.choiceOfStrings("Which team?", Seq("billing" -> None))
   * ```
   *

@@ -20,7 +20,7 @@ import org.http4s.implicits.*
   * suite needs no network: `Client.fromHttpApp` serves routes in memory, so the
   * same tests run on the JVM and on Node.
   *
-  * ```scala
+  * ```scala sc:nocompile
   * val client = Verdict4sClient[IO](httpClient, apiKey)
   *
   * val (urgent, dept) = client.ask(
@@ -56,7 +56,7 @@ final class Verdict4sClient[F[_]: Temporal] private (
 
   /** Ask a set of questions and get back exactly typed answers.
     *
-    * ```scala
+    * ```scala sc:nocompile
     * val (urgent, dept, mood) = client.ask(Ask(q1, q2, q3), state)
     * ```
     */

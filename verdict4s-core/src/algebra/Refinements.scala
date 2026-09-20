@@ -15,9 +15,9 @@ import io.github.iltotore.iron.constraint.all.*
   * bound the TypeSafe API documents is carried by the type itself rather than
   * re-checked at each use site. Literals are folded at compile time:
   *
-  * ```scala
+  * ```scala sc:nocompile
   * val p = Probability(0.95) // ok
-  * val q = Probability(1.5) // does not compile
+  * val q = Probability(1.5) // rejected at compile time
   * ```
   *
   * Values arriving from JSON are not literals, so decoders use

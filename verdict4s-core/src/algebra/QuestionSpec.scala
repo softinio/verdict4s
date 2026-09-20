@@ -41,9 +41,9 @@ object NoulCriteria:
   * question that answers in their own type use `Question[A]`, which pairs one
   * of these with a decoder — see the typed question builders.
   *
-  * [[Raw]] exists only for forward compatibility: it lets a caller send a
-  * question shape a given release does not model yet, rather than wait for a
-  * library version.
+  * [[QuestionSpec.Raw]] exists only for forward compatibility: it lets a caller
+  * send a question shape a given release does not model yet, rather than wait
+  * for a library version.
   *
   * @group Protocol
   */

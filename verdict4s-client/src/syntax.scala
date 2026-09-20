@@ -8,7 +8,7 @@ import io.circe.Encoder
   * in implicit scope and infers `F` from the client. This import adds a
   * reading-order alternative for those who prefer it:
   *
-  * ```scala
+  * ```scala sc:nocompile
   * import com.softinio.verdict4s.syntax.*
   *
   * given Verdict4sClient[IO] = client

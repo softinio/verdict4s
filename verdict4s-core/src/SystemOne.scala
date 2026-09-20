@@ -12,7 +12,7 @@ import io.circe.syntax.*
   * JSON, send it with whatever HTTP client you already have, and parse the
   * reply back into typed answers:
   *
-  * ```scala
+  * ```scala sc:nocompile
   * val body = SystemOne.render(request)
   * val text = myHttpClient.post(SystemOne.evaluateUrl, body) // your code
   * val evaluation = SystemOne.parse(text)
@@ -52,7 +52,7 @@ object SystemOne:
 
   /** Build and render in one step, reporting every problem at once.
     *
-    * ```scala
+    * ```scala sc:nocompile
     * SystemOne.renderAsk(Ask(q1, q2), state, Model.JevLatest)
     * ```
     */

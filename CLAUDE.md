@@ -8,9 +8,10 @@ A Scala 3 client for typed decision models (TypeSafe AI's Jev), cross-built for
 **JVM and Scala.js** from one source tree. Published to Maven Central as three
 layered artifacts.
 
-The library API is still a placeholder: `Verdict4sError` and a `health` probe
-stand in for the real Jev protocol. The build, CI and publishing pipeline around
-them is finished and green. See `TODO.md`.
+The Jev protocol is implemented across all three layers: models, codecs and the
+`Ask` tuple builder in core, an http4s client with retries on top, and a
+batteries-included bundle. The suite is green on all twelve targets. What is
+left is release mechanics -- see `TODO.md`.
 
 ## Commands
 
@@ -25,7 +26,7 @@ mill "__.js[_].test"                      # all Scala versions of a platform ([_
 
 # single test
 mill "verdict4s-core.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.Verdict4sErrorTest
-mill "verdict4s-client.jvm[3.3.8].test" -- '*health is true*'   # munit glob, matches test names
+mill "verdict4s-client.jvm[3.3.8].test" -- '*retried*'   # munit glob, matches test names
 
 fmt / fmtCheck                            # scalafmt (devshell aliases)
 testAll                                   # mill __.test
@@ -38,8 +39,9 @@ name passed to `.test` is *not* a class filter — it silently runs nothing
 ("0 total"). Use `testOnly` or the `-- '*glob*'` form above.
 
 `docJar`, `publishVersion` and anything downstream need a git/jj repo, because
-`mill-git` derives the version from tags. There is none yet, so those tasks fail
-locally with `RepositoryNotFoundException` — not a build defect.
+`mill-git` derives the version from tags. Outside one they fail with
+`RepositoryNotFoundException`, which is not a build defect. Untagged, the
+version is derived from the commit; tagging `v0.1.0` publishes `0.1.0`.
 
 ## Architecture
 
@@ -48,14 +50,14 @@ take exactly as much as they want:
 
 | Module | Deps | Holds |
 |---|---|---|
-| `verdict4s-core` | cats-core, circe | Sans-IO. Models, codecs, request building, response parsing. |
+| `verdict4s-core` | cats-core, circe, Iron | Sans-IO. Models, codecs, request building, response parsing, `Ask`. |
 | `verdict4s-client` | + http4s-client, fs2, cats-effect-kernel | `Verdict4sClient[F]` over a caller-supplied `Client[F]`. |
 | `verdict4s` | + ember (JVM) / http4s-dom (JS) | `Verdict4s.default[F]` — picks a transport for you. |
 
 Three invariants hold this together. Breaking any of them defeats the design:
 
-**`verdict4s-core` stays effect-free.** No effect type, no HTTP client, and
-deliberately no fs2 — fs2-core pulls in `cats-effect-kernel`, which would
+**`verdict4s-core` stays effect-free.** cats-core, circe, Iron and stdlib only.
+No effect type, no HTTP client, and deliberately no fs2 — fs2-core pulls in `cats-effect-kernel`, which would
 reintroduce the dependency this layer exists to avoid. Streaming belongs in
 `verdict4s-client`. The point is that someone with no effect system, on any
 platform, can still drive the protocol.
@@ -128,9 +130,44 @@ warnings than they do against cats, fs2, http4s or circe, which all set it.
 
 Versions come from git tags via `mill-git` — tagging `v0.1.0` publishes `0.1.0`.
 
-## Known stale content
+## Traps that cost time here
 
-`README.md` is still `scala-mill-library-starter` boilerplate from the template:
-the title, intro, Quick Start and the "JDK 25 / Java 25 bytecode" prerequisite
-line are all wrong for this project. The module, command and structure sections
-were updated and are accurate. `docs/index.md` is current.
+Each of these compiles or passes somewhere and fails somewhere else, so none of
+them show up in a single local run.
+
+**`import io.github.iltotore.iron.*` shadows `cats`.** Iron ships an object
+named `cats` in its root package, so `cats.data.NonEmptyChain` resolves into
+Iron's module and fails with "macro expansion was stopped". Import the type
+directly in any file that imports Iron.
+
+**`constValueTuple[...].toList` fails on 3.3.8 and compiles on 3.9.0.** It
+leaks `Tuple.Union` through the Mirror proxy. Both derivations use
+`.productIterator.toList` instead; the LTS leg of CI is what catches this.
+
+**`Double.toString` differs between JVM and Node** -- `"1.0"` against `"1"`.
+Core tests are shared across both platforms, so golden-JSON assertions compare
+`Json` values structurally. The single exact-string assertion, which proves key
+ordering, is deliberately free of floating point.
+
+**`Order.by(identity[String])` on an opaque type recurses forever.** Inside the
+defining file the opaque type *is* its underlying type, so the instance
+resolves to itself. `Model` uses an explicit comparison, and a test pins it.
+
+**`java.util.Formatter` is only partly implemented on Scala.js**, so
+`f"q$i%02d"` does not work. `Ask.defaultKey` pads by hand.
+
+**Iron's API is not what older examples show.** It is `RefinedType`, not
+`RefinedTypeOps`; the opaque type it defines is `.T`, unwrapped with `.value`;
+and there is no `MinLength`/`MaxLength` -- cardinality goes through
+`Length[GreaterEqual[n] & LessEqual[m]]`.
+
+**A tuple bind in a `for` over `IO` needs `withFilter`**, which `IO` lacks. Use
+a pattern `val` inside the comprehension instead.
+
+**`mill docs.preview` holds Mill's workspace lock** for as long as it runs,
+because it serves inside a Mill task, so nothing else can build meanwhile. Set
+`MILL_OUTPUT_DIR` to work around it, or run the scala-cli script directly.
+
+**Laika validates internal links**, so the `/api/` reference -- generated by
+`docJar`, not by Laika -- is linked absolutely. Laika's syntax highlighting is
+an opt-in bundle, and in 1.x it lives at `laika.config.SyntaxHighlighting`.

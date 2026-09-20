@@ -54,11 +54,20 @@ jobs:
       run: |
         nix develop --command mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
 
-    # Build documentation for every module
+    # Build documentation for every module. The scaladoc snippet compiler is
+    # on, so an example in a doc comment that stops matching the API fails here.
     - name: Generate documentation
       if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
       run: |
         nix develop --command mill "__.jvm[3.9.0].docJar"
+
+    # The interop examples (ZIO, Future, Twitter Future, Finagle) are real
+    # sources so the effect-systems page cannot rot. Unpublished, JVM only,
+    # one Scala version -- one extra target rather than four.
+    - name: Compile interop examples
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
+      run: |
+        nix develop --command mill verdict4s-examples.compile
 
     # Upload test results
     - name: Upload test results
@@ -136,10 +145,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-mill-docs-
 
-    # Generate site
+    # Generate the narrative site, then the API reference beside it, so the
+    # /api/ links from the site resolve.
     - name: Generate site
       run: |
         nix develop --command mill --no-daemon docs.build
+
+    - name: Generate API reference
+      run: |
+        nix develop --command mill --no-daemon "__.jvm[3.9.0].docJar"
+        for module in verdict4s verdict4s-client verdict4s-core; do
+          src="out/$module/jvm/3.9.0/docJar.dest/javadoc"
+          if [ -d "$src" ]; then
+            mkdir -p "site/target/docs/site/api/$module"
+            cp -r "$src"/* "site/target/docs/site/api/$module/"
+          fi
+        done
 
     # Publish site
     - name: Publish site

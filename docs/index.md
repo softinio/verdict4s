@@ -1,11 +1,43 @@
 # Verdict4s
 
-A Scala client for typed decision models, which answer questions about your
-program state with typed choices, scores, and probabilities instead of text.
-Supports TypeSafe AI's Jev.
+A Scala 3 client for [TypeSafe AI](https://typesafe.ai)'s **Jev**, a decision
+model that answers typed questions about your program state with choices,
+scores and calibrated probabilities instead of text.
 
-Verdict4s cross-builds for the **JVM** and **Scala.js**, from the same sources
+You describe the decision; your code keeps control of what happens next.
+
+```scala
+val (urgent, team, mood) = client.ask(
+  Ask(
+    Question.noul("Does this convey urgency?"),
+    Question.choice[Dept]("Which team should handle this?"),
+    Question.score("How frustrated?", Seq("Calm", "Frustrated", "Very angry"))
+  ),
+  "Help! My payouts have been failing for 3 days."
+)
+```
+
+`urgent` is a `NoulAnswer`, `team` a `ChoiceAnswer[Dept]`, `mood` a
+`ScoreAnswer` — destructured positionally, at exactly the right types, with no
+casts and no lookups by string.
+
+Verdict4s cross-builds for the **JVM** and **Scala.js** from the same sources
 and at the same version.
+
+## Why the types matter here
+
+The service enforces real limits: a Choice takes 1 to 255 options, a Score
+takes 2 to 10 ordered levels, probabilities live in the unit interval. Those
+are carried by the types rather than discovered a network round trip later.
+
+```scala
+Probability(0.95)   // fine
+Probability(1.5)    // does not compile
+```
+
+Questions are validated before anything is sent, and failures accumulate, so
+a request with three problems reports all three at once rather than one per
+attempt.
 
 ## Choosing a module
 
@@ -18,7 +50,8 @@ one that matches how much you want the library to decide for you.
 | `verdict4s-client` | You already have an http4s `Client[F]`, or want a specific backend. |
 | `verdict4s-core` | You want the types and codecs only, with no effect system at all. |
 
-Each layer depends on the one below it, so taking `verdict4s` gives you all three.
+Each layer depends on the one below it, so taking `verdict4s` gives you all
+three.
 
 ### Mill
 
@@ -37,83 +70,20 @@ libraryDependencies += "com.softinio" %%% "verdict4s" % "<version>"
 The `::` (Mill) and `%%%` (sbt) forms resolve the right artifact for whichever
 platform you are building, so the same line works for JVM and Scala.js.
 
-## Usage
+## Where to next
 
-### Batteries included
+- [Getting started](getting-started.md) — your first request, on JVM and Scala.js
+- [Typed questions](typed-questions.md) — `Ask`, enum derivation, your own answer types
+- [Errors and retries](errors-and-retries.md) — what can fail, and what is retried
+- [Bring your own client](client-module.md) — any http4s backend, or an in-memory fake
+- [No effect system](core-module.md) — driving the protocol by hand
+- [Other effect systems](effect-systems.md) — ZIO, Future, Twitter Future, Finagle
+- [API reference](https://softinio.github.io/verdict4s/api/verdict4s/index.html) — generated Scaladoc
 
-`Verdict4s.default` picks the transport for the platform you are on — Ember on
-the JVM, the Fetch API on Scala.js — so the same code compiles and runs on both.
+## A note on dependencies
 
-```scala
-import cats.effect.{IO, IOApp}
-import com.softinio.verdict4s.Verdict4s
-import org.http4s.implicits.*
-
-object Main extends IOApp.Simple:
-  def run: IO[Unit] =
-    Verdict4s.default[IO](uri"https://your-service.example/api").use { client =>
-      client.health.flatMap(IO.println)
-    }
-```
-
-The `Resource` owns the underlying connection pool, so allocate it once for the
-lifetime of your application rather than once per call.
-
-### Bring your own client
-
-Depend on `verdict4s-client` and construct `Verdict4sClient` directly. It takes
-any http4s `Client[F]`, which means any backend on any platform: Ember, Fetch,
-Blaze, Netty, the JDK client, or an in-memory fake.
-
-```scala
-import cats.effect.IO
-import com.softinio.verdict4s.Verdict4sClient
-import org.http4s.client.Client
-import org.http4s.implicits.*
-
-def myClient: Client[IO] = ???
-
-val verdict = Verdict4sClient[IO](myClient, uri"https://your-service.example/api")
-```
-
-This is also how you test without a network. `Client.fromHttpApp` serves routes
-in memory, so no socket is opened and no port is bound:
-
-```scala
-import org.http4s.*
-import org.http4s.client.Client
-import org.http4s.dsl.io.*
-
-val routes = HttpRoutes.of[IO] { case GET -> Root / "health" => Ok() }.orNotFound
-val fake   = Verdict4sClient[IO](Client.fromHttpApp(routes), uri"https://example.invalid")
-```
-
-### No effect system
-
-`verdict4s-core` carries only cats-core and circe. It has no effect type, no
-HTTP client and no fs2, so you can drive the protocol from whatever you already
-use — including nothing at all.
-
-```scala
-import com.softinio.verdict4s.Verdict4sError
-
-val describe: Verdict4sError => String =
-  case Verdict4sError.Api(status, details) => s"service said $status: $details"
-  case Verdict4sError.Decoding(details)    => s"bad response: $details"
-  case Verdict4sError.Transport(details, _) => s"could not reach service: $details"
-```
-
-## Platform notes
-
-On Scala.js the default transport is the Fetch API, which works both in the
-browser and on Node 18+. Ember is deliberately not used there: it needs raw TCP
-sockets, which browsers do not expose.
-
-## Documentation
-
-This site is built with [Laika](https://typelevel.org/Laika/) from the
-Markdown sources in the `docs/` directory. Add more pages by dropping
-additional `.md` files next to this one.
-
-- `mill docs.build` — build the site into `site/target/docs/site`
-- `mill docs.preview` — build and serve the site at `http://localhost:4242`
+`verdict4s-core` depends on cats-core, circe and
+[Iron](https://github.com/Iltotore/iron). Iron is what carries the API's
+numeric and cardinality bounds in the types, and it is a public dependency: it
+appears in signatures such as `Probability`, so it comes along with the
+library.
