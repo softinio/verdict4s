@@ -1,6 +1,14 @@
 package com.softinio.verdict4s.algebra
 
 import scala.collection.immutable.SortedMap
+import scala.compiletime.constValue
+import scala.compiletime.constValueTuple
+import scala.compiletime.summonAll
+import scala.deriving.Mirror
+import scala.compiletime.constValue
+import scala.compiletime.constValueTuple
+import scala.compiletime.summonAll
+import scala.deriving.Mirror
 
 import cats.Eq
 import cats.Show
@@ -145,6 +153,47 @@ object Options:
         )
       )
       .toValidated
+
+  /** Derive an option set from a Scala 3 `enum`.
+    *
+    * ```scala
+    * enum Dept derives Options:
+    *   case Billing, Technical, Sales
+    * ```
+    *
+    * The case labels become the option names, in declaration order, and a
+    * Choice question built from this answers in `Dept` rather than in strings.
+    * Use [[describing]] when the names alone are not enough of a rubric.
+    *
+    * Only enums whose cases are all singletons can be derived: a case with
+    * parameters has no single name to send.
+    */
+  inline def derived[A](using m: Mirror.SumOf[A]): Options[A] =
+    fromMirror[A](Map.empty)
+
+  /** Derive from an `enum`, with rubric text for some or all of its cases. */
+  inline def describing[A](
+      rubrics: Map[String, Instructions]
+  )(using m: Mirror.SumOf[A]): Options[A] =
+    fromMirror[A](rubrics)
+
+  private inline def fromMirror[A](
+      rubrics: Map[String, Instructions]
+  )(using m: Mirror.SumOf[A]): Options[A] =
+    // The cardinality is statically known here, so an option set that could
+    // never be sent is a compile error rather than a runtime surprise.
+    inline if constValue[Tuple.Size[m.MirroredElemTypes]] > 255 then
+      compiletime.error("a choice question accepts at most 255 options")
+    // `.toList` on a constValueTuple leaks Tuple.Union through the Mirror
+    // proxy and fails on 3.3 while compiling fine on 3.9; productIterator
+    // sidesteps the union entirely.
+    val labels = constValueTuple[m.MirroredElemLabels].productIterator.toList
+      .map(_.asInstanceOf[String])
+    val values =
+      summonAll[Tuple.Map[m.MirroredElemTypes, ValueOf]].productIterator.toList
+        .map(_.asInstanceOf[ValueOf[A]].value)
+    build(labels.map(OptionName.applyUnsafe), values, rubrics)
+      .valueOr(errors => throw errors.head)
 
   given [A]: Eq[Options[A]] = Eq.by(_.names)
   given [A]: Show[Options[A]] = Show.fromToString

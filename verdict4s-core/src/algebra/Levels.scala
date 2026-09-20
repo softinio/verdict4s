@@ -1,5 +1,15 @@
 package com.softinio.verdict4s.algebra
 
+import scala.compiletime.constValue
+import scala.compiletime.constValueTuple
+import scala.compiletime.summonAll
+import scala.deriving.Mirror
+
+import scala.compiletime.constValue
+import scala.compiletime.constValueTuple
+import scala.compiletime.summonAll
+import scala.deriving.Mirror
+
 import cats.Eq
 import cats.Show
 import cats.data.NonEmptyChain
@@ -88,6 +98,35 @@ object Levels:
     Instructions
       .text(raw)
       .leftMap(_.map(v => v.copy(field = "criteria")))
+
+  /** Derive an ordered level set from a Scala 3 `enum`.
+    *
+    * ```scala
+    * enum Frustration derives Levels:
+    *   case Calm, Frustrated, VeryAngry
+    * ```
+    *
+    * Declaration order *is* rubric order, lowest first, and it is what the
+    * service's level indices refer to. Reordering the cases changes the meaning
+    * of every score already recorded, so treat that order as part of your data
+    * model rather than as cosmetic.
+    */
+  inline def derived[A](using m: Mirror.SumOf[A]): Levels[A] =
+    // Both bounds are statically known, so an enum that could never be a valid
+    // score rubric fails at its declaration rather than at runtime.
+    inline if constValue[Tuple.Size[m.MirroredElemTypes]] < 2 then
+      compiletime.error("a score question needs at least 2 levels")
+    inline if constValue[Tuple.Size[m.MirroredElemTypes]] > 10 then
+      compiletime.error("a score question accepts at most 10 levels")
+    val labels = constValueTuple[m.MirroredElemLabels].productIterator.toList
+      .map(_.asInstanceOf[String])
+    val values =
+      summonAll[Tuple.Map[m.MirroredElemTypes, ValueOf]].productIterator.toList
+        .map(_.asInstanceOf[ValueOf[A]].value)
+    build(
+      labels.map(l => Instructions.unsafe(io.circe.Json.fromString(l))),
+      values
+    ).valueOr(errors => throw errors.head)
 
   given [A]: Eq[Levels[A]] = Eq.by(_.descriptions.toList)
   given [A]: Show[Levels[A]] = Show.fromToString

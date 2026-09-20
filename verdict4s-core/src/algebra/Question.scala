@@ -5,6 +5,7 @@ import cats.data.ValidatedNec
 import cats.syntax.all.*
 import com.softinio.verdict4s.Verdict4sError
 import io.circe.JsonObject
+import scala.deriving.Mirror
 
 /** A question, together with the way to read its answer back at the right type.
   *
@@ -70,6 +71,16 @@ object Question:
   )(using options: Options[A]): Question[ChoiceAnswer[A]] =
     Instructions.text(instructions).map(i => choiceSpec(i, options))
 
+  /** Pick one option, deriving the set from an `enum` on the spot.
+    *
+    * Equivalent to `choice[A]` with a derived [[Options]], for an enum that
+    * does not carry a `derives Options` clause.
+    */
+  inline def choiceOf[A](
+      instructions: String
+  )(using Mirror.SumOf[A]): Question[ChoiceAnswer[A]] =
+    choice[A](instructions)(using Options.derived[A])
+
   /** Pick one option from a set whose names are only known at runtime. */
   def choiceOfStrings(
       instructions: String,
@@ -90,6 +101,12 @@ object Question:
       instructions: String
   )(using levels: Levels[A]): Question[ScoreAnswer] =
     Instructions.text(instructions).map(i => scoreSpec(i, levels.descriptions))
+
+  /** Rate against levels derived from an `enum` on the spot. */
+  inline def scoreOfEnum[A](
+      instructions: String
+  )(using Mirror.SumOf[A]): Question[ScoreAnswer] =
+    scoreOf[A](instructions)(using Levels.derived[A])
 
   // -- Escape hatches ------------------------------------------------------
 
