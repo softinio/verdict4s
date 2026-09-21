@@ -306,23 +306,30 @@ object `verdict4s-examples` extends ScalaModule:
   *
   * Only the site uses it. The per-module `docJar`s stay, because Maven Central
   * requires a javadoc jar for each published artifact.
+  *
+  * Built with the 3.3.8 LTS, not 3.9.0, and not only because that is what the
+  * library publishes from. Scaladoc 3.9.0 stopped emitting the jQuery
+  * `<script>` tag while its `ux.js` still navigates with `$.get`: every
+  * same-origin link click calls `preventDefault()` and then throws
+  * `ReferenceError: $ is not defined`, so no link in the reference works when
+  * it is served over HTTP. 3.3.8 still emits the tag.
   */
 object unidoc extends ScalaModule:
-  def scalaVersion = "3.9.0"
-  def moduleDeps   = Seq(verdict4s.jvm("3.9.0"))
+  def scalaVersion = "3.3.8"
+  def moduleDeps   = Seq(verdict4s.jvm("3.3.8"))
 
   /** Document the three published modules, not this empty one. */
   override def docSources = Task {
     Seq(
-      `verdict4s-core`.jvm("3.9.0").compile().classes,
-      `verdict4s-client`.jvm("3.9.0").compile().classes,
-      verdict4s.jvm("3.9.0").compile().classes
+      `verdict4s-core`.jvm("3.3.8").compile().classes,
+      `verdict4s-client`.jvm("3.3.8").compile().classes,
+      verdict4s.jvm("3.3.8").compile().classes
     )
   }
 
   def scalaDocOptions = Task {
     val version =
-      Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.9.0").publishVersion())
+      Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.3.8").publishVersion())
     withoutDefaultProject(super.scalaDocOptions()) ++ docOptions("Verdict4s", version)
   }
 

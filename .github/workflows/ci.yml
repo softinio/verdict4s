@@ -54,11 +54,13 @@ jobs:
       run: |
         nix develop --command mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
 
-    # Build documentation for every module.
+    # Build documentation for every module, on the 3.3.8 LTS the library
+    # publishes from. (Scaladoc 3.9.0 drops the jQuery tag its own ux.js needs,
+    # which breaks every link in the generated pages.)
     - name: Generate documentation
-      if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.3.8'
       run: |
-        nix develop --command mill "__.jvm[3.9.0].docJar"
+        nix develop --command mill "__.jvm[3.3.8].docJar"
 
     # The interop examples (ZIO, Future, JDK HttpClient) are real
     # sources so the effect-systems page cannot rot. Unpublished, JVM only,

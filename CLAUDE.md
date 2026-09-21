@@ -183,6 +183,16 @@ cats-effect link to their projects' own Scala 2 sites for that reason). Two
 external links are known dead because upstream publishes no page for them:
 Iron's `Refined` and cats-effect's `Temporal` alias.
 
+**Build Scaladoc with 3.3.8, never 3.9.0.** Scaladoc 3.9.0 stopped emitting
+the `<script>` tag for jQuery, but its `ux.js` still navigates by intercepting
+every same-origin link click (`preventDefault()`) and fetching the page with
+`$.get`. With `$` undefined that throws after the click is cancelled, so *every
+link* in the reference is dead when served over HTTP -- yet the HTML is
+correct, every URL returns 200, and it works from `file://`, where `ux.js`
+bails out early. The tell is a missing `code.jquery.com` script tag. Both
+`unidoc` and CI's `docJar` step use 3.3.8; 3.9.0 also produced two spurious
+option warnings that 3.3.8 does not.
+
 **The Scaladoc snippet compiler is off on purpose.** `-snippet-compiler:compile`
 intermittently crashed the compiler (`class String has non-class parent`) under
 a long-lived Mill daemon while passing in fresh runs, and it was checking a
