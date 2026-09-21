@@ -8,6 +8,9 @@ already use — including nothing at all.
 def mvnDeps = Seq(mvn"com.softinio::verdict4s-core::<version>")
 ```
 
+This style — the library builds and reads the messages, you do the I/O — is
+sometimes called *sans-IO*.
+
 ## The shape of it
 
 ```scala

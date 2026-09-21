@@ -50,7 +50,7 @@ take exactly as much as they want:
 
 | Module | Deps | Holds |
 |---|---|---|
-| `verdict4s-core` | cats-core, circe, Iron | Sans-IO. Models, codecs, request building, response parsing, `Ask`. |
+| `verdict4s-core` | cats-core, circe, Iron | Effect-free. Models, codecs, request building, response parsing, `Ask`. |
 | `verdict4s-client` | + http4s-client, fs2, cats-effect-kernel | `Verdict4sClient[F]` over a caller-supplied `Client[F]`. |
 | `verdict4s` | + ember (JVM) / http4s-dom (JS) | `Verdict4s.default[F]` — picks a transport for you. |
 
@@ -189,16 +189,16 @@ it "unusable" misstated that, so it was removed. Note `kyo-cats` trails
 **Finagle.** `finagle-http_2.13` does compile from Scala 3 (Scala 3 consumes
 2.13 artifacts), and a working example existed. It was removed because it put a
 Scala 2.13 artifact into an otherwise pure Scala 3 build, Finagle had not
-released since 24.2.0 (May 2024), and it showed nothing a sans-IO example does
+released since 24.2.0 (May 2024), and it showed nothing an effect-free example does
 not. Finatra was never viable: it is 2.13-only, and a 2.13
 application cannot depend on verdict4s.
 
 **Twitter `Future`.** `util-core_3` exists, and an example used it for the
-sans-IO strategy. Removed for the same staleness as Finagle (same 24.2.0 release
+no-effect-system strategy. Removed for the same staleness as Finagle (same 24.2.0 release
 line) and because it took an abstract `post` function, so it never showed a
 real transport. The JDK `HttpClient` example replaced it: no dependency, never
 stale, and concrete from render to parse. `catbird-effect` has no Scala 3 build,
-so sans-IO is the only route for Twitter `Future` users anyway.
+so the effect-free core is the only route for Twitter `Future` users anyway.
 
 **Maven Central's search API is unreliable for "latest version".** It
 reported Iron 3.0.2 (actual: 3.3.2) and Kyo 3.0.7 (actual: 1.0.0-RC6). Read

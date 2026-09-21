@@ -9,8 +9,8 @@ import io.circe.Json
 
 /** Failures a verdict4s call can produce.
   *
-  * Lives in the sans-IO core so that callers can pattern match on it without
-  * taking a dependency on cats-effect or http4s.
+  * Lives in the effect-free core so that callers can pattern match on it
+  * without taking a dependency on cats-effect or http4s.
   *
   * @group Errors
   */

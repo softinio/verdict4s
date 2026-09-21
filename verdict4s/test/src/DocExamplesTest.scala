@@ -95,8 +95,8 @@ class DocExamplesTest extends CatsEffectSuite:
     val q = Question.scoreOf[Frustration]("How frustrated is the customer?")
     assert(q.spec.isDefined)
 
-  // docs/core-module.md -- sans-IO
-  test("the sans-IO example compiles and round trips"):
+  // docs/core-module.md -- no effect system
+  test("the no-effect-system example compiles and round trips"):
     val body = SystemOne.renderAsk(questions, "Help! My payouts are failing.")
     assert(body.isRight)
     SystemOne.parseAsk(questions, cannedResponse) match

@@ -15,14 +15,14 @@ does not mention:
   `Verdict4sClient[F]` directly, with nothing to bridge.
 - **It does not, but something converts to and from `cats.effect.IO`** →
   Strategy B. Keep `IO` inside and convert at the edge.
-- **Neither** → Strategy C. Use the sans-IO core and move the bytes with
+- **Neither** → Strategy C. Use the effect-free core and move the bytes with
   whatever HTTP client you already have.
 
 | Example | Strategy |
 |---|---|
 | [ZIO](#zio) | **A** — direct, via `zio-interop-cats` |
 | [Scala `Future`](#scala-future) | **B** — convert at the edge |
-| [JDK `HttpClient`](#jdk-httpclient) | **C** — sans-IO |
+| [JDK `HttpClient`](#jdk-httpclient) | **C** — no effect system |
 
 ## Strategy A — direct
 
@@ -75,7 +75,7 @@ and tear down a connection pool every time.
 
 If you would rather not depend on cats-effect at all, use Strategy C instead.
 
-## Strategy C — sans-IO
+## Strategy C — no effect system
 
 `verdict4s-core` renders a request to JSON and parses a reply back into typed
 answers, with no effect system anywhere. You move the bytes.

@@ -94,7 +94,7 @@ building anything else.
 ## Structure
 
 ```
-verdict4s-core/      sans-IO: models, codecs, Ask, no effect system
+verdict4s-core/      effect-free: models, codecs, Ask, no HTTP client
 verdict4s-client/    a client over a caller-supplied http4s Client[F]
 verdict4s/           batteries included: Ember on JVM, Fetch on Scala.js
 verdict4s-examples/  interop examples, compiled by CI, never published

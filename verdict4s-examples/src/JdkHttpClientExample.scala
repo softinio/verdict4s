@@ -11,7 +11,7 @@ import scala.jdk.CollectionConverters.*
 import com.softinio.verdict4s.*
 import com.softinio.verdict4s.algebra.*
 
-/** **Strategy C — sans-IO, no effect system at all.**
+/** **Strategy C — no effect system.**
   *
   * `verdict4s-core` carries only cats-core, circe and Iron: no effect type, no
   * HTTP client. [[SystemOne]] renders a request to JSON and parses a reply back

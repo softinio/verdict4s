@@ -125,7 +125,7 @@ trait Verdict4sJsModule extends Verdict4sModule with ScalaJSModule:
   def scalaJSVersion = scalaJSVer
 
 // ---------------------------------------------------------------------------
-// verdict4s-core — sans-IO. Models, codecs, request building, response
+// verdict4s-core — effect-free. Models, codecs, request building, response
 // parsing. No effect type, no HTTP client, no fs2: deliberately usable from
 // any effect system, or none at all.
 // ---------------------------------------------------------------------------

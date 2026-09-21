@@ -22,7 +22,7 @@ import io.circe.syntax.*
   * for a plain blocking client — anything without a lawful cats-effect
   * instance. If you do have one, `verdict4s-client` is less work.
   *
-  * @group Sans-IO
+  * @group No effect system
   */
 object SystemOne:
 

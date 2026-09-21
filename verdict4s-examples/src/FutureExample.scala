@@ -16,7 +16,7 @@ import com.softinio.verdict4s.algebra.*
   *
   * The practical answer is to keep `IO` inside and hand a `Future` to the
   * caller. If you would rather not depend on cats-effect at all, see
-  * [[JdkHttpClientExample]], which uses the sans-IO core instead.
+  * [[JdkHttpClientExample]], which uses the effect-free core instead.
   */
 object FutureExample:
 

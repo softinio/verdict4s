@@ -3,7 +3,7 @@ package com.softinio.verdict4s
 import com.softinio.verdict4s.algebra.*
 import io.circe.parser
 
-/** The sans-IO surface: the protocol driven with no effect system present.
+/** The effect-free surface: the protocol driven with no effect system present.
   *
   * These tests are the proof of the effect-free-core invariant. Nothing here
   * touches cats-effect, http4s or a network, and none of it could, because the
