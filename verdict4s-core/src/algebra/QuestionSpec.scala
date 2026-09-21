@@ -20,7 +20,9 @@ final case class NoulCriteria(
     */
   def isEmpty: Boolean = ifTrue.isEmpty && ifFalse.isEmpty
 
+/** The empty criteria, the encoder, and instances. */
 object NoulCriteria:
+  /** Neither side described. Encodes as no `criteria` key at all. */
   val empty: NoulCriteria = NoulCriteria(None, None)
 
   given Encoder[NoulCriteria] = Encoder.instance: c =>
@@ -68,6 +70,7 @@ enum QuestionSpec:
     case _: Score  => "score"
     case r: Raw    => r.questionType
 
+/** The wire encoding of a question. */
 object QuestionSpec:
 
   /** Hand-written rather than derived, because three details matter and a

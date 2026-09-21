@@ -29,6 +29,7 @@ final case class EvaluationRequest(
     questions: EvaluationRequest.Questions
 )
 
+/** The wire type of the question map, and the request's encoder. */
 object EvaluationRequest:
 
   /** The question map as it goes on the wire.
@@ -71,6 +72,7 @@ final case class Evaluation(
   /** The answer under one key, if the service returned one. */
   def answer(key: QuestionKey): Option[Answer] = answers.get(key)
 
+/** The response's codecs and instances. */
 object Evaluation:
 
   /** Note `answers` is a plain `SortedMap`, not refined to be non-empty.

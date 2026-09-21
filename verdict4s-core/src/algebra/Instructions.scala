@@ -34,6 +34,9 @@ import io.circe.Json
   */
 opaque type Instructions = Json
 
+/** Constructors for [[Instructions]]: plain text, structured JSON, or any
+  * encodable value. Each validates, rejecting what the API would reject.
+  */
 object Instructions:
 
   /** Plain text instructions. Rejects blank strings. */

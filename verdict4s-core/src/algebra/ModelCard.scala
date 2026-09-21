@@ -21,6 +21,7 @@ final case class ModelCard(
     releaseDate: String
 )
 
+/** Codecs and instances for [[ModelCard]]. */
 object ModelCard:
 
   given Decoder[ModelCard] = Decoder.instance: c =>

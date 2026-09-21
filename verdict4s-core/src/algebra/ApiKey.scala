@@ -34,6 +34,7 @@ final class ApiKey private (private val secret: String):
   /** The raw key, for building an `Authorization` header. */
   private[verdict4s] def bearer: String = secret
 
+/** Validating and wrapping a key. */
 object ApiKey:
 
   /** Validate and wrap a key.

@@ -14,6 +14,7 @@ final case class Usage(inputTokens: Int, outputTokens: Int):
   /** Total tokens billed for the request. */
   def total: Int = inputTokens + outputTokens
 
+/** Codecs and instances for [[Usage]]. */
 object Usage:
 
   given Decoder[Usage] = Decoder.instance: c =>

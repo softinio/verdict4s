@@ -132,6 +132,9 @@ final class Ask[Q <: Tuple] private (
       )
       .toValidated
 
+/** Building an [[Ask]] from one to twelve questions, and the type that computes
+  * its answers.
+  */
 object Ask:
 
   /** There is no arity limit of ours. The service documents none either -- it

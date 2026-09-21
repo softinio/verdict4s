@@ -32,6 +32,7 @@ final case class ApiErrorBody(
     raw: Json
 )
 
+/** Reading an error body, and its decoder, which never fails. */
 object ApiErrorBody:
 
   /** Read an error body. Never fails. */

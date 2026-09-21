@@ -21,6 +21,7 @@ trait Jitter[F[_]]:
   /** A fresh sample in [0, 1). */
   def sample: F[Double]
 
+/** Ready-made sources of jitter: a random one, and a constant one for tests. */
 object Jitter:
 
   /** Samples from `scala.util.Random`. Works on both platforms. */

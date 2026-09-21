@@ -54,6 +54,7 @@ enum Answer:
     case _: Choice => "choice"
     case _: Score  => "score"
 
+/** Codecs and instances for [[Answer]]. */
 object Answer:
 
   given Decoder[Answer] = Decoder.instance: c =>
@@ -125,6 +126,7 @@ final case class NoulAnswer(value: Probability):
   def isTrue(threshold: Double = 0.5): Boolean =
     (value.value: Double) >= threshold
 
+/** Instances for [[NoulAnswer]]. */
 object NoulAnswer:
   given Eq[NoulAnswer] = Eq.fromUniversalEquals
   given Show[NoulAnswer] =
@@ -144,6 +146,7 @@ final case class ChoiceAnswer[A](
   def probabilityFor(value: A)(using options: Options[A]): Option[Probability] =
     probabilities.get(options.render(value))
 
+/** Instances for [[ChoiceAnswer]]. */
 object ChoiceAnswer:
   given [A]: Eq[ChoiceAnswer[A]] = Eq.fromUniversalEquals
   given [A]: Show[ChoiceAnswer[A]] = Show.fromToString
@@ -168,6 +171,7 @@ final case class ScoreAnswer(
   /** [[nearestLevel]] mapped back into a level type. */
   def levelAs[A](using levels: Levels[A]): Option[A] = levels.at(nearestLevel)
 
+/** Instances for [[ScoreAnswer]]. */
 object ScoreAnswer:
   given Eq[ScoreAnswer] = Eq.fromUniversalEquals
   given Show[ScoreAnswer] = Show.fromToString

@@ -30,6 +30,14 @@ import scala.deriving.Mirror
 opaque type Question[A] =
   ValidatedNec[Verdict4sError.Validation, Question.Spec[A]]
 
+/** Constructors for every question type, and the combinators that change how an
+  * answer is read.
+  *
+  * Every constructor returns a validated `Question[A]`: it never throws, and
+  * problems accumulate rather than stopping at the first. `A` is what the
+  * answer decodes to -- `NoulAnswer`, `ChoiceAnswer[D]` for an option type `D`,
+  * or `ScoreAnswer` -- and [[map]] or [[emap]] turn it into a type of your own.
+  */
 object Question:
 
   /** A validated question paired with its answer decoder. */

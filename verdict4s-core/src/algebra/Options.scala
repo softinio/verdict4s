@@ -32,6 +32,7 @@ import io.github.iltotore.iron.*
   * @group Protocol
   */
 final class Options[A] private (
+    /** The option names and their rubrics, as they go on the wire. */
     val keys: Options.Keys,
     private val decodeKey: String => Option[A],
     private val encodeKey: A => OptionName
@@ -52,6 +53,9 @@ final class Options[A] private (
   override def toString: String =
     s"Options(${names.map(n => n.value: String).mkString(", ")})"
 
+/** Building an [[Options]] set: from strings at runtime, or derived from an
+  * `enum` with `derives Options`.
+  */
 object Options:
 
   /** The rubric map as it goes on the wire.

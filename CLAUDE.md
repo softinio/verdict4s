@@ -172,6 +172,28 @@ because it serves inside a Mill task, so nothing else can build meanwhile. Set
 `docJar`, not by Laika -- is linked absolutely. Laika's syntax highlighting is
 an opt-in bundle, and in 1.x it lives at `laika.config.SyntaxHighlighting`.
 
+**Scaladoc `-external-mappings` patterns match a symbol's package path, not the
+jar.** `.*cats/kernel/.*` works; `.*/cats-kernel_3-.*` silently matches
+nothing and every type from that library renders as unresolved plain text.
+`.*scala.*` and `.*java.*` only appeared to work by jar name because the package
+paths contain those words too. First match wins, so order specific patterns
+first. Verify a mapping by counting links in the output, and check the target
+URLs return 200: javadoc.io has not unpacked every version (circe, http4s and
+cats-effect link to their projects' own Scala 2 sites for that reason). Two
+external links are known dead because upstream publishes no page for them:
+Iron's `Refined` and cats-effect's `Temporal` alias.
+
+**The Scaladoc snippet compiler is off on purpose.** `-snippet-compiler:compile`
+intermittently crashed the compiler (`class String has non-class parent`) under
+a long-lived Mill daemon while passing in fresh runs, and it was checking a
+single snippet. Doc examples are guarded by `DocExamplesTest` instead.
+
+**The site's API reference is `unidoc`, not the per-module `docJar`s.** Each
+module's own Scaladoc cannot link to types in the others, so `unidoc` runs
+Scaladoc once over all three modules' TASTy. The per-module `docJar`s remain
+because Maven Central requires a javadoc jar per artifact; both use
+`docOptions` in `build.mill` so they cannot drift.
+
 ## Integrations considered and dropped
 
 The `effect-systems` docs page and `verdict4s-examples` deliberately cover only

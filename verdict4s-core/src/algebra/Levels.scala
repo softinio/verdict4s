@@ -27,6 +27,7 @@ import io.github.iltotore.iron.*
   * @group Protocol
   */
 final class Levels[A] private (
+    /** The level descriptions as they go on the wire, lowest first. */
     val descriptions: Levels.Descriptions,
     private val values: Vector[A]
 ):
@@ -42,6 +43,9 @@ final class Levels[A] private (
 
   override def toString: String = s"Levels(${size} levels)"
 
+/** Building a [[Levels]] rubric: from strings at runtime, or derived from an
+  * `enum` with `derives Levels`.
+  */
 object Levels:
 
   /** The ordered level descriptions as they go on the wire.

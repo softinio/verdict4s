@@ -85,6 +85,9 @@ final case class RetryPolicy private (
       .zip(jitterSamples)
       .flatMap((attempt, sample) => delayFor(attempt, None, sample))
 
+/** The default policy, a policy that never retries, and a validated constructor
+  * for your own.
+  */
 object RetryPolicy:
 
   /** The settings the official SDKs use. */

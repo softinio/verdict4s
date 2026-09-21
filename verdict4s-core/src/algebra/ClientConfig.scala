@@ -26,13 +26,22 @@ final case class ClientConfig(
     retry: RetryPolicy = RetryPolicy.default,
     requestTimeout: FiniteDuration = 10.seconds
 ):
+  /** A copy using a different default model. */
   def withModel(m: Model): ClientConfig = copy(model = m)
+
+  /** A copy using a different retry policy. */
   def withRetry(r: RetryPolicy): ClientConfig = copy(retry = r)
+
+  /** A copy that never retries. */
   def withoutRetries: ClientConfig = copy(retry = RetryPolicy.none)
+
+  /** A copy with a different ceiling on each HTTP attempt. */
   def withRequestTimeout(t: FiniteDuration): ClientConfig =
     copy(requestTimeout = t)
 
+/** The default configuration, and instances. */
 object ClientConfig:
+  /** Retries on, `jev-latest`, and a 10 second timeout per attempt. */
   val default: ClientConfig = ClientConfig()
 
   given Eq[ClientConfig] = Eq.fromUniversalEquals

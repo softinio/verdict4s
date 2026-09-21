@@ -21,6 +21,35 @@ val ironVersion       = "3.3.2"
 val munitVer      = "1.3.6"
 val munitCeVer    = "2.2.1"
 
+/** Scaladoc options shared by each module's own docs and by the combined
+  * reference the site publishes, so the two cannot drift.
+  */
+def docOptions(title: String, version: String): Seq[String] = Seq(
+  "-project",
+  title,
+  "-project-version",
+  version,
+  "-social-links:github::https://github.com/softinio/verdict4s",
+  "-groups",
+  "-external-mappings:" + Seq(
+    // Third-party types link to their own published API docs. The patterns
+    // match a symbol's *package path* (cats/kernel/Eq...), not the jar name:
+    // that is why `.*scala.*` and `.*java.*` below work. Order matters, first
+    // match wins, so cats-kernel precedes cats. Only docs verified to resolve
+    // are listed -- a broken link is worse than plain text.
+    s".*cats/kernel/.*::scaladoc3::https://javadoc.io/static/org.typelevel/cats-kernel_3/$catsVersion/",
+    s".*cats/(data|syntax|instances|Show|Order|Eq).*::scaladoc3::https://javadoc.io/static/org.typelevel/cats-core_3/$catsVersion/",
+    s".*io/github/iltotore/iron/.*::scaladoc3::https://javadoc.io/static/io.github.iltotore/iron_3/$ironVersion/",
+    // javadoc.io has not unpacked these versions, so they link to the
+    // projects' own hosted docs, which are Scala 2 scaladoc sites.
+    ".*cats/effect/.*::scaladoc2::https://typelevel.org/cats-effect/api/3.x/",
+    ".*io/circe/.*::scaladoc2::https://circe.github.io/circe/api/",
+    ".*org/http4s/.*::scaladoc2::https://http4s.org/v0.23/api/",
+    ".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/",
+    ".*java.*::javadoc::https://docs.oracle.com/en/java/javase/21/docs/api/"
+  ).mkString(",")
+)
+
 /** Shared settings for every published module, on every platform.
   *
   * `PlatformScalaModule` drops the trailing `jvm`/`js` path segment, so both
@@ -56,17 +85,7 @@ trait Verdict4sModule
 
   def scalaDocOptions = Task {
     val version = Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(publishVersion())
-    super.scalaDocOptions() ++ Seq(
-      "-project",
-      docTitle,
-      "-project-version",
-      version,
-      "-social-links:github::https://github.com/softinio/verdict4s",
-      "-groups",
-      "-external-mappings:" +
-        ".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/," +
-        ".*java.*::javadoc::https://docs.oracle.com/en/java/javase/21/docs/api/"
-    )
+    super.scalaDocOptions() ++ docOptions(docTitle, version)
   }
 
   /** Emits `<info.versionScheme>early-semver</info.versionScheme>` into the POM.
@@ -268,6 +287,36 @@ object `verdict4s-examples` extends ScalaModule:
     mvn"dev.zio::zio-interop-cats:23.1.0.5"
   )
 
+/** One API reference covering all three modules.
+  *
+  * Each module's own `docJar` documents only that module, so a type from
+  * another layer -- `Ask` in the client docs, say -- renders as plain text
+  * rather than a link, and a reader has to know which module a type lives in
+  * before they can find it. This runs scaladoc once over the TASTy of all three,
+  * so every cross-module reference links and there is one place to search.
+  *
+  * Only the site uses it. The per-module `docJar`s stay, because Maven Central
+  * requires a javadoc jar for each published artifact.
+  */
+object unidoc extends ScalaModule:
+  def scalaVersion = "3.9.0"
+  def moduleDeps   = Seq(verdict4s.jvm("3.9.0"))
+
+  /** Document the three published modules, not this empty one. */
+  override def docSources = Task {
+    Seq(
+      `verdict4s-core`.jvm("3.9.0").compile().classes,
+      `verdict4s-client`.jvm("3.9.0").compile().classes,
+      verdict4s.jvm("3.9.0").compile().classes
+    )
+  }
+
+  def scalaDocOptions = Task {
+    val version =
+      Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.9.0").publishVersion())
+    super.scalaDocOptions() ++ docOptions("Verdict4s", version)
+  }
+
 /** Documentation site: the Laika narrative pages plus the scaladoc API
   * reference, assembled into one directory.
   *
@@ -284,14 +333,8 @@ object `verdict4s-examples` extends ScalaModule:
   */
 object docs extends Module:
 
-  /** Each published module's scaladoc, from the 3.9.0 JVM build as CI uses. */
-  def apiDocs: T[Seq[(String, PathRef)]] = Task {
-    Seq(
-      "verdict4s"        -> verdict4s.jvm("3.9.0").docJar(),
-      "verdict4s-client" -> `verdict4s-client`.jvm("3.9.0").docJar(),
-      "verdict4s-core"   -> `verdict4s-core`.jvm("3.9.0").docJar()
-    )
-  }
+  /** The combined API reference; see [[unidoc]]. */
+  def apiDocs: T[PathRef] = Task { unidoc.docJar() }
 
   def build() = Task.Command {
     renderSite(apiDocs())
@@ -307,7 +350,7 @@ object docs extends Module:
     ()
   }
 
-  private def renderSite(apis: Seq[(String, PathRef)]): PathRef =
+  private def renderSite(api: PathRef): PathRef =
     val projectRoot = mill.api.BuildCtx.workspaceRoot
     val siteDir     = projectRoot / "site" / "target" / "docs" / "site"
 
@@ -317,13 +360,10 @@ object docs extends Module:
         .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
 
       // docJar writes the rendered HTML beside the jar, in `docs/`.
-      apis.foreach { (module, jar) =>
-        val from = jar.path / os.up / "docs"
-        val to   = siteDir / "api" / module
-        os.remove.all(to)
-        os.copy(from, to, createFolders = true)
-        println(s"  API reference: api/$module")
-      }
+      val to = siteDir / "api"
+      os.remove.all(to)
+      os.copy(api.path / os.up / "docs", to, createFolders = true)
+      println("  API reference: api/")
     }
     println(s"Site built at: $siteDir")
     PathRef(siteDir)

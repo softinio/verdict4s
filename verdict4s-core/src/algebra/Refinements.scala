@@ -47,6 +47,8 @@ object Probability extends RefinedType[Double, UnitIntervalC]:
     Encoder.encodeDouble.contramap(p => p.value: Double)
   given Decoder[Probability] =
     Decoder.decodeDouble.emap(either(_).map(identity))
+
+/** A probability between 0 and 1 inclusive. Build one with `Probability`. */
 type Probability = Probability.T
 
 /** How certain the model is, between 0 and 1 inclusive.
@@ -61,6 +63,8 @@ object Confidence extends RefinedType[Double, UnitIntervalC]:
   given Encoder[Confidence] =
     Encoder.encodeDouble.contramap(c => c.value: Double)
   given Decoder[Confidence] = Decoder.decodeDouble.emap(either(_).map(identity))
+
+/** How certain the model is, between 0 and 1. Distinct from [[Probability]]. */
 type Confidence = Confidence.T
 
 /** Constraint for identifiers that must carry actual content. */
@@ -77,6 +81,8 @@ object OptionName extends RefinedType[String, NonBlankC]:
   given KeyEncoder[OptionName] =
     KeyEncoder.encodeKeyString.contramap(n => n.value: String)
   given KeyDecoder[OptionName] = KeyDecoder.instance(either(_).toOption)
+
+/** A non-blank Choice option name. */
 type OptionName = OptionName.T
 
 /** A caller-chosen key in the `questions` map; answers return under the same
@@ -93,10 +99,14 @@ object QuestionKey extends RefinedType[String, NonBlankC]:
   given KeyEncoder[QuestionKey] =
     KeyEncoder.encodeKeyString.contramap(n => n.value: String)
   given KeyDecoder[QuestionKey] = KeyDecoder.instance(either(_).toOption)
+
+/** A non-blank key in the `questions` map. */
 type QuestionKey = QuestionKey.T
 
 /** A model identifier such as `jev-latest` or `jev-1.13.0`. */
 object ModelId extends RefinedType[String, NonBlankC]
+
+/** A non-blank model identifier. */
 type ModelId = ModelId.T
 
 /** Choice accepts between 1 and 255 options.

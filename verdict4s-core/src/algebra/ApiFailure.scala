@@ -46,6 +46,7 @@ enum ApiFailure:
     case RateLimited | Overloaded | Server => true
     case _                                 => false
 
+/** Classifying an HTTP status code. */
 object ApiFailure:
 
   /** Classify an HTTP status code.

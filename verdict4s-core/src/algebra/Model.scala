@@ -19,6 +19,7 @@ import io.circe.Encoder
   */
 opaque type Model = String
 
+/** The model aliases, and naming a specific model. */
 object Model:
 
   /** The most recent stable release. The default, and what you usually want. */

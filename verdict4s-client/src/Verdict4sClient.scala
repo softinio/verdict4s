@@ -41,6 +41,7 @@ final class Verdict4sClient[F[_]: Temporal] private (
     client: Client[F],
     baseUri: Uri,
     apiKey: ApiKey,
+    /** The settings this client applies to every request. */
     val config: ClientConfig,
     jitter: Jitter[F]
 ):
@@ -100,6 +101,7 @@ final class Verdict4sClient[F[_]: Temporal] private (
       jitter
     )(Wire.decode[F, A])
 
+/** Constructing a [[Verdict4sClient]] over a transport you supply. */
 object Verdict4sClient:
 
   /** The service's own address, checked at compile time. */

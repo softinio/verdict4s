@@ -20,6 +20,9 @@ sealed abstract class Verdict4sError(
 ) extends Exception(message):
   cause.foreach(initCause)
 
+/** The cases of [[Verdict4sError]], and a constructor for API errors built from
+  * a raw response.
+  */
 object Verdict4sError:
 
   /** The request never produced a usable response. */
