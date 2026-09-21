@@ -250,7 +250,7 @@ object verdict4s extends Module:
 // verdict4s-examples — interop examples, compiled but never published.
 //
 // The `effect-systems` documentation page shows verdict4s driven from ZIO,
-// Scala Future and Twitter Future. Those examples have to compile or they
+// Scala Future and the JDK's HttpClient. Those examples have to compile or they
 // rot, so they live here as real sources. This is deliberately NOT a
 // Verdict4sModule: it inherits no pomSettings and no publishVersion, so it
 // cannot be published by accident, and the release glob ("__[3.3.8]") does not
@@ -268,8 +268,7 @@ object `verdict4s-examples` extends ScalaModule:
 
   def mvnDeps = Seq(
     mvn"dev.zio::zio:2.1.19",
-    mvn"dev.zio::zio-interop-cats:23.1.0.5",
-    mvn"com.twitter::util-core:24.2.0"
+    mvn"dev.zio::zio-interop-cats:23.1.0.5"
   )
 
 /** Documentation site: the Laika narrative pages plus the scaladoc API

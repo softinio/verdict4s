@@ -175,8 +175,8 @@ an opt-in bundle, and in 1.x it lives at `laika.config.SyntaxHighlighting`.
 ## Integrations considered and dropped
 
 The `effect-systems` docs page and `verdict4s-examples` deliberately cover only
-ZIO, Scala `Future` and Twitter `Future`. Two others were built or investigated
-and removed. Do not re-add them without re-checking these facts.
+ZIO, Scala `Future` and a plain JDK `HttpClient`. Three others were built or
+investigated and removed. Do not re-add them without re-checking these facts.
 
 **Kyo.** Kyo 1.0.0-RC6 is built with Scala 3.8.4, so the 3.3 LTS cannot read
 its TASTy, and it ships Java 25 bytecode (class file 69) that the JDK 21
@@ -189,9 +189,16 @@ it "unusable" misstated that, so it was removed. Note `kyo-cats` trails
 **Finagle.** `finagle-http_2.13` does compile from Scala 3 (Scala 3 consumes
 2.13 artifacts), and a working example existed. It was removed because it put a
 Scala 2.13 artifact into an otherwise pure Scala 3 build, Finagle had not
-released since 24.2.0 (May 2024), and it showed nothing the Twitter `Future`
-example does not. Finatra was never viable: it is 2.13-only, and a 2.13
+released since 24.2.0 (May 2024), and it showed nothing a sans-IO example does
+not. Finatra was never viable: it is 2.13-only, and a 2.13
 application cannot depend on verdict4s.
+
+**Twitter `Future`.** `util-core_3` exists, and an example used it for the
+sans-IO strategy. Removed for the same staleness as Finagle (same 24.2.0 release
+line) and because it took an abstract `post` function, so it never showed a
+real transport. The JDK `HttpClient` example replaced it: no dependency, never
+stale, and concrete from render to parse. `catbird-effect` has no Scala 3 build,
+so sans-IO is the only route for Twitter `Future` users anyway.
 
 **Maven Central's search API is unreliable for "latest version".** It
 reported Iron 3.0.2 (actual: 3.3.2) and Kyo 3.0.7 (actual: 1.0.0-RC6). Read
