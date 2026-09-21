@@ -40,6 +40,12 @@ type UnitIntervalC = GreaterEqual[0.0] & LessEqual[1.0]
 
 /** A probability, between 0 and 1 inclusive. */
 object Probability extends RefinedType[Double, UnitIntervalC]:
+
+  /** Refine at runtime, throwing `IllegalArgumentException` if the value is not
+    * between 0 and 1. Prefer `either` or `option`, which return the failure
+    * instead.
+    */
+  override def applyUnsafe(value: Double): T = super.applyUnsafe(value)
   given Ordering[Probability] = Ordering.by(p => p.value: Double)
   given Order[Probability] = Order.fromOrdering
   given Show[Probability] = Show.show(p => (p.value: Double).toString)
@@ -57,6 +63,12 @@ type Probability = Probability.T
   * distribution, and conflating the two is an easy mistake to make.
   */
 object Confidence extends RefinedType[Double, UnitIntervalC]:
+
+  /** Refine at runtime, throwing `IllegalArgumentException` if the value is not
+    * between 0 and 1. Prefer `either` or `option`, which return the failure
+    * instead.
+    */
+  override def applyUnsafe(value: Double): T = super.applyUnsafe(value)
   given Ordering[Confidence] = Ordering.by(c => c.value: Double)
   given Order[Confidence] = Order.fromOrdering
   given Show[Confidence] = Show.show(c => (c.value: Double).toString)
@@ -72,6 +84,12 @@ type NonBlankC = Not[Blank]
 
 /** A Choice option name, as sent in `criteria` and returned in `choice`. */
 object OptionName extends RefinedType[String, NonBlankC]:
+
+  /** Refine at runtime, throwing `IllegalArgumentException` if the value is not
+    * a non-blank string. Prefer `either` or `option`, which return the failure
+    * instead.
+    */
+  override def applyUnsafe(value: String): T = super.applyUnsafe(value)
   given Ordering[OptionName] = Ordering.by(n => n.value: String)
   given Order[OptionName] = Order.fromOrdering
   given Show[OptionName] = Show.show(n => n.value: String)
@@ -89,6 +107,12 @@ type OptionName = OptionName.T
   * key.
   */
 object QuestionKey extends RefinedType[String, NonBlankC]:
+
+  /** Refine at runtime, throwing `IllegalArgumentException` if the value is not
+    * a non-blank string. Prefer `either` or `option`, which return the failure
+    * instead.
+    */
+  override def applyUnsafe(value: String): T = super.applyUnsafe(value)
   given Ordering[QuestionKey] = Ordering.by(n => n.value: String)
   given Order[QuestionKey] = Order.fromOrdering
   given Show[QuestionKey] = Show.show(n => n.value: String)
@@ -104,7 +128,13 @@ object QuestionKey extends RefinedType[String, NonBlankC]:
 type QuestionKey = QuestionKey.T
 
 /** A model identifier such as `jev-latest` or `jev-1.13.0`. */
-object ModelId extends RefinedType[String, NonBlankC]
+object ModelId extends RefinedType[String, NonBlankC]:
+
+  /** Refine at runtime, throwing `IllegalArgumentException` if the value is not
+    * a non-blank string. Prefer `either` or `option`, which return the failure
+    * instead.
+    */
+  override def applyUnsafe(value: String): T = super.applyUnsafe(value)
 
 /** A non-blank model identifier. */
 type ModelId = ModelId.T

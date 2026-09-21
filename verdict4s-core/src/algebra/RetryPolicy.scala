@@ -13,8 +13,8 @@ import com.softinio.verdict4s.Verdict4sError
 /** How to back off and retry when the service asks you to.
   *
   * The API documents 429 and 529 with an explicit instruction to retry with
-  * exponential backoff, and the official SDKs do so by default; [[default]]
-  * matches their settings.
+  * exponential backoff, and the official SDKs do so by default;
+  * [[RetryPolicy.default]] matches their settings.
   *
   * Everything here is pure. [[delayFor]] takes the jitter sample as an argument
   * rather than drawing one, which means the whole schedule is a function of its

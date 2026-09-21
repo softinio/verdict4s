@@ -16,7 +16,7 @@ import scala.deriving.Mirror
   *     so a tuple of questions is uniform in its wrapper.
   *   - a decoder. Carrying it here, where `A` is statically known, is what lets
   *     `Ask` project answers back at exact types without a GADT match — and
-  *     what makes [[map]] and [[emap]] one-liners.
+  *     what makes [[Question.map]] and [[Question.emap]] one-liners.
   *
   * Validation is accumulated rather than fail-fast, so a request with three
   * malformed questions reports all three:

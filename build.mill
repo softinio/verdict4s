@@ -50,6 +50,15 @@ def docOptions(title: String, version: String): Seq[String] = Seq(
   ).mkString(",")
 )
 
+/** Mill's scaladoc defaults already carry `-project <artifactName>`. Appending
+  * our own `-project` then makes scaladoc warn that the option was updated, so
+  * drop Mill's before adding ours.
+  */
+def withoutDefaultProject(options: Seq[String]): Seq[String] =
+  options.indexOf("-project") match
+    case -1 => options
+    case i  => options.patch(i, Nil, 2)
+
 /** Shared settings for every published module, on every platform.
   *
   * `PlatformScalaModule` drops the trailing `jvm`/`js` path segment, so both
@@ -85,7 +94,7 @@ trait Verdict4sModule
 
   def scalaDocOptions = Task {
     val version = Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(publishVersion())
-    super.scalaDocOptions() ++ docOptions(docTitle, version)
+    withoutDefaultProject(super.scalaDocOptions()) ++ docOptions(docTitle, version)
   }
 
   /** Emits `<info.versionScheme>early-semver</info.versionScheme>` into the POM.
@@ -314,7 +323,7 @@ object unidoc extends ScalaModule:
   def scalaDocOptions = Task {
     val version =
       Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.9.0").publishVersion())
-    super.scalaDocOptions() ++ docOptions("Verdict4s", version)
+    withoutDefaultProject(super.scalaDocOptions()) ++ docOptions("Verdict4s", version)
   }
 
 /** Documentation site: the Laika narrative pages plus the scaladoc API
