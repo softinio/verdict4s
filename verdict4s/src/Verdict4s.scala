@@ -12,7 +12,7 @@ import org.http4s.Uri
   * JVM, the browser and Node Fetch API on Scala.js — so getting a working
   * client is a one-liner:
   *
-  * ```scala sc:nocompile
+  * ```scala
   * Verdict4s.default[IO](apiKey).use { client =>
   *   client.ask(Ask(Question.noul("Is this urgent?")), ticket)
   * }

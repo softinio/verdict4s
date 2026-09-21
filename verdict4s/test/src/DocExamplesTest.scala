@@ -10,8 +10,8 @@ import org.http4s.implicits.*
 
 /** Guards the narrative documentation.
   *
-  * Laika cannot compile-check Scala snippets against the classpath the way
-  * scaladoc's `-snippet-compiler` does for docstrings, so the examples in the
+  * Neither Laika nor Scaladoc compile-checks the Scala snippets in the docs,
+  * so the examples in the
   * Markdown pages under `docs` would otherwise be free to drift out of step
   * with the API. Every non-trivial example there is mirrored here as real code:
   * if a signature changes, this fails even though the Markdown cannot.

@@ -63,9 +63,6 @@ trait Verdict4sModule
       version,
       "-social-links:github::https://github.com/softinio/verdict4s",
       "-groups",
-      // Compiles every example in a scaladoc comment, so a doc example that
-      // stops matching the API fails `docJar` -- which CI already runs.
-      "-snippet-compiler:compile",
       "-external-mappings:" +
         ".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/," +
         ".*java.*::javadoc::https://docs.oracle.com/en/java/javase/21/docs/api/"

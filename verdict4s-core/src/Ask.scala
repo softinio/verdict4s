@@ -15,7 +15,7 @@ import io.github.iltotore.iron.*
   * request each, and it is the shape the service is designed around. `Ask`
   * keeps that batching while preserving each question's own answer type:
   *
-  * ```scala sc:nocompile
+  * ```scala
   * val (urgent, dept, mood) = client.ask(
   *   Ask(
   *     Question.noul("Does this convey urgency?"),

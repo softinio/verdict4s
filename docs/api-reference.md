@@ -13,5 +13,3 @@ Each layer depends on the one below it, so the types you meet in
 Most of what you write against lives in `verdict4s-core`, in
 `com.softinio.verdict4s.algebra` — start there.
 
-The reference is built with the Scaladoc snippet compiler switched on, so every
-example in it compiles against the version you are reading.

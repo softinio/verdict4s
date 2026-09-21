@@ -101,7 +101,7 @@ object Levels:
 
   /** Derive an ordered level set from a Scala 3 `enum`.
     *
-    * ```scala sc:nocompile
+    * ```scala
     * enum Frustration derives Levels:
     *   case Calm, Frustrated, VeryAngry
     * ```

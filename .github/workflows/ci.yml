@@ -54,8 +54,7 @@ jobs:
       run: |
         nix develop --command mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
 
-    # Build documentation for every module. The scaladoc snippet compiler is
-    # on, so an example in a doc comment that stops matching the API fails here.
+    # Build documentation for every module.
     - name: Generate documentation
       if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
       run: |

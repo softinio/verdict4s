@@ -156,7 +156,7 @@ object Options:
 
   /** Derive an option set from a Scala 3 `enum`.
     *
-    * ```scala sc:nocompile
+    * ```scala
     * enum Dept derives Options:
     *   case Billing, Technical, Sales
     * ```
