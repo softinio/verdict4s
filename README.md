@@ -61,7 +61,7 @@ libraryDependencies += "com.softinio" %%% "verdict4s" % "<version>"
 - [Getting started](https://softinio.github.io/verdict4s/getting-started.html)
 - [Typed questions](https://softinio.github.io/verdict4s/typed-questions.html)
 - [Errors and retries](https://softinio.github.io/verdict4s/errors-and-retries.html)
-- [Other effect systems](https://softinio.github.io/verdict4s/effect-systems.html) — ZIO, Future, Twitter Future, Finagle
+- [Other effect systems](https://softinio.github.io/verdict4s/effect-systems.html) — ZIO, Future, Twitter Future
 - [API reference](https://softinio.github.io/verdict4s/api/verdict4s/index.html)
 
 ## Development
@@ -78,7 +78,7 @@ fmt / fmtCheck                            # scalafmt
 testAll                                   # mill __.test
 testJvm25                                 # JVM tests on Java 25, as CI does
 buildDocs / previewDocs                   # Laika site, or serve on :4242
-mill verdict4s-examples.compile           # the ZIO / Future / Finagle examples
+mill verdict4s-examples.compile           # the ZIO / Future / Twitter Future examples
 ```
 
 Integration tests run against the real service and are gated on an API key.

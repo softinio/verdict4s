@@ -61,7 +61,7 @@ jobs:
       run: |
         nix develop --command mill "__.jvm[3.9.0].docJar"
 
-    # The interop examples (ZIO, Future, Twitter Future, Finagle) are real
+    # The interop examples (ZIO, Future, Twitter Future) are real
     # sources so the effect-systems page cannot rot. Unpublished, JVM only,
     # one Scala version -- one extra target rather than four.
     - name: Compile interop examples

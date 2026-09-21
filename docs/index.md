@@ -77,7 +77,7 @@ platform you are building, so the same line works for JVM and Scala.js.
 - [Errors and retries](errors-and-retries.md) — what can fail, and what is retried
 - [Bring your own client](client-module.md) — any http4s backend, or an in-memory fake
 - [No effect system](core-module.md) — driving the protocol by hand
-- [Other effect systems](effect-systems.md) — ZIO, Future, Twitter Future, Finagle
+- [Other effect systems](effect-systems.md) — ZIO, Future, Twitter Future, and anything else
 - [API reference](api-reference.md) — generated Scaladoc for each module
 
 ## A note on dependencies

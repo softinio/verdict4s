@@ -6,13 +6,23 @@ ways in, and which one you use depends on what your effect type can offer.
 Every example on this page lives in the `verdict4s-examples` module and is
 compiled by CI, so none of it can quietly rot.
 
-| Framework | Scala 3 support | Strategy |
-|---|---|---|
-| [ZIO](#zio) | `zio` 2.1.19, `zio-interop-cats` 23.1.0.5 | **A** — direct |
-| [Scala `Future`](#scala-future) | stdlib | **B** — convert at the edge |
-| [Twitter `Future`](#twitter-future) | `util-core_3` 24.2.0 | **C** — sans-IO |
-| [Finagle](#finagle) | 2.13 artifacts, usable from Scala 3 | **C** — sans-IO |
-| [Kyo](#kyo) | not currently usable here | — |
+## Which strategy fits
+
+The rule is the same whatever you use, so it applies to libraries this page
+does not mention:
+
+- **Your effect has a lawful cats-effect `Async` instance** → Strategy A. Use
+  `Verdict4sClient[F]` directly, with nothing to bridge.
+- **It does not, but something converts to and from `cats.effect.IO`** →
+  Strategy B. Keep `IO` inside and convert at the edge.
+- **Neither** → Strategy C. Use the sans-IO core and move the bytes with
+  whatever HTTP client you already have.
+
+| Example | Strategy |
+|---|---|
+| [ZIO](#zio) | **A** — direct, via `zio-interop-cats` |
+| [Scala `Future`](#scala-future) | **B** — convert at the edge |
+| [Twitter `Future`](#twitter-future) | **C** — sans-IO |
 
 ## Strategy A — direct
 
@@ -89,46 +99,13 @@ def triage(apiKey: ApiKey, ticket: String, post: Post): Future[(Boolean, Dept)] 
       }
 ```
 
-### Finagle
-
-Finagle publishes for Scala 2.13 only, but Scala 3 can consume Scala 2.13
-artifacts, so a Scala 3 service can use it normally. Spell the suffix out,
-since the usual `::` would look for a `_3` build that does not exist:
-
-```scala
-mvn"com.twitter:finagle-http_2.13:24.2.0"
-```
-
-```scala
-val service = Http.client.withTls("api.typesafe.ai").newService("api.typesafe.ai:443")
-
-def triage(apiKey: ApiKey, ticket: String): Future[(Boolean, Dept)] =
-  SystemOne.renderAsk(questions, ticket) match
-    case Left(invalid) => Future.exception(invalid)
-    case Right(body)   => service(request(apiKey, body)).flatMap(read)
-```
-
-**Finatra** is a different matter. It is also 2.13-only, and a Scala 2.13
-application cannot depend on verdict4s, which is Scala 3-only. The route there
-is a Scala 3 module that owns the verdict4s calls, which your Finatra service
-then depends on.
-
 ### Anything else
 
 The same shape works for Akka HTTP, Pekko HTTP, sttp, and a plain blocking
 `java.net.http.HttpClient`. See [no effect system](core-module.md).
 
-## Kyo
-
-Not currently usable with this project, for two independent reasons:
-
-- Kyo's current release, **1.0.0-RC6**, is built with **Scala 3.8.4**. TASTy is
-  only backward compatible, so a Scala 3.3 LTS module cannot read it.
-- It ships **Java 25 bytecode**, which this project's JDK 21 toolchain cannot
-  load. That 21 is a ceiling rather than a preference: no current Scala 3
-  compiler emits past it.
-
-`kyo-cats` would otherwise be the bridge, via `Cats.get`, making this a
-Strategy B integration. If your own project already runs on Java 25 and a
-recent Scala 3, that should work; it simply cannot be compiled and verified
-here, so it is not shipped as an example.
+A library published only for Scala 2.13 is usually still usable: Scala 3 can
+consume Scala 2.13 artifacts, as long as you depend on them with the suffix
+spelled out (`mvn"org:lib_2.13:version"`), since `::` would look for a `_3`
+build. The reverse does not hold — a Scala 2.13 application cannot depend on
+verdict4s, which is Scala 3 only.

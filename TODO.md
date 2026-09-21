@@ -20,5 +20,3 @@ on all twelve targets. What is left is release mechanics and follow-ups.
    would reject a valid response. Item 2 is what will tell us.
 4. **Decide the JDK floor.** `-release 21` is the current setting, the highest
    both 3.3.8 and 3.9.0 accept. Drop to 17 for wider reach.
-5. **Revisit Kyo** when it stops requiring Java 25 bytecode and a Scala 3.8+
-   compiler, or if the JDK floor moves. See `docs/effect-systems.md`.

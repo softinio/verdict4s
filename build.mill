@@ -250,34 +250,26 @@ object verdict4s extends Module:
 // verdict4s-examples — interop examples, compiled but never published.
 //
 // The `effect-systems` documentation page shows verdict4s driven from ZIO,
-// Kyo, Scala Future and Twitter Future. Those examples have to compile or
-// they rot, so they live here as real sources. This is deliberately NOT a
+// Scala Future and Twitter Future. Those examples have to compile or they
+// rot, so they live here as real sources. This is deliberately NOT a
 // Verdict4sModule: it inherits no pomSettings and no publishVersion, so it
 // cannot be published by accident, and the release glob ("__[3.3.8]") does not
 // match it because it is not a Cross module.
 //
-// JVM only and a single Scala version: one extra CI target rather than four.
-// None of these dependencies appear anywhere else in the build.
+// Pinned to the 3.3.8 LTS, the version the library publishes from, so the
+// examples are proven against what users actually get. JVM only, one Scala
+// version: one extra CI target rather than four. None of these dependencies
+// appear anywhere else in the build.
 // ---------------------------------------------------------------------------
 
 object `verdict4s-examples` extends ScalaModule:
-  // 3.9.0 rather than the LTS only because these examples are not published;
-  // the library itself still releases from 3.3.8.
-  //
-  // Kyo is deliberately absent. Its current release, 1.0.0-RC6, is built with
-  // Scala 3.8.4 (so a 3.3.8 module cannot read its TASTy) and ships Java 25
-  // bytecode, which this project's JDK 21 toolchain cannot load at all --
-  // and 21 is a ceiling here, not a preference, because no current Scala 3
-  // compiler emits past it. The effect-systems page documents the situation
-  // rather than shipping an example that does not compile.
-  def scalaVersion = "3.9.0"
-  def moduleDeps   = Seq(verdict4s.jvm("3.9.0"))
+  def scalaVersion = "3.3.8"
+  def moduleDeps   = Seq(verdict4s.jvm("3.3.8"))
 
   def mvnDeps = Seq(
     mvn"dev.zio::zio:2.1.19",
     mvn"dev.zio::zio-interop-cats:23.1.0.5",
-    mvn"com.twitter::util-core:24.2.0",
-    mvn"com.twitter:finagle-http_2.13:24.2.0"
+    mvn"com.twitter::util-core:24.2.0"
   )
 
 /** Documentation site: the Laika narrative pages plus the scaladoc API
