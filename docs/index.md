@@ -78,7 +78,7 @@ platform you are building, so the same line works for JVM and Scala.js.
 - [Bring your own client](client-module.md) — any http4s backend, or an in-memory fake
 - [No effect system](core-module.md) — driving the protocol by hand
 - [Other effect systems](effect-systems.md) — ZIO, Future, Twitter Future, Finagle
-- [API reference](https://softinio.github.io/verdict4s/api/verdict4s/index.html) — generated Scaladoc
+- [API reference](api-reference.md) — generated Scaladoc for each module
 
 ## A note on dependencies
 

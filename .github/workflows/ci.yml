@@ -145,22 +145,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-mill-docs-
 
-    # Generate the narrative site, then the API reference beside it, so the
-    # /api/ links from the site resolve.
+    # docs.build renders the narrative site and copies each module's scaladoc
+    # in under api/<module>, so the reference links resolve.
     - name: Generate site
       run: |
         nix develop --command mill --no-daemon docs.build
-
-    - name: Generate API reference
-      run: |
-        nix develop --command mill --no-daemon "__.jvm[3.9.0].docJar"
-        for module in verdict4s verdict4s-client verdict4s-core; do
-          src="out/$module/jvm/3.9.0/docJar.dest/javadoc"
-          if [ -d "$src" ]; then
-            mkdir -p "site/target/docs/site/api/$module"
-            cp -r "$src"/* "site/target/docs/site/api/$module/"
-          fi
-        done
 
     # Publish site
     - name: Publish site

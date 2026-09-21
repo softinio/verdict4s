@@ -280,49 +280,62 @@ object `verdict4s-examples` extends ScalaModule:
     mvn"com.twitter:finagle-http_2.13:24.2.0"
   )
 
-/** Documentation site (Laika + Helium theme, rendered from `docs/`).
+/** Documentation site: the Laika narrative pages plus the scaladoc API
+  * reference, assembled into one directory.
   *
-  * Both commands shell out to scala-cli (provided by the devshell) to run the
-  * scripts in `scripts/`.
+  *   - `mill docs.build` — render the site into `site/target/docs/site`, with
+  *     each module's API reference under `api/<module>/`
+  *   - `mill docs.preview` — build, then serve at http://localhost:4242
   *
-  *   - `mill docs.build` — build the site into `site/target/docs/site`
-  *   - `mill docs.preview` — build and serve the site at
-  *     http://localhost:4242
+  * Preview serves what `build` produced rather than re-rendering, so the two
+  * cannot drift. They once did: the preview carried its own copy of the
+  * transformer and lacked syntax highlighting the real build had.
+  *
+  * Note `docs.preview` holds Mill's workspace lock for as long as it serves, so
+  * nothing else can build meanwhile.
   */
 object docs extends Module:
+
+  /** Each published module's scaladoc, from the 3.9.0 JVM build as CI uses. */
+  def apiDocs: T[Seq[(String, PathRef)]] = Task {
+    Seq(
+      "verdict4s"        -> verdict4s.jvm("3.9.0").docJar(),
+      "verdict4s-client" -> `verdict4s-client`.jvm("3.9.0").docJar(),
+      "verdict4s-core"   -> `verdict4s-core`.jvm("3.9.0").docJar()
+    )
+  }
+
   def build() = Task.Command {
-    val projectRoot = mill.api.BuildCtx.workspaceRoot
-    val outputDir   = "site/target/docs/site"
-
-    println("Building documentation site...")
-    println(s"  Input:  ${projectRoot / "docs"}")
-    println(s"  Output: ${projectRoot / os.RelPath(outputDir)}")
-
-    val scriptPath = projectRoot / "scripts" / "LaikaBuild.scala"
-
-    mill.api.BuildCtx.withFilesystemCheckerDisabled {
-      os.proc("scala-cli", "run", scriptPath.toString)
-        .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
-    }
-
-    println(s"Site built at: $outputDir")
-    PathRef(projectRoot / os.RelPath(outputDir))
+    renderSite(apiDocs())
   }
 
   def preview() = Task.Command {
     val projectRoot = mill.api.BuildCtx.workspaceRoot
-    val port        = 4242
-
-    println("Starting preview server...")
-    println(s"  Input: ${projectRoot / "docs"}")
-    println(s"  URL:   http://localhost:$port")
-    println("  Press Ctrl+C to stop")
-
-    val scriptPath = projectRoot / "scripts" / "LaikaPreview.scala"
-
+    renderSite(apiDocs())
     mill.api.BuildCtx.withFilesystemCheckerDisabled {
-      os.proc("scala-cli", "run", scriptPath.toString)
+      os.proc("scala-cli", "run", (projectRoot / "scripts" / "LaikaPreview.scala").toString)
         .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
     }
     ()
   }
+
+  private def renderSite(apis: Seq[(String, PathRef)]): PathRef =
+    val projectRoot = mill.api.BuildCtx.workspaceRoot
+    val siteDir     = projectRoot / "site" / "target" / "docs" / "site"
+
+    mill.api.BuildCtx.withFilesystemCheckerDisabled {
+      println("Rendering the narrative site...")
+      os.proc("scala-cli", "run", (projectRoot / "scripts" / "LaikaBuild.scala").toString)
+        .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
+
+      // docJar writes the rendered HTML beside the jar, in `docs/`.
+      apis.foreach { (module, jar) =>
+        val from = jar.path / os.up / "docs"
+        val to   = siteDir / "api" / module
+        os.remove.all(to)
+        os.copy(from, to, createFolders = true)
+        println(s"  API reference: api/$module")
+      }
+    }
+    println(s"Site built at: $siteDir")
+    PathRef(siteDir)
