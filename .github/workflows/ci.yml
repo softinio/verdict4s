@@ -54,6 +54,18 @@ jobs:
       run: |
         nix develop --command mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
 
+    # Nothing else enforces these, and a missing header goes unnoticed for
+    # months. The year is matched loosely so new files need no change here.
+    - name: Check licence headers
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
+      run: |
+        missing=$(git ls-files '*.scala' '*.mill' | xargs grep -L 'Copyright .* Salar Rahmanian' || true)
+        if [ -n "$missing" ]; then
+          echo "Missing licence header:"
+          echo "$missing"
+          exit 1
+        fi
+
     # Build documentation for every module, on the 3.3.8 LTS the library
     # publishes from. (Scaladoc 3.9.0 drops the jQuery tag its own ux.js needs,
     # which breaks every link in the generated pages.)
