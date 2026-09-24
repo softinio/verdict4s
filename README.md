@@ -61,8 +61,10 @@ libraryDependencies += "com.softinio" %%% "verdict4s" % "<version>"
 - [Getting started](https://softinio.github.io/verdict4s/getting-started.html)
 - [Typed questions](https://softinio.github.io/verdict4s/typed-questions.html)
 - [Errors and retries](https://softinio.github.io/verdict4s/errors-and-retries.html)
+- [Bring your own client](https://softinio.github.io/verdict4s/client-module.html) — any http4s backend, or an in-memory fake
+- [No effect system](https://softinio.github.io/verdict4s/core-module.html) — driving the protocol by hand
 - [Other effect systems](https://softinio.github.io/verdict4s/effect-systems.html) — ZIO, Future, and anything without a cats-effect instance
-- [API reference](https://softinio.github.io/verdict4s/api/verdict4s/index.html)
+- [API reference](https://softinio.github.io/verdict4s/api-reference.html) — all three modules in one Scaladoc site
 
 ## Development
 
@@ -85,7 +87,7 @@ Integration tests run against the real service and are gated on an API key.
 Without one they report as ignored, so the suite stays green offline:
 
 ```bash
-TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test"
+TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveApiIT
 ```
 
 `mill docs.preview` holds Mill's workspace lock while it runs; stop it before

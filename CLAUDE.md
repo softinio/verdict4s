@@ -10,8 +10,9 @@ layered artifacts.
 
 The Jev protocol is implemented across all three layers: models, codecs and the
 `Ask` tuple builder in core, an http4s client with retries on top, and a
-batteries-included bundle. The suite is green on all twelve targets. What is
-left is release mechanics -- see `TODO.md`.
+batteries-included bundle. The suite is green on all twelve targets, and the
+integration suite has been run against the live service. What is left is
+release mechanics -- see `TODO.md`.
 
 ## Commands
 
@@ -32,6 +33,10 @@ fmt / fmtCheck                            # scalafmt (devshell aliases)
 testAll                                   # mill __.test
 testJvm25                                 # JVM tests on Java 25, as CI does
 buildDocs / previewDocs                   # Laika site -> site/target/docs/site, or serve on :4242
+mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient interop examples
+
+# against the real service; ignored without a key, so it is safe to run blind
+TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveApiIT
 ```
 
 Module path segments are `<module>.<platform>[<scalaVersion>]`. A bare class
@@ -203,6 +208,17 @@ module's own Scaladoc cannot link to types in the others, so `unidoc` runs
 Scaladoc once over all three modules' TASTy. The per-module `docJar`s remain
 because Maven Central requires a javadoc jar per artifact; both use
 `docOptions` in `build.mill` so they cannot drift.
+
+**`GET /v1/models` wraps its array in a `models` field.** The HTTP reference
+does not show the response shape, and the JS SDK's `list(): APIPromise<ModelCard[]>`
+describes what that SDK returns *after* unwrapping, so modelling it as a bare
+array looks right from the documentation and fails against the service. The
+in-memory fake agreed with the mistake until `LiveApiIT` ran. When a fake and
+the docs are the only evidence, neither is evidence.
+
+**Every `.scala` and `.mill` file carries the Apache header**, dated by year, and
+CI fails without it. Non-Scala files deliberately have none -- see the licence
+commit for why. Add the header to any new source file.
 
 ## Integrations considered and dropped
 
