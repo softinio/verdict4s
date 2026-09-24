@@ -108,6 +108,19 @@ object SystemOne:
   ): Either[Verdict4sError, Ask.Answers[Q]] =
     parse(body).flatMap(ask.answers)
 
+  /** Parse the models endpoint's response, unwrapping its `models` envelope. */
+  def parseModels(body: String): Either[Verdict4sError, List[ModelCard]] =
+    parser
+      .parse(body)
+      .left
+      .map(f => Verdict4sError.Decoding(s"the body was not JSON: ${f.message}"))
+      .flatMap(
+        ModelCard.listDecoder
+          .decodeJson(_)
+          .left
+          .map(f => Verdict4sError.Decoding(f.message))
+      )
+
   /** Turn an unsuccessful response into a typed error.
     *
     * @param status

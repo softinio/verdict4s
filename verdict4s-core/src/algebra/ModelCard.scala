@@ -54,5 +54,18 @@ object ModelCard:
       "release_date" -> m.releaseDate.asJson
     )
 
+  /** The models endpoint wraps its array in a `models` field:
+    *
+    * ```json
+    * {"models": [{"name": "jev-latest", "description": "...", "release_date": "..."}]}
+    * ```
+    *
+    * That envelope is a wire detail the official SDKs unwrap, and so does
+    * `Verdict4sClient.models`, so it gets a decoder rather than a type of its
+    * own.
+    */
+  val listDecoder: Decoder[List[ModelCard]] =
+    Decoder.instance(_.downField("models").as[List[ModelCard]])
+
   given Eq[ModelCard] = Eq.fromUniversalEquals
   given Show[ModelCard] = Show.show(_.asJson.noSpaces)

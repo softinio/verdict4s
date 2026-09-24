@@ -180,8 +180,11 @@ class Verdict4sClientTest extends CatsEffectSuite:
   test("models decodes the list endpoint"):
     val app = HttpRoutes
       .of[IO] { case GET -> Root / "v1" / "models" =>
+        // The envelope the live endpoint actually returns. This fake served a
+        // bare array once, which is precisely why the mismatch survived until
+        // the integration suite ran.
         Ok(
-          """[{"name":"jev-latest","description":"alias","release_date":"2025-06-01"}]"""
+          """{"models":[{"name":"jev-latest","description":"alias","release_date":"2025-06-01"}]}"""
         )
       }
       .orNotFound

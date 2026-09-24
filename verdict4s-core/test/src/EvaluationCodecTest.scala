@@ -160,6 +160,38 @@ class EvaluationCodecTest extends munit.FunSuite:
       )
     )
 
+  test("the models endpoint's envelope is unwrapped"):
+    // The wire format wraps the array in a `models` field. Verbatim from a
+    // live GET /v1/models; an earlier version modelled it as a bare array,
+    // which the integration suite caught.
+    val cards = ModelCard.listDecoder.decodeJson(golden("""
+      {
+        "models": [
+          {
+            "name": "jev-latest",
+            "description": "The latest iteration of TypeSafe's System One Model: Jev",
+            "release_date": "2026-09-10T18:38:01.391457+00:00"
+          },
+          {
+            "name": "jev-preview",
+            "description": "A preview version of `jev-latest`: should be better in most ways",
+            "release_date": "2026-09-10T18:39:06.057655+00:00"
+          }
+        ]
+      }
+    """))
+    assertEquals(
+      cards.map(_.map(_.name.name)),
+      Right(List("jev-latest", "jev-preview"))
+    )
+    assertEquals(
+      cards.map(_.head.releaseDate),
+      Right("2026-09-10T18:38:01.391457+00:00")
+    )
+
+  test("a bare array is not accepted for the models endpoint"):
+    assert(ModelCard.listDecoder.decodeJson(golden("""[]""")).isLeft)
+
   test("a list of model cards decodes"):
     val cards = golden("""
       [

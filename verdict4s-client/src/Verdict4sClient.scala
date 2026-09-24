@@ -21,6 +21,7 @@ import cats.syntax.all.*
 import com.softinio.verdict4s.algebra.*
 import com.softinio.verdict4s.internal.RetryLoop
 import com.softinio.verdict4s.internal.Wire
+import io.circe.Decoder
 import io.circe.Encoder
 import io.circe.Json
 import io.circe.syntax.*
@@ -94,6 +95,9 @@ final class Verdict4sClient[F[_]: Temporal] private (
 
   /** The models available to this account. */
   def models: F[List[ModelCard]] =
+    // The endpoint wraps its array in a `models` field; this shadows circe's
+    // derived list decoder, which would expect a bare array.
+    given Decoder[List[ModelCard]] = ModelCard.listDecoder
     RetryLoop.run[F, List[ModelCard]](
       client,
       Wire.get[F](Wire.modelsUri(baseUri), apiKey),
