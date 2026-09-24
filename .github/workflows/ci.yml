@@ -54,11 +54,33 @@ jobs:
       run: |
         nix develop --command mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
 
-    # Build documentation for every module
-    - name: Generate documentation
+    # Nothing else enforces these, and a missing header goes unnoticed for
+    # months. The year is matched loosely so new files need no change here.
+    - name: Check licence headers
       if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
       run: |
-        nix develop --command mill "__.jvm[3.9.0].docJar"
+        missing=$(git ls-files '*.scala' '*.mill' | xargs grep -L 'Copyright .* Salar Rahmanian' || true)
+        if [ -n "$missing" ]; then
+          echo "Missing licence header:"
+          echo "$missing"
+          exit 1
+        fi
+
+    # Build documentation for every module, on the 3.3.8 LTS the library
+    # publishes from. (Scaladoc 3.9.0 drops the jQuery tag its own ux.js needs,
+    # which breaks every link in the generated pages.)
+    - name: Generate documentation
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.3.8'
+      run: |
+        nix develop --command mill "__.jvm[3.3.8].docJar"
+
+    # The interop examples (ZIO, Future, JDK HttpClient) are real
+    # sources so the effect-systems page cannot rot. Unpublished, JVM only,
+    # one Scala version -- one extra target rather than four.
+    - name: Compile interop examples
+      if: matrix.platform == 'jvm' && matrix.scala-version == '3.9.0'
+      run: |
+        nix develop --command mill verdict4s-examples.compile
 
     # Upload test results
     - name: Upload test results
@@ -136,7 +158,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-mill-docs-
 
-    # Generate site
+    # docs.build renders the narrative site and copies each module's scaladoc
+    # in under api/<module>, so the reference links resolve.
     - name: Generate site
       run: |
         nix develop --command mill --no-daemon docs.build

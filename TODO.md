@@ -1,23 +1,18 @@
 # TODO
 
-Build, CI and publishing are wired up and green. What is left is the library itself.
+The Jev protocol is implemented across all three layers and the suite is green
+on all twelve targets. What is left is release mechanics and follow-ups.
 
-1. **Replace the placeholder API with the real Jev protocol.**
-   - `verdict4s-core` — the request/response models, their circe codecs, and the
-     decision types (choices, scores, probabilities). Keep this layer free of
-     cats-effect, http4s and fs2, or the sans-IO split stops paying for itself.
-   - `verdict4s-client` — replace `health` with the real endpoints. Streaming
-     responses go through fs2 here, not in core.
-   - `verdict4s` — `default` currently takes a `baseUri`; give it whatever
-     auth/config the service actually needs.
-2. **Decide the JDK floor.** `-release 21` is the current setting, which is the
-   highest both 3.3.8 and 3.9.0 accept. Drop to 17 if you want wider reach.
-3. **Rewrite `README.md`.** The module and command sections are accurate, but the
-   title, intro and Quick Start are still `scala-mill-library-starter` boilerplate
-   from the template.
-4. **Set up Maven Central publishing secrets** in the GitHub repo:
+1. **Set up Maven Central publishing secrets** in the GitHub repo:
    `MILL_PGP_PASSPHRASE`, `MILL_PGP_SECRET_BASE64`, `MILL_SONATYPE_PASSWORD`,
    `MILL_SONATYPE_USERNAME`.
-5. **Initialize version control.** There is no `.jj` or `.git` here yet, so
-   `mill-git` cannot derive a version — which makes `docJar`, `publishVersion`
-   and anything downstream of them fail locally.
+2. **Re-run the integration suite when the API changes.** `LiveApiIT` is gated
+   on `TYPESAFE_API_KEY` and reports as ignored without one:
+   ```
+   TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveApiIT
+   ```
+   It passed against the live service on 2026-09-23, which is what caught the
+   `models` envelope. It is the only check that the wire format matches the
+   service rather than its documentation.
+3. **Decide the JDK floor.** `-release 21` is the current setting, the highest
+   both 3.3.8 and 3.9.0 accept. Drop to 17 for wider reach.

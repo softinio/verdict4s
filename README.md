@@ -1,183 +1,108 @@
-# scala-mill-library-starter
+# verdict4s
 
-A Nix flake template for bootstrapping Scala library projects using the [Mill](https://mill-build.org) build tool. Includes:
+[![CI](https://github.com/softinio/verdict4s/actions/workflows/ci.yml/badge.svg)](https://github.com/softinio/verdict4s/actions/workflows/ci.yml)
 
-- Cross-Scala 3 build (3.3.8 LTS + 3.9.0 latest)
-- Cross-platform: JVM and Scala.js from the same sources
-- Three-layer structure: sans-IO core, tagless-final client, batteries-included bundle
-- Git-tag-based automatic versioning via [mill-git](https://github.com/jodersky/mill-git)
-- Maven Central publishing via Sonatype
-- Laika documentation site (Helium theme) with build/preview commands and
-  automatic publishing to GitHub Pages
-- Scalafmt formatting
-- GitHub Actions CI and release workflows
-- Nix devshell with all required tools
+A Scala 3 client for [TypeSafe AI](https://typesafe.ai)'s **Jev**, a decision
+model that answers typed questions about your program state with choices,
+scores and calibrated probabilities instead of text.
 
-## Quick Start
+Cross-built for the **JVM** and **Scala.js** from one source tree.
 
-```bash
-mkdir verdict4s && cd verdict4s
-nix flake init --template github:softinio/templates#scala-mill-library-starter
+```scala
+enum Dept derives Options:
+  case Billing, Technical, Sales
+
+val (urgent, team, mood) = client.ask(
+  Ask(
+    Question.noul("Does this convey urgency?"),
+    Question.choice[Dept]("Which team should handle this?"),
+    Question.score("How frustrated?", Seq("Calm", "Frustrated", "Very angry"))
+  ),
+  "Help! My payouts have been failing for 3 days."
+)
 ```
 
-## Setup
+`urgent` is a `NoulAnswer`, `team` a `ChoiceAnswer[Dept]`, `mood` a
+`ScoreAnswer` — destructured positionally, at exactly the right types, with no
+casts and no lookups by string.
 
-After initializing the template, customize the placeholder names using one of these methods:
+## Why the types matter
 
-### Option A: Shell script
+The service enforces real limits: a Choice takes 1 to 255 options, a Score 2 to
+10 ordered levels, probabilities live in the unit interval. Those are carried
+by the types rather than discovered a network round trip later.
 
-```bash
-bash setup.sh
+```scala
+Probability(0.95)   // fine
+Probability(1.5)    // does not compile
 ```
 
-### Option B: Claude Code
+Questions are validated before anything is sent, and failures accumulate, so a
+request with three problems reports all three at once.
 
-Open the project in Claude Code and run:
+## Install
 
+```scala
+// Mill
+def mvnDeps = Seq(mvn"com.softinio::verdict4s::<version>")
+
+// sbt
+libraryDependencies += "com.softinio" %%% "verdict4s" % "<version>"
 ```
-/project:setup
-```
 
-Both methods will prompt you for your library name, Maven organization, GitHub handle, developer info, and description, then rename all placeholders accordingly.
+| Module | Use it when |
+|---|---|
+| `verdict4s` | You want a working client in one line. Brings its own transport. |
+| `verdict4s-client` | You already have an http4s `Client[F]`, or want a specific backend. |
+| `verdict4s-core` | You want the types and codecs only, with no effect system at all. |
 
-## Prerequisites
+## Documentation
 
-- [Nix](https://nixos.org/download) with flakes enabled
-- JDK 25 (provided by the devshell); published artifacts target Java 25 bytecode
+- [Getting started](https://softinio.github.io/verdict4s/getting-started.html)
+- [Typed questions](https://softinio.github.io/verdict4s/typed-questions.html)
+- [Errors and retries](https://softinio.github.io/verdict4s/errors-and-retries.html)
+- [Bring your own client](https://softinio.github.io/verdict4s/client-module.html) — any http4s backend, or an in-memory fake
+- [No effect system](https://softinio.github.io/verdict4s/core-module.html) — driving the protocol by hand
+- [Other effect systems](https://softinio.github.io/verdict4s/effect-systems.html) — ZIO, Future, and anything without a cats-effect instance
+- [API reference](https://softinio.github.io/verdict4s/api-reference.html) — all three modules in one Scaladoc site
 
 ## Development
 
-Enter the Nix devshell:
+Everything runs inside the Nix devshell. `nix develop --command <cmd>` works
+non-interactively; the aliases below assume you are already inside it.
 
 ```bash
-nix develop
+mill __.test                              # all 12 targets: 3 modules x {jvm,js} x {3.3.8,3.9.0}
+mill "__.jvm[3.9.0].test"                 # one platform, one Scala version
+mill "verdict4s-core.jvm[3.3.8].test"     # one module
+
+fmt / fmtCheck                            # scalafmt
+testAll                                   # mill __.test
+testJvm25                                 # JVM tests on Java 25, as CI does
+buildDocs / previewDocs                   # Laika site, or serve on :4242
+mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient examples
 ```
 
-### Common Commands
-
-| Command | Description |
-|---|---|
-| `mill __.compile` | Compile all modules |
-| `mill __.test` | Run all tests |
-| `mill "__.jvm[3.9.0].test"` | Test every module on the JVM with Scala 3.9.0 |
-| `mill "__.js[3.3.8].test"` | Test every module on Scala.js with Scala 3.3.8 |
-| `mill "verdict4s-core.jvm[3.9.0].test"` | Test one module, one platform, one version |
-| `fmt` | Format all sources with Scalafmt |
-| `fmtCheck` | Check formatting without modifying |
-| `mill "__.jvm[3.9.0].docJar"` | Generate Scaladoc |
-| `mill docs.build` (or `buildDocs`) | Build the Laika documentation site |
-| `mill docs.preview` (or `previewDocs`) | Serve the docs at http://localhost:4242 |
-| `mill __.publishLocal` | Publish to local Ivy repository |
-
-## Project Structure
-
-```
-.
-├── build.mill                        # Mill build definition
-├── devshell.toml                     # Nix devshell configuration
-├── flake.nix                         # Nix flake
-├── .mill-version                     # Mill version pin
-├── .scalafmt.conf                    # Scalafmt configuration
-├── verdict4s-core/                   # Sans-IO layer: types and codecs
-│   ├── src/
-│   │   └── Verdict4sError.scala
-│   └── test/src/
-│       └── Verdict4sErrorTest.scala
-├── verdict4s-client/                 # Tagless-final client over http4s Client[F]
-│   ├── src/
-│   │   └── Verdict4sClient.scala
-│   └── test/src/
-│       └── Verdict4sClientTest.scala
-├── verdict4s/                        # Batteries included: default transport
-│   ├── src/                          #   shared across platforms
-│   │   └── Verdict4s.scala
-│   ├── src-jvm/                      #   JVM only: Ember
-│   │   └── Transport.scala
-│   ├── src-js/                       #   Scala.js only: Fetch
-│   │   └── Transport.scala
-│   └── test/src/
-│       └── Verdict4sTest.scala
-├── docs/                             # Laika documentation sources (Markdown)
-│   └── index.md
-├── scripts/                          # scala-cli scripts running Laika
-│   ├── LaikaBuild.scala
-│   └── LaikaPreview.scala
-└── .github/workflows/
-    ├── ci.yml                        # CI: test + format check + docs site
-    └── release.yml                   # Release: publish to Maven Central
-```
-
-Three Mill modules, each cross-built for Scala 3.3.8 and 3.9.0 and for both the
-JVM and Scala.js — twelve build targets, six published coordinates:
-
-- **`verdict4s-core`** — sans-IO. Models, JSON codecs, request building and
-  response parsing. Depends on cats-core and circe only: no effect type, no
-  HTTP client, not even fs2, so it is usable from any effect system or none.
-- **`verdict4s-client`** — tagless-final `Verdict4sClient[F]` over an http4s
-  `Client[F]` the caller supplies. Backend-agnostic, so it works with Ember,
-  Fetch, Blaze, Netty, the JDK client, or an in-memory fake.
-- **`verdict4s`** — batteries included. Adds a default transport per platform:
-  Ember on the JVM, the Fetch API on Scala.js.
-
-`PlatformScalaModule` lets both platforms of a module share one directory:
-`src/` is common, `src-jvm/` and `src-js/` hold platform-specific code.
-
-All modules extend `GitVersionedPublishModule`, so the version is automatically derived from git tags (e.g. tagging `v0.1.0` publishes version `0.1.0`).
-
-### Why releases publish from the LTS only
-
-Every Scala 3.x is binary compatible, so all cross-versions share the `_3`
-coordinate. TASTy, however, is only backward compatible: artifacts built by
-3.9.0 cannot be read by a 3.3 compiler, while 3.3.8-built artifacts are readable
-by both. The release workflow therefore pins publishing to `__[3.3.8]`, and the
-3.9.0 cross-build in CI serves as compile verification rather than a publish
-target.
-
-## Documentation Site
-
-The `docs/` directory holds the Markdown sources for a documentation site
-rendered by [Laika](https://typelevel.org/Laika/) with the Helium theme.
-
-| Command | Description |
-|---|---|
-| `mill docs.build` | Build the site into `site/target/docs/site` |
-| `mill docs.preview` | Build and serve the site at http://localhost:4242 |
-
-Inside the devshell the `buildDocs` and `previewDocs` aliases wrap these
-commands. Both shell out to `scala-cli` (provided by the devshell) to run the
-scripts in `scripts/`; customize the Helium theme (title, nav links, footer)
-there. The CI workflow builds the site on every push and publishes it to the
-`gh-pages` branch (GitHub Pages) on pushes to `main`.
-
-## Publishing to Maven Central
-
-Publishing uses [Sonatype Central](https://central.sonatype.com). You need a Sonatype account and a GPG key.
-
-### Required GitHub Secrets
-
-| Secret | Description |
-|---|---|
-| `MILL_PGP_PASSPHRASE` | GPG key passphrase |
-| `MILL_PGP_SECRET_BASE64` | Base64-encoded GPG private key |
-| `MILL_SONATYPE_PASSWORD` | Sonatype Central password |
-| `MILL_SONATYPE_USERNAME` | Sonatype Central username |
-
-### Publishing a Release
-
-Push a git tag prefixed with `v`:
+Integration tests run against the real service and are gated on an API key.
+Without one they report as ignored, so the suite stays green offline:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveApiIT
 ```
 
-The release workflow will publish to Maven Central and create a GitHub release with auto-generated notes.
+`mill docs.preview` holds Mill's workspace lock while it runs; stop it before
+building anything else.
 
-## Customization
+## Structure
 
-After setup, customize `build.mill` to:
+```
+verdict4s-core/      effect-free: models, codecs, Ask, no HTTP client
+verdict4s-client/    a client over a caller-supplied http4s Client[F]
+verdict4s/           batteries included: Ember on JVM, Fetch on Scala.js
+verdict4s-examples/  interop examples, compiled by CI, never published
+docs/                Laika narrative site
+```
 
-- Add your library's actual dependencies in `mvnDeps`
-- Add or remove Scala versions in `scalaVersions`, or platforms by adding a
-  `ScalaNativeModule` alongside the existing `jvm` and `js` objects
-- Update `pomSettings` with your project details
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).
