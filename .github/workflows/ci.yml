@@ -82,9 +82,11 @@ jobs:
       run: |
         nix develop --command mill verdict4s-examples.compile
 
-    # Upload test results
+    # Only on failure: the reports are for diagnosing a red run, and uploading
+    # them from every green one filled the account's artifact storage quota,
+    # which fails the job even when every test has passed.
     - name: Upload test results
-      if: always()
+      if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: test-results-${{ matrix.platform }}-${{ matrix.scala-version }}
