@@ -9,6 +9,11 @@ command = "mill __.test"
 help = "Run the test suites for every module, on both JVM and Scala.js"
 
 [[commands]]
+name = "testJvm17"
+command = 'VERDICT4S_JVM=temurin:17 mill "__.jvm[_].test"'
+help = "Run the JVM test suites against Java 17, the floor the artifacts target, as CI does"
+
+[[commands]]
 name = "testJvm25"
 command = 'VERDICT4S_JVM=temurin:25 mill "__.jvm[_].test"'
 help = "Run the JVM test suites against Java 25, as CI does"

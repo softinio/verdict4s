@@ -84,8 +84,8 @@ mill "verdict4s-core.jvm[3.3.8].test"     # one module
 
 fmt / fmtCheck                            # scalafmt
 testAll                                   # mill __.test
+testJvm17                                 # JVM tests on Java 17, the floor, as CI does
 testJvm25                                 # JVM tests on Java 25, as CI does
-VERDICT4S_JVM=temurin:17 mill "__.jvm[_].test"   # JVM tests on the Java 17 floor
 buildDocs / previewDocs                   # Laika site, or serve on :4242
 mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient examples
 ```

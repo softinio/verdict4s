@@ -32,8 +32,8 @@ mill "verdict4s-client.jvm[3.3.8].test" -- '*retried*'   # munit glob, matches t
 
 fmt / fmtCheck                            # scalafmt (devshell aliases)
 testAll                                   # mill __.test
+testJvm17                                 # JVM tests on Java 17, the floor, as CI does
 testJvm25                                 # JVM tests on Java 25, as CI does
-VERDICT4S_JVM=temurin:17 mill "__.jvm[_].test"   # on the Java 17 floor
 buildDocs / previewDocs                   # Laika site -> site/target/docs/site, or serve on :4242
 mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient interop examples
 
