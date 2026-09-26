@@ -1,4 +1,9 @@
-# verdict4s
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/img/logo-wordmark-dark.svg">
+    <img alt="verdict4s" src="docs/img/logo-wordmark.svg" width="440">
+  </picture>
+</p>
 
 [![CI](https://github.com/softinio/verdict4s/actions/workflows/ci.yml/badge.svg)](https://github.com/softinio/verdict4s/actions/workflows/ci.yml)
 [![Release](https://github.com/softinio/verdict4s/actions/workflows/release.yml/badge.svg)](https://github.com/softinio/verdict4s/actions/workflows/release.yml)
