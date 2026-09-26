@@ -233,6 +233,13 @@ Laika resolves it, so a Laika variable reaches the page verbatim.
 `LaikaBuild.scala` copies `docs/` to `site/target/docs/src` with the token
 replaced and renders that; `mill docs.build` supplies the version.
 
+**Read environment variables through a `Task.Input`, never `Task.env` in a
+plain `Task`.** A plain task is cached, and Mill does not re-run it when only an
+environment variable changes, so `VERDICT4S_DOC_VERSION=… mill docs.build`
+silently rendered the previous build's version. CI never notices, because it
+starts without a cache. `docs.versionOverride` and `jvmVersion` are inputs for
+this reason; anything else that reads the environment should depend on one.
+
 **Every `.scala` and `.mill` file carries the Apache header**, dated by year, and
 CI fails without it. Non-Scala files deliberately have none -- see the licence
 commit for why. Add the header to any new source file.

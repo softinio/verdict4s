@@ -109,7 +109,7 @@ trait Verdict4sModule
     else common :+ "-Xkind-projector:underscores"
 
   def scalaDocOptions = Task {
-    val version = Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(publishVersion())
+    val version = docs.versionOverride().getOrElse(publishVersion())
     withoutDefaultProject(super.scalaDocOptions()) ++ docOptions(docTitle, version)
   }
 
@@ -346,8 +346,7 @@ object unidoc extends ScalaModule:
   }
 
   def scalaDocOptions = Task {
-    val version =
-      Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.3.8").publishVersion())
+    val version = docs.versionOverride().getOrElse(verdict4s.jvm("3.3.8").publishVersion())
     withoutDefaultProject(super.scalaDocOptions()) ++ docOptions("Verdict4s", version)
   }
 
@@ -370,12 +369,21 @@ object docs extends Module:
   /** The combined API reference; see [[unidoc]]. */
   def apiDocs: T[PathRef] = Task { unidoc.docJar() }
 
+  /** `VERDICT4S_DOC_VERSION`, which the docs workflow sets from the release
+    * tag. An input, like `jvmVersion`, so it is re-read on every run: a plain
+    * task that reads `Task.env` is cached, and silently keeps the version from
+    * the last build when only the variable changes.
+    */
+  def versionOverride: T[Option[String]] = Task.Input {
+    Task.env.get("VERDICT4S_DOC_VERSION")
+  }
+
   /** The version the pages show in their dependency lines, in place of
-    * `@VERSION@`. The release workflow sets it from the tag; locally it is the
-    * git-derived version, as for the Scaladoc.
+    * `@VERSION@`: the override if set, otherwise the git-derived version, as
+    * for the Scaladoc.
     */
   def siteVersion: T[String] = Task {
-    Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.3.8").publishVersion())
+    versionOverride().getOrElse(verdict4s.jvm("3.3.8").publishVersion())
   }
 
   def build() = Task.Command {
