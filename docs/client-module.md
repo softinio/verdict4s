@@ -5,7 +5,7 @@ single decision buys every backend and every platform without this library
 owning any of them.
 
 ```scala
-def mvnDeps = Seq(mvn"com.softinio::verdict4s-client::<version>")
+def mvnDeps = Seq(mvn"com.softinio::verdict4s-client::@VERSION@")
 ```
 
 ```scala

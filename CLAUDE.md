@@ -10,9 +10,10 @@ layered artifacts.
 
 The Jev protocol is implemented across all three layers: models, codecs and the
 `Ask` tuple builder in core, an http4s client with retries on top, and a
-batteries-included bundle. The suite is green on all twelve targets, and the
-integration suite has been run against the live service. What is left is
-release mechanics -- see `TODO.md`.
+batteries-included bundle. The suite is green on all twelve targets. Releases
+are cut by pushing a `v*` tag (see the README's "Releasing" section); run
+`LiveApiIT` before each one, since it is the only check that the wire format
+matches the service rather than its documentation.
 
 ## Commands
 
@@ -31,6 +32,7 @@ mill "verdict4s-client.jvm[3.3.8].test" -- '*retried*'   # munit glob, matches t
 
 fmt / fmtCheck                            # scalafmt (devshell aliases)
 testAll                                   # mill __.test
+testJvm17                                 # JVM tests on Java 17, the floor, as CI does
 testJvm25                                 # JVM tests on Java 25, as CI does
 buildDocs / previewDocs                   # Laika site -> site/target/docs/site, or serve on :4242
 mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient interop examples
@@ -90,10 +92,12 @@ platforms.
 These are non-obvious and were each established by testing. Do not "fix" them
 back.
 
-**`-release 21` is a ceiling, not a preference.** Both Scala 3.3.8 and 3.9.0
-reject 22 through 25, verified on a genuine JDK 25 toolchain. Java 25 bytecode is
-not reachable from any current Scala 3 compiler. 17 also works if you ever want a
-lower floor.
+**The JDK floor is 17 (`-release 17`), and 21 is the ceiling.** 17 was chosen
+before the first release because lowering a floor later is free and raising one
+is a breaking change. Every runtime dependency targets Java 8 bytecode, so
+nothing upstream forces it higher; CI's `jdk-compat` job runs the JVM suite on a
+real Java 17. The ceiling is the compilers': both Scala 3.3.8 and 3.9.0 reject
+`-release` 22 through 25, verified on a genuine JDK 25 toolchain.
 
 **The nixpkgs `mill` wrapper hardcodes `JAVA_HOME` to its own JDK 21** and
 exports it shell-wide, so every compile, test and scaladoc run happens on 21
@@ -104,7 +108,7 @@ resolves via coursier. Two JDKs cannot both live in the devshell — nix fails t
 build on a file collision.
 
 **`javacOptions` uses `--release`, not `-source`/`-target`.** The latter sets the
-bytecode version without restricting the API classpath, so post-21 APIs compile
+bytecode version without restricting the API classpath, so post-17 APIs compile
 clean and then fail at runtime.
 
 **`.mill-version` tracks what nixpkgs ships** (currently 1.1.8), not the latest
@@ -134,6 +138,12 @@ and `_sjs1_3`.
 warnings than they do against cats, fs2, http4s or circe, which all set it.
 
 Versions come from git tags via `mill-git` — tagging `v0.1.0` publishes `0.1.0`.
+
+The site is published only from a release, never from `main`: `docs.yml` runs
+after a successful `Release`, checks out the tag and deploys to `gh-pages`,
+served at `verdict4s.softinio.dev`. The deploy replaces the whole branch, so it
+must keep passing `cname:` -- a push without the `CNAME` file makes GitHub drop
+the custom domain.
 
 ## Traps that cost time here
 
@@ -215,6 +225,13 @@ describes what that SDK returns *after* unwrapping, so modelling it as a bare
 array looks right from the documentation and fails against the service. The
 in-memory fake agreed with the mistake until `LiveApiIT` ran. When a fake and
 the docs are the only evidence, neither is evidence.
+
+**Docs pages write versions as `@VERSION@`, not Laika's `${...}`.** Every
+version sits in a dependency line inside a fenced Scala block, and the
+highlighter claims `${...}` in a string literal as Scala interpolation before
+Laika resolves it, so a Laika variable reaches the page verbatim.
+`LaikaBuild.scala` copies `docs/` to `site/target/docs/src` with the token
+replaced and renders that; `mill docs.build` supplies the version.
 
 **Every `.scala` and `.mill` file carries the Apache header**, dated by year, and
 CI fails without it. Non-Scala files deliberately have none -- see the licence

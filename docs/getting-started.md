@@ -3,7 +3,7 @@
 ## Add the dependency
 
 ```scala
-def mvnDeps = Seq(mvn"com.softinio::verdict4s::<version>")
+def mvnDeps = Seq(mvn"com.softinio::verdict4s::@VERSION@")
 ```
 
 ## Get an API key

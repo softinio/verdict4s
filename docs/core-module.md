@@ -5,7 +5,7 @@ HTTP client, deliberately no fs2. You can drive the protocol with whatever you
 already use — including nothing at all.
 
 ```scala
-def mvnDeps = Seq(mvn"com.softinio::verdict4s-core::<version>")
+def mvnDeps = Seq(mvn"com.softinio::verdict4s-core::@VERSION@")
 ```
 
 This style — the library builds and reads the messages, you do the I/O — is

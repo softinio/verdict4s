@@ -1,0 +1,66 @@
+name: "Documentation"
+on:
+  # Publish the site once a release has reached Maven Central, so the version in
+  # the pages' dependency lines always resolves.
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
+  # Re-publish by hand for a given tag, e.g. after a docs-only fix.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to build the site from (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # A tag push reports the tag as the run's head_branch.
+      TAG: ${{ github.event.inputs.tag || github.event.workflow_run.head_branch }}
+    steps:
+    # Build from the tag, not from main: workflow_run otherwise checks out the
+    # default branch, whose docs may already describe unreleased changes.
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ env.TAG }}
+        fetch-depth: 0
+
+    - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache Mill
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/mill
+          ~/.cache/coursier
+        key: ${{ runner.os }}-mill-docs-${{ hashFiles('build.mill') }}
+        restore-keys: |
+          ${{ runner.os }}-mill-docs-
+
+    # The site and the Scaladoc both read VERDICT4S_DOC_VERSION, so they show
+    # the released version rather than one derived from the commit.
+    - name: Generate site
+      run: |
+        export VERDICT4S_DOC_VERSION="${TAG#v}"
+        echo "Building the site for $VERDICT4S_DOC_VERSION"
+        nix develop --command mill --no-daemon docs.build
+
+    # Replaces the branch contents, so pages removed from docs/ disappear.
+    # `cname` rewrites the CNAME file on every deploy; without it the push
+    # would delete the file and GitHub would drop the custom domain.
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4.0.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: site/target/docs/site
+        cname: verdict4s.softinio.dev
+        commit_message: "Documentation for ${{ env.TAG }}"

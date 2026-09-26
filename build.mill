@@ -62,7 +62,7 @@ def docOptions(title: String, version: String): Seq[String] = Seq(
     ".*io/circe/.*::scaladoc2::https://circe.github.io/circe/api/",
     ".*org/http4s/.*::scaladoc2::https://http4s.org/v0.23/api/",
     ".*scala.*::scaladoc3::https://scala-lang.org/api/3.x/",
-    ".*java.*::javadoc::https://docs.oracle.com/en/java/javase/21/docs/api/"
+    ".*java.*::javadoc::https://docs.oracle.com/en/java/javase/17/docs/api/"
   ).mkString(",")
 )
 
@@ -125,7 +125,9 @@ trait Verdict4sModule
   def pomSettings = PomSettings(
     description = docDescription,
     organization = "com.softinio",
-    url = "https://github.com/softinio/verdict4s",
+    // The project homepage Maven Central and Scaladex link to. The repository
+    // is still recorded, as <scm>, by `versionControl` below.
+    url = "https://verdict4s.softinio.dev",
     licenses = Seq(License.`Apache-2.0`),
     versionControl = VersionControl.github("softinio", "verdict4s"),
     developers = Seq(
@@ -146,19 +148,19 @@ trait Verdict4sJvmModule extends Verdict4sModule:
   /** JDK used to compile and run the JVM modules.
     *
     * Empty means "whatever JDK Mill itself runs on", which in this devshell is
-    * the 21 that the nixpkgs `mill` wrapper pins -- the same version these
-    * artifacts target. CI sets this to exercise newer runtimes, because
-    * `--release 21` guarantees the API surface exists but not that the code
-    * behaves identically on a later JVM.
+    * the 21 that the nixpkgs `mill` wrapper pins. CI sets this to run on 17,
+    * the floor these artifacts target, and on newer runtimes, because
+    * `--release 17` guarantees the API surface exists but not that the code
+    * behaves identically on another JVM.
     */
   override def jvmVersion: T[String] = Task.Input {
     Task.env.getOrElse("VERDICT4S_JVM", "")
   }
 
-  def javacOptions = Seq("--release", "21")
+  def javacOptions = Seq("--release", "17")
 
   override def scalacOptions = Task {
-    super.scalacOptions() ++ Seq("-release", "21")
+    super.scalacOptions() ++ Seq("-release", "17")
   }
 
 /** Scala.js-only settings. */
@@ -353,7 +355,7 @@ object unidoc extends ScalaModule:
   * reference, assembled into one directory.
   *
   *   - `mill docs.build` — render the site into `site/target/docs/site`, with
-  *     each module's API reference under `api/<module>/`
+  *     the combined API reference under `api/`
   *   - `mill docs.preview` — build, then serve at http://localhost:4242
   *
   * Preview serves what `build` produced rather than re-rendering, so the two
@@ -368,13 +370,21 @@ object docs extends Module:
   /** The combined API reference; see [[unidoc]]. */
   def apiDocs: T[PathRef] = Task { unidoc.docJar() }
 
+  /** The version the pages show in their dependency lines, in place of
+    * `@VERSION@`. The release workflow sets it from the tag; locally it is the
+    * git-derived version, as for the Scaladoc.
+    */
+  def siteVersion: T[String] = Task {
+    Task.env.get("VERDICT4S_DOC_VERSION").getOrElse(verdict4s.jvm("3.3.8").publishVersion())
+  }
+
   def build() = Task.Command {
-    renderSite(apiDocs())
+    renderSite(apiDocs(), siteVersion())
   }
 
   def preview() = Task.Command {
     val projectRoot = mill.api.BuildCtx.workspaceRoot
-    renderSite(apiDocs())
+    renderSite(apiDocs(), siteVersion())
     mill.api.BuildCtx.withFilesystemCheckerDisabled {
       os.proc("scala-cli", "run", (projectRoot / "scripts" / "LaikaPreview.scala").toString)
         .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
@@ -382,14 +392,19 @@ object docs extends Module:
     ()
   }
 
-  private def renderSite(api: PathRef): PathRef =
+  private def renderSite(api: PathRef, version: String): PathRef =
     val projectRoot = mill.api.BuildCtx.workspaceRoot
     val siteDir     = projectRoot / "site" / "target" / "docs" / "site"
 
     mill.api.BuildCtx.withFilesystemCheckerDisabled {
       println("Rendering the narrative site...")
       os.proc("scala-cli", "run", (projectRoot / "scripts" / "LaikaBuild.scala").toString)
-        .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
+        .call(
+          cwd = projectRoot,
+          env = Map("VERDICT4S_DOC_VERSION" -> version),
+          stdout = os.Inherit,
+          stderr = os.Inherit
+        )
 
       // docJar writes the rendered HTML beside the jar, in `docs/`.
       val to = siteDir / "api"
