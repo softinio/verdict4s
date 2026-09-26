@@ -25,6 +25,7 @@ import laika.io.syntax.*
 import laika.theme.*
 import cats.effect.*
 import laika.ast.Path.Root
+import laika.ast.{Image, LengthUnit}
 import laika.config.LinkValidation
 import laika.config.SyntaxHighlighting
 import laika.helium.Helium
@@ -77,8 +78,17 @@ object LaikaBuild extends IOApp.Simple {
         title = Some("Verdict4s"),
         language = Some("en")
       )
+      .site.favIcons(Favicon.internal(Root / "img" / "logo.svg", "any"))
       .site.topNavigationBar(
-        homeLink = IconLink.internal(Root / "index.md", HeliumIcon.home),
+        homeLink = ImageLink.internal(
+          Root / "index.md",
+          Image.internal(
+            Root / "img" / "logo.svg",
+            width = Some(LengthUnit.px(36)),
+            height = Some(LengthUnit.px(36)),
+            alt = Some("verdict4s")
+          )
+        ),
         navLinks = Seq(
           // An ordinary page, so the link is validated. It is the page that
           // links on into each module's scaladoc under api/.
