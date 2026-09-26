@@ -1,0 +1,3339 @@
+<!DOCTYPE html><html data-pathToRoot="../../../" data-rawLocation="com/softinio/verdict4s/algebra" data-dynamicSideMenu="false"><head><meta charset="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta><title>com.softinio.verdict4s.algebra</title><link rel="shortcut icon" type="image/x-icon" href="../../../favicon.ico"></link><script type="text/javascript" src="../../../scripts/theme.js"></script><script type="text/javascript" src="../../../scripts/searchData.js" defer="true"></script><script type="text/javascript" src="../../../scripts/scastieConfiguration.js" defer="true"></script><link rel="stylesheet" href="../../../styles/theme/bundle.css"></link><link rel="stylesheet" href="../../../styles/theme/components/bundle.css"></link><link rel="stylesheet" href="../../../styles/theme/components/button/bundle.css"></link><link rel="stylesheet" href="../../../styles/theme/layout/bundle.css"></link><link rel="stylesheet" href="../../../styles/nord-light.css"></link><link rel="stylesheet" href="../../../styles/dotty-icons.css"></link><link rel="stylesheet" href="../../../styles/filter-bar.css"></link><link rel="stylesheet" href="../../../styles/code-snippets.css"></link><link rel="stylesheet" href="../../../styles/searchbar.css"></link><link rel="stylesheet" href="../../../styles/social-links.css"></link><link rel="stylesheet" href="../../../styles/versions-dropdown.css"></link><link rel="stylesheet" href="../../../styles/content-contributors.css"></link><link rel="stylesheet" href="../../../styles/fontawesome.css"></link><script type="text/javascript" src="../../../hljs/highlight.pack.js" defer="true"></script><script type="text/javascript" src="../../../scripts/hljs-scala3.js" defer="true"></script><script type="text/javascript" src="../../../scripts/ux.js" defer="true"></script><script type="text/javascript" src="../../../scripts/common/component.js" defer="true"></script><script type="text/javascript" src="../../../scripts/common/utils.js" defer="true"></script><script type="text/javascript" src="../../../scripts/components/FilterBar.js" defer="true"></script><script type="text/javascript" src="../../../scripts/components/DocumentableList.js" defer="true"></script><script type="text/javascript" src="../../../scripts/components/Input.js" defer="true"></script><script type="text/javascript" src="../../../scripts/components/FilterGroup.js" defer="true"></script><script type="text/javascript" src="../../../scripts/components/Filter.js" defer="true"></script><script type="text/javascript" src="../../../scripts/scaladoc-scalajs.js" defer="true"></script><script type="text/javascript" src="../../../scripts/contributors.js" defer="true"></script><script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js" defer="true"></script><script type="text/javascript" src="https://d3js.org/d3.v6.min.js" defer="true"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/graphlib-dot@0.6.2/dist/graphlib-dot.min.js" defer="true"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js" defer="true"></script><script type="text/javascript" src="https://scastie.scala-lang.org/embedded.js" defer="true"></script><script type="text/javascript" src="../../../scripts/data.js" defer="true"></script><link rel="stylesheet" href="../../../styles/apistyles.css"></link><script>var pathToRoot = "../../../";</script></head><body><div id=""><div id="header" class="body-small"><div class="header-container-left"><a href="../../../" class="logo-container"><span class="project-name h300">Verdict4s</span></a><span onclick="dropdownHandler(event)" class="text-button with-arrow" id="dropdown-trigger"><a><div class="projectVersion">0.1.0</div></a></span><div id="version-dropdown" class="dropdown-menu"></div></div><div class="header-container-right"><button id="search-toggle" class="icon-button"></button><span id="theme-toggle" class="icon-button"></span><span id="mobile-menu-toggle" class="icon-button hamburger"></span></div></div><div id="mobile-menu"><div class="mobile-menu-header body-small"><span class="mobile-menu-logo"><span class="project-name h300">Verdict4s</span></span><button id="mobile-menu-close" class="icon-button close"></button></div><div class="mobile-menu-container body-medium"><input id="mobile-scaladoc-searchbar-input" class="scaladoc-searchbar-input" type="search" placeholder="Find anything"></input><span id="mobile-theme-toggle" class="mobile-menu-item mode"></span></div></div><span id="mobile-sidebar-toggle" class="floating-button"></span><div id="leftColumn" class="body-small"><div class="switcher-container"><a id="api-nav-button" class="switcher h100 selected" href="../../../index.html">API</a></div><nav id="api-nav" class="side-menu"><div class="ni n0 expanded"><span class="nh h100 expanded cs"><button class="ar icon-button expanded"></button><a href="../verdict4s.html"><span class="micon pa"></span><span>com.softinio.verdict4s</span></a></span><div class="ni n1 expanded"><span class="nh h100 selected"><button class="ar icon-button expanded"></button><a href="#"><span class="micon pa"></span><span>algebra</span></a></span><div class="ni n2 "><span class="nh "><a href="algebra/Answer$.html"><span class="micon ob"></span><span>Answer</span></a></span></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="algebra/Answer.html"><span class="micon en"></span><span>Answer</span></a></span><div class="ni n3 "><span class="nh "><a href="algebra/Answer$$Noul.html"><span class="micon cl"></span><span>Noul</span></a></span></div><div class="ni n3 "><span class="nh "><a href="algebra/Answer$$Choice.html"><span class="micon cl"></span><span>Choice</span></a></span></div><div class="ni n3 "><span class="nh "><a href="algebra/Answer$$Score.html"><span class="micon cl"></span><span>Score</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="algebra/ApiErrorBody.html"><span class="micon cl"></span><span>ApiErrorBody</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ApiErrorBody$.html"><span class="micon ob"></span><span>ApiErrorBody</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ApiFailure$.html"><span class="micon ob"></span><span>ApiFailure</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ApiFailure.html"><span class="micon en"></span><span>ApiFailure</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ApiKey$.html"><span class="micon ob"></span><span>ApiKey</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ApiKey.html"><span class="micon cl"></span><span>ApiKey</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ChoiceAnswer$.html"><span class="micon ob"></span><span>ChoiceAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ChoiceAnswer.html"><span class="micon cl"></span><span>ChoiceAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ClientConfig.html"><span class="micon cl"></span><span>ClientConfig</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ClientConfig$.html"><span class="micon ob"></span><span>ClientConfig</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Confidence$.html"><span class="micon ob"></span><span>Confidence</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Defaults$.html"><span class="micon ob"></span><span>Defaults</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Evaluation.html"><span class="micon cl"></span><span>Evaluation</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Evaluation$.html"><span class="micon ob"></span><span>Evaluation</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/EvaluationRequest.html"><span class="micon cl"></span><span>EvaluationRequest</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/EvaluationRequest$.html"><span class="micon ob"></span><span>EvaluationRequest</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Instructions$.html"><span class="micon ob"></span><span>Instructions</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Levels.html"><span class="micon cl"></span><span>Levels</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Levels$.html"><span class="micon ob"></span><span>Levels</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Model$.html"><span class="micon ob"></span><span>Model</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ModelCard$.html"><span class="micon ob"></span><span>ModelCard</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ModelCard.html"><span class="micon cl"></span><span>ModelCard</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ModelId$.html"><span class="micon ob"></span><span>ModelId</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/NoulAnswer$.html"><span class="micon ob"></span><span>NoulAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/NoulAnswer.html"><span class="micon cl"></span><span>NoulAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/NoulCriteria.html"><span class="micon cl"></span><span>NoulCriteria</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/NoulCriteria$.html"><span class="micon ob"></span><span>NoulCriteria</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/OptionName$.html"><span class="micon ob"></span><span>OptionName</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Options.html"><span class="micon cl"></span><span>Options</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Options$.html"><span class="micon ob"></span><span>Options</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Probability$.html"><span class="micon ob"></span><span>Probability</span></a></span></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="algebra/Question$.html"><span class="micon ob"></span><span>Question</span></a></span><div class="ni n3 "><span class="nh "><a href="algebra/Question$$Spec.html"><span class="micon cl"></span><span>Spec</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="algebra/QuestionKey$.html"><span class="micon ob"></span><span>QuestionKey</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/QuestionSpec$.html"><span class="micon ob"></span><span>QuestionSpec</span></a></span></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="algebra/QuestionSpec.html"><span class="micon en"></span><span>QuestionSpec</span></a></span><div class="ni n3 "><span class="nh "><a href="algebra/QuestionSpec$$Noul.html"><span class="micon cl"></span><span>Noul</span></a></span></div><div class="ni n3 "><span class="nh "><a href="algebra/QuestionSpec$$Choice.html"><span class="micon cl"></span><span>Choice</span></a></span></div><div class="ni n3 "><span class="nh "><a href="algebra/QuestionSpec$$Score.html"><span class="micon cl"></span><span>Score</span></a></span></div><div class="ni n3 "><span class="nh "><a href="algebra/QuestionSpec$$Raw.html"><span class="micon cl"></span><span>Raw</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="algebra/Refinements$.html"><span class="micon ob"></span><span>Refinements</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/RetryPolicy$.html"><span class="micon ob"></span><span>RetryPolicy</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/RetryPolicy.html"><span class="micon cl"></span><span>RetryPolicy</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ScoreAnswer.html"><span class="micon cl"></span><span>ScoreAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/ScoreAnswer$.html"><span class="micon ob"></span><span>ScoreAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Usage.html"><span class="micon cl"></span><span>Usage</span></a></span></div><div class="ni n2 "><span class="nh "><a href="algebra/Usage$.html"><span class="micon ob"></span><span>Usage</span></a></span></div></div><div class="ni n1 "><span class="nh "><a href="Ask.html"><span class="micon cl"></span><span>Ask</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Ask$.html"><span class="micon ob"></span><span>Ask</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Jitter.html"><span class="micon tr"></span><span>Jitter</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Jitter$.html"><span class="micon ob"></span><span>Jitter</span></a></span></div><div class="ni n1 "><span class="nh "><a href="SystemOne$.html"><span class="micon ob"></span><span>SystemOne</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Verdict4s$.html"><span class="micon ob"></span><span>Verdict4s</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Verdict4sClient.html"><span class="micon cl"></span><span>Verdict4sClient</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Verdict4sClient$.html"><span class="micon ob"></span><span>Verdict4sClient</span></a></span></div><div class="ni n1 "><span class="nh "><a href="Verdict4sEnv$.html"><span class="micon ob"></span><span>Verdict4sEnv</span></a></span></div><div class="ni n1"><span class="nh "><button class="ar icon-button "></button><a href="Verdict4sError$.html"><span class="micon ob"></span><span>Verdict4sError</span></a></span><div class="ni n2 "><span class="nh "><a href="Verdict4sError$$Api.html"><span class="micon cl"></span><span>Api</span></a></span></div><div class="ni n2 "><span class="nh "><a href="Verdict4sError$$Decoding.html"><span class="micon cl"></span><span>Decoding</span></a></span></div><div class="ni n2 "><span class="nh "><a href="Verdict4sError$$Invalid.html"><span class="micon cl"></span><span>Invalid</span></a></span></div><div class="ni n2 "><span class="nh "><a href="Verdict4sError$$Transport.html"><span class="micon cl"></span><span>Transport</span></a></span></div><div class="ni n2 "><span class="nh "><a href="Verdict4sError$$Validation.html"><span class="micon cl"></span><span>Validation</span></a></span></div></div><div class="ni n1 "><span class="nh "><a href="Verdict4sError.html"><span class="micon cl"></span><span>Verdict4sError</span></a></span></div><div class="ni n1 "><span class="nh "><a href="syntax$.html"><span class="micon ob"></span><span>syntax</span></a></span></div></div></nav></div><div id="footer" class="body-small"><div class="left-container">Generated with</div><div class="right-container"><a href="https://github.com/softinio/verdict4s"><button class="icon-button gh"></button></a><div class="text"></div></div><div class="text-mobile"></div></div><div id="scaladoc-searchBar"></div><div id="main"><div class="breadcrumbs container"><a href="../../../index.html">Verdict4s</a>/<a href="../verdict4s.html">com.softinio.verdict4s</a>/<a href="algebra.html">com.softinio.verdict4s.algebra</a></div><div id="content" class="body-medium"><div><div class="cover-header">
+ <span class="icon"><span class="micon pa"></span></span>
+ <h1 class="h600 single">com.softinio.verdict4s.algebra</h1>
+</div>
+<div class="fqname body-large">
+ <span></span>
+</div>
+<div class="main-signature mono-small-block">
+ <div class="signature">
+  <span class="modifiers"></span><span class="kind"><span t="k">package </span></span><a href="algebra.html" t="n" class="documentableName ">com.softinio.verdict4s.algebra</a>
+ </div>
+</div>
+<section id="members-list">
+ <h2 class="h500">Members list</h2>
+ <div class="documentableFilter">
+  <div class="filtersContainer"></div><input class="filterableInput" placeholder="Filter by any phrase" data-test-id="filterBarInput" type="search"><button class="clearButton label-only-button" data-test-id="filterBarClearButton">Clear all</button>
+ </div>
+ <div class="membersList expand">
+  <div class="tabs">
+   <div class="contents">
+    <section id="Grouped-members">
+     <div data-togglable="grouped_members" class="tab expand">
+      <div class="member-group-header">
+       <h3 data-togglable="grouped_members" class="h400">Grouped members</h3>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Errors</h3>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/ApiErrorBody.html" t="n" class="documentableName ">ApiErrorBody</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">kind</span>: <a href="https://scala-lang.org/api/3.x/scala/Option.html" t="t">Option</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>], <span t="k"></span><span data-unresolved-link="" t="n">message</span>: <a href="https://scala-lang.org/api/3.x/scala/Option.html" t="t">Option</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>], <span t="k"></span><span data-unresolved-link="" t="n">field</span>: <a href="https://scala-lang.org/api/3.x/scala/Option.html" t="t">Option</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>], <span t="k"></span><span data-unresolved-link="" t="n">raw</span>: <a href="https://circe.github.io/circe/api/io/circe/Json.html" t="t">Json</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A best-effort reading of an error response body.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A best-effort reading of an error response body.</p>
+             <p>The TypeSafe docs describe error <em>statuses</em> precisely but do not pin the shape of the JSON body, so this parse is deliberately <strong>total</strong>: every field is optional and <span data-unresolved-link="">raw</span> always holds what actually arrived. A 422 carrying an envelope this version does not recognise must still surface as a <code>Verdict4sError.Api</code> with its body intact — turning it into a decoding failure would hide the very detail the caller needs.</p>
+            </div>
+            <h2 class="h200">Value parameters</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              field
+             </dt>
+             <dd class="body-medium">
+              <p>the offending field, for validation failures</p>
+             </dd>
+             <dt class="body-small">
+              kind
+             </dt>
+             <dd class="body-medium">
+              <p>a machine-readable error type, when the body names one</p>
+             </dd>
+             <dt class="body-small">
+              message
+             </dt>
+             <dd class="body-medium">
+              <p>a human-readable description, when the body carries one</p>
+             </dd>
+             <dt class="body-small">
+              raw
+             </dt>
+             <dd class="body-medium">
+              <p>the body exactly as received</p>
+             </dd>
+            </dl>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ApiErrorBody$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="algebra/ApiFailure.html" t="n" class="documentableName ">ApiFailure</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A named classification of an unsuccessful HTTP status.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A named classification of an unsuccessful HTTP status.</p>
+             <p>Matching on this is steadier than matching on raw status codes: the two statuses that callers most often want to treat alike — 429 and 529 — are numerically unrelated, and 5xx is a range rather than a value.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ApiFailure$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/reflect/Enum.html" t="n">Enum</a>
+               </div>
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Refinements</h3>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Refinements$.html" t="n" class="documentableName ">Refinements</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Refined primitives shared across the protocol.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Refined primitives shared across the protocol.</p>
+             <p>Each of these is an Iron <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html">io.github.iltotore.iron.RefinedType</a>, so the bound the TypeSafe API documents is carried by the type itself rather than re-checked at each use site. Literals are folded at compile time:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>val p = Probability(0.95) // ok
+</span><span line-number="2" class=""><span class="tooltip-container"></span>val q = Probability(1.5) // rejected at compile time
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+             <p>Values arriving from JSON are not literals, so decoders use <code>Probability.either</code>, turning an out-of-range number from the service into a typed decoding failure instead of letting it propagate.</p>
+             <p><code>RefinedType</code> produces a <em>nominal</em> type: unwrap it with <code>.value</code>. That is deliberate — the alternative, a bare <code>Double :| C</code> alias, is a true <code>Double</code> subtype but prints its whole constraint in signatures and would let <a href="algebra.html#Probability-0">Probability</a> and <a href="algebra.html#Confidence-0">Confidence</a> be passed interchangeably.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Self type
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <span></span>
+               <div>
+                <a href="algebra/Refinements$.html" t="n">Refinements</a>.<span t="k">type</span>
+               </div>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Questions</h3>
+       <div class="documentableElement" id="Question-0" data-f-keywords="opaque">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">opaque </span></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#Question-0" t="n" class="documentableName ">Question</a>[<span t="k"></span><span data-unresolved-link="" t="t">A</span>]
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A question, together with the way to read its answer back at the right type.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A question, together with the way to read its answer back at the right type.</p>
+             <p>Two things are bundled here, and both matter:</p>
+             <ul>
+              <li>the <a href="algebra/QuestionSpec.html">QuestionSpec</a> that goes on the wire, already validated. Every constructor returns <code>Question[A]</code> whether or not it had a rule to check, so a tuple of questions is uniform in its wrapper.</li>
+              <li>a decoder. Carrying it here, where <code>A</code> is statically known, is what lets <code>Ask</code> project answers back at exact types without a GADT match — and what makes <a href="https://javadoc.io/static/org.typelevel/cats-core_3/2.13.0/cats/data/Validated.html#map-31b">Question.map</a> and <a href="algebra/Question$.html#emap-fffff751">Question.emap</a> one-liners.</li>
+             </ul>
+             <p>Validation is accumulated rather than fail-fast, so a request with three malformed questions reports all three:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>val q = Question.choiceOfStrings("Which team?", Seq("billing" -&gt; None))
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small"></dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Configuration</h3>
+       <div class="documentableElement" data-f-keywords="final">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/ApiKey.html" t="n" class="documentableName ">ApiKey</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A TypeSafe API key.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A TypeSafe API key.</p>
+             <p>Deliberately a real class rather than an opaque type over <code>String</code>. An opaque type erases to its underlying type, so <code>toString</code> would be <code>String.toString</code> and the secret would surface in every failed assertion, every <code>Show</code> of a containing case class, and every stack trace. Here <code>toString</code> and <code>Show</code> both render <code>ApiKey(***)</code>, while <code>equals</code> and <code>hashCode</code> still behave, so keys remain usable as map keys and in tests.</p>
+             <p>The secret itself is reachable only from within <code>com.softinio.verdict4s</code>, which is what lets the client set the <code>Authorization</code> header while keeping the value away from callers.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ApiKey$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/ClientConfig.html" t="n" class="documentableName ">ClientConfig</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">model</span>: <a href="algebra.html#Model-0" t="t">Model</a> = ..., <span t="k"></span><span data-unresolved-link="" t="n">retry</span>: <a href="algebra/RetryPolicy.html" t="t">RetryPolicy</a> = ..., <span t="k"></span><span data-unresolved-link="" t="n">requestTimeout</span>: <a href="https://scala-lang.org/api/3.x/scala/concurrent/duration/FiniteDuration.html" t="t">FiniteDuration</a> = ...)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Settings a client applies to every request.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Settings a client applies to every request.</p>
+             <p>Deliberately carries no base URL. <code>org.http4s.Uri</code> is not available in the effect-free core, and holding the address as a <code>String</code> here would push a parse failure into the happy path at runtime; the client turns <a href="algebra/Defaults$.html#BaseUrl-0">Defaults.BaseUrl</a> into a compile-time-checked literal instead.</p>
+            </div>
+            <h2 class="h200">Value parameters</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              model
+             </dt>
+             <dd class="body-medium">
+              <p>the model used when a request does not name one</p>
+             </dd>
+             <dt class="body-small">
+              requestTimeout
+             </dt>
+             <dd class="body-medium">
+              <p>ceiling on one HTTP attempt</p>
+             </dd>
+             <dt class="body-small">
+              retry
+             </dt>
+             <dd class="body-medium">
+              <p>how to back off and retry</p>
+             </dd>
+            </dl>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ClientConfig$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Defaults$.html" t="n" class="documentableName ">Defaults</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Wire-level constants, kept in the effect-free core so that the client, the environment readers and the documentation all agree on one source of truth.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Wire-level constants, kept in the effect-free core so that the client, the environment readers and the documentation all agree on one source of truth.</p>
+             <p>The base URL is a <code>String</code> rather than an <code>org.http4s.Uri</code> because core must not depend on http4s. The client turns it into a compile-time-checked literal, so a malformed default can never reach runtime.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Self type
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <span></span>
+               <div>
+                <a href="algebra/Defaults$.html" t="n">Defaults</a>.<span t="k">type</span>
+               </div>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/RetryPolicy.html" t="n" class="documentableName ">RetryPolicy</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>How to back off and retry when the service asks you to.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>How to back off and retry when the service asks you to.</p>
+             <p>The API documents 429 and 529 with an explicit instruction to retry with exponential backoff, and the official SDKs do so by default; <a href="algebra/RetryPolicy$.html#default-0">RetryPolicy.default</a> matches their settings.</p>
+             <p>Everything here is pure. <a href="algebra/RetryPolicy.html#delayFor-93a">delayFor</a> takes the jitter sample as an argument rather than drawing one, which means the whole schedule is a function of its inputs and can be tested exactly, with no clock, no random source, and no mocking library. Drawing the sample is the client's job.</p>
+            </div>
+            <h2 class="h200">Value parameters</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              backoffInitial
+             </dt>
+             <dd class="body-medium">
+              <p>the first delay, doubled each attempt</p>
+             </dd>
+             <dt class="body-small">
+              backoffMax
+             </dt>
+             <dd class="body-medium">
+              <p>ceiling for the doubling</p>
+             </dd>
+             <dt class="body-small">
+              jitter
+             </dt>
+             <dd class="body-medium">
+              <p>0 to 1; the fraction by which a delay may vary, so that many clients retrying at once spread out instead of arriving together</p>
+             </dd>
+             <dt class="body-small">
+              maxRetries
+             </dt>
+             <dd class="body-medium">
+              <p>attempts after the first; 0 disables retrying</p>
+             </dd>
+             <dt class="body-small">
+              respectRetryAfter
+             </dt>
+             <dd class="body-medium">
+              <p>whether a <code>Retry-After</code> header wins when it asks for longer than the computed backoff</p>
+             </dd>
+             <dt class="body-small">
+              retryableStatuses
+             </dt>
+             <dd class="body-medium">
+              <p>which statuses are worth retrying</p>
+             </dd>
+             <dt class="body-small">
+              totalTimeout
+             </dt>
+             <dd class="body-medium">
+              <p>ceiling on the whole call, retries included</p>
+             </dd>
+            </dl>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/RetryPolicy$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Protocol</h3>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="algebra/Answer.html" t="n" class="documentableName ">Answer</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>One answer, exactly as it comes off the wire.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>One answer, exactly as it comes off the wire.</p>
+             <p>Untyped in the sense that a Choice answer carries the option as a <code>String</code>: this is the honest shape of the response, and it is what <code>Evaluation.answers</code> exposes. The typed views below — <a href="algebra/NoulAnswer.html">NoulAnswer</a>, <a href="algebra/ChoiceAnswer.html">ChoiceAnswer</a>, <a href="algebra/ScoreAnswer.html">ScoreAnswer</a> — are what the question builders project this into once the question's own type is known.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/Answer$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/reflect/Enum.html" t="n">Enum</a>
+               </div>
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/ChoiceAnswer.html" t="n" class="documentableName ">ChoiceAnswer</a>[<span t="k"></span><span data-unresolved-link="" t="t">A</span>](<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">choice</span>: <span data-unresolved-link="" t="t">A</span>, <span t="k"></span><span data-unresolved-link="" t="n">probabilities</span>: <a href="https://scala-lang.org/api/3.x/scala/collection/immutable/SortedMap.html" t="t">SortedMap</a>[<a href="algebra.html#OptionName-0" t="t">OptionName</a>, <a href="algebra.html#Probability-0" t="t">Probability</a>], <span t="k"></span><span data-unresolved-link="" t="n">confidence</span>: <a href="algebra.html#Confidence-0" t="t">Confidence</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A Choice answer, already mapped into the caller's own option type.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A Choice answer, already mapped into the caller's own option type.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ChoiceAnswer$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/Evaluation.html" t="n" class="documentableName ">Evaluation</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">model</span>: <a href="algebra.html#Model-0" t="t">Model</a>, <span t="k"></span><span data-unresolved-link="" t="n">answers</span>: <a href="https://scala-lang.org/api/3.x/scala/collection/immutable/SortedMap.html" t="t">SortedMap</a>[<a href="algebra.html#QuestionKey-0" t="t">QuestionKey</a>, <a href="algebra/Answer.html" t="t">Answer</a>], <span t="k"></span><span data-unresolved-link="" t="n">usage</span>: <a href="algebra/Usage.html" t="t">Usage</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A complete evaluation response.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A complete evaluation response.</p>
+            </div>
+            <h2 class="h200">Value parameters</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              answers
+             </dt>
+             <dd class="body-medium">
+              <p>one answer per question, under the keys you supplied</p>
+             </dd>
+             <dt class="body-small">
+              model
+             </dt>
+             <dd class="body-medium">
+              <p>the model that actually performed the evaluation, which for an alias such as <code>jev-latest</code> resolves to a pinned version</p>
+             </dd>
+             <dt class="body-small">
+              usage
+             </dt>
+             <dd class="body-medium">
+              <p>tokens consumed by the request</p>
+             </dd>
+            </dl>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/Evaluation$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/EvaluationRequest.html" t="n" class="documentableName ">EvaluationRequest</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">state</span>: <a href="https://circe.github.io/circe/api/io/circe/Json.html" t="t">Json</a>, <span t="k"></span><span data-unresolved-link="" t="n">model</span>: <a href="algebra.html#Model-0" t="t">Model</a>, <span t="k"></span><span data-unresolved-link="" t="n">questions</span>: <a href="algebra/EvaluationRequest$.html#Questions-0" t="t">Questions</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A complete evaluation request.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A complete evaluation request.</p>
+            </div>
+            <h2 class="h200">Value parameters</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              model
+             </dt>
+             <dd class="body-medium">
+              <p>the model that handles the request</p>
+             </dd>
+             <dt class="body-small">
+              questions
+             </dt>
+             <dd class="body-medium">
+              <p>the typed questions, keyed by names you choose; answers come back under the same keys</p>
+             </dd>
+             <dt class="body-small">
+              state
+             </dt>
+             <dd class="body-medium">
+              <p>the content to evaluate: a string for text, or structured data for chat logs, records, or application state</p>
+             </dd>
+            </dl>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/EvaluationRequest$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" id="Instructions-0" data-f-keywords="opaque">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">opaque </span></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#Instructions-0" t="n" class="documentableName ">Instructions</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>The <code>instructions</code> and <code>criteria</code> payload: a string, object, or array.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>The <code>instructions</code> and <code>criteria</code> payload: a string, object, or array.</p>
+             <p>No JSON ADT is invented for this — <code>io.circe.Json</code> already is that type, and circe is already a core dependency. What this adds is the protocol's validity rule: the API accepts a string, an object or an array, so numbers, booleans and <code>null</code> are rejected at construction, and a string must carry actual content.</p>
+             <p>Structure is useful when a question needs to refer to data. Put the question in one field and the data in others, then reference them by name in backticks:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>Instructions.encoded(
+</span><span line-number="2" class=""><span class="tooltip-container"></span> Map(
+</span><span line-number="3" class=""><span class="tooltip-container"></span>   "potential_duplicate" -&gt; "John Smith, Oakland",
+</span><span line-number="4" class=""><span class="tooltip-container"></span>   "question" -&gt; "Is the resume for the same person as `potential_duplicate`?"
+</span><span line-number="5" class=""><span class="tooltip-container"></span> )
+</span><span line-number="6" class=""><span class="tooltip-container"></span>)
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small"></dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/Levels.html" t="n" class="documentableName ">Levels</a>[<span t="k"></span><span data-unresolved-link="" t="t">A</span>]
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>The ordered rubric of a Score question, plus how to read a level back.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>The ordered rubric of a Score question, plus how to read a level back.</p>
+             <p>Unlike <a href="algebra/Options.html">Options</a> this is a <code>List</code>, not a sorted map: the levels are ordered, and their position <em>is</em> their meaning — the service returns level indices as <code>"0"</code>, <code>"1"</code>, and so on, keyed to this order.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/Levels$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" id="Model-0" data-f-keywords="opaque">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">opaque </span></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#Model-0" t="n" class="documentableName ">Model</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>The model that handles a request.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>The model that handles a request.</p>
+             <p>Not an <code>enum</code>: the set of models is owned by the service and grows without a library release, so pinning it in a closed sum would make every new model a breaking change. The aliases below are provided as constants instead.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small"></dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/ModelCard.html" t="n" class="documentableName ">ModelCard</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">name</span>: <a href="algebra.html#Model-0" t="t">Model</a>, <span t="k"></span><span data-unresolved-link="" t="n">description</span>: <a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <span t="k"></span><span data-unresolved-link="" t="n">releaseDate</span>: <a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Metadata for a model available to the account.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Metadata for a model available to the account.</p>
+             <p><code>releaseDate</code> stays a <code>String</code> rather than a date: <code>java.time</code> is not available on Scala.js without <code>scala-java-time</code>, and the effect-free core does not take that dependency for one display field.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ModelCard$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/NoulAnswer.html" t="n" class="documentableName ">NoulAnswer</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">value</span>: <a href="algebra.html#Probability-0" t="t">Probability</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A Noul answer: how likely the answer is yes.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A Noul answer: how likely the answer is yes.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/NoulAnswer$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/NoulCriteria.html" t="n" class="documentableName ">NoulCriteria</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">ifTrue</span>: <a href="https://scala-lang.org/api/3.x/scala/Option.html" t="t">Option</a>[<a href="algebra.html#Instructions-0" t="t">Instructions</a>], <span t="k"></span><span data-unresolved-link="" t="n">ifFalse</span>: <a href="https://scala-lang.org/api/3.x/scala/Option.html" t="t">Option</a>[<a href="algebra.html#Instructions-0" t="t">Instructions</a>])
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>What a yes and a no mean, for a Noul question. Both sides are optional.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>What a yes and a no mean, for a Noul question. Both sides are optional.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/NoulCriteria$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/Options.html" t="n" class="documentableName ">Options</a>[<span t="k"></span><span data-unresolved-link="" t="t">A</span>]
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>The option set of a Choice question, plus how to read the answer back.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>The option set of a Choice question, plus how to read the answer back.</p>
+             <p>Holds three things: the rubric map that goes on the wire, and the pair of functions that turn the service's <code>choice</code> string into a value of <code>A</code> and back. Keeping the mapping next to the keys is what lets a Choice question answer in the caller's own type rather than in raw strings.</p>
+             <p>Build one with <a href="algebra/Options$.html#strings-ffffff50">Options.strings</a> for options only known at runtime, or derive it from an <code>enum</code> (see <code>derives Options</code>, added alongside the typed question builders).</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/Options$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="algebra/QuestionSpec.html" t="n" class="documentableName ">QuestionSpec</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A question exactly as it goes on the wire.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A question exactly as it goes on the wire.</p>
+             <p>Closed and non-generic on purpose: the service defines these three shapes, so this is the protocol rather than an extension point. Callers who want a question that answers in their own type use <code>Question[A]</code>, which pairs one of these with a decoder — see the typed question builders.</p>
+             <p><a href="algebra/QuestionSpec$$Raw.html">QuestionSpec.Raw</a> exists only for forward compatibility: it lets a caller send a question shape a given release does not model yet, rather than wait for a library version.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/QuestionSpec$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/reflect/Enum.html" t="n">Enum</a>
+               </div>
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/ScoreAnswer.html" t="n" class="documentableName ">ScoreAnswer</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">score</span>: <a href="https://scala-lang.org/api/3.x/scala/Double.html" t="t">Double</a>, <span t="k"></span><span data-unresolved-link="" t="n">legend</span>: <a href="https://scala-lang.org/api/3.x/scala/collection/immutable/SortedMap.html" t="t">SortedMap</a>[<a href="https://scala-lang.org/api/3.x/scala/Int.html" t="t">Int</a>, <a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>], <span t="k"></span><span data-unresolved-link="" t="n">probabilities</span>: <a href="https://scala-lang.org/api/3.x/scala/collection/immutable/SortedMap.html" t="t">SortedMap</a>[<a href="https://scala-lang.org/api/3.x/scala/Int.html" t="t">Int</a>, <a href="algebra.html#Probability-0" t="t">Probability</a>], <span t="k"></span><span data-unresolved-link="" t="n">confidence</span>: <a href="algebra.html#Confidence-0" t="t">Confidence</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A Score answer.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A Score answer.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/ScoreAnswer$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final,case">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final case </span></span><span class="kind"><span t="k">class </span></span><a href="algebra/Usage.html" t="n" class="documentableName ">Usage</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">inputTokens</span>: <a href="https://scala-lang.org/api/3.x/scala/Int.html" t="t">Int</a>, <span t="k"></span><span data-unresolved-link="" t="n">outputTokens</span>: <a href="https://scala-lang.org/api/3.x/scala/Int.html" t="t">Int</a>)
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Token usage reported alongside every evaluation.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Token usage reported alongside every evaluation.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="algebra/Usage$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Product.html" t="n">Product</a>
+               </div>
+               <div>
+                trait <a href="https://scala-lang.org/api/3.x/scala/Equals.html" t="n">Equals</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="Type-members">
+     <div data-togglable="Type members" class="tab expand">
+      <div class="member-group-header">
+       <h3 data-togglable="Type members" class="h400">Type members</h3>
+      </div>
+      <section id="Classlikes">
+       <div class="documentableList expand">
+        <div class="documentableList-expander">
+         <button class="icon-button show-content expand"></button>
+         <h4 class="groupHeader h200">Classlikes</h4>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Answer$.html" t="n" class="documentableName ">Answer</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Codecs and instances for <a href="algebra/Answer.html">Answer</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Codecs and instances for <a href="algebra/Answer.html">Answer</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/Answer.html">enum</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Sum.html" t="n">Sum</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Answer$.html" t="n">Answer</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ApiErrorBody$.html" t="n" class="documentableName ">ApiErrorBody</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Reading an error body, and its decoder, which never fails.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Reading an error body, and its decoder, which never fails.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ApiErrorBody.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ApiErrorBody$.html" t="n">ApiErrorBody</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ApiFailure$.html" t="n" class="documentableName ">ApiFailure</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Classifying an HTTP status code.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Classifying an HTTP status code.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ApiFailure.html">enum</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Sum.html" t="n">Sum</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ApiFailure$.html" t="n">ApiFailure</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ApiKey$.html" t="n" class="documentableName ">ApiKey</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Validating and wrapping a key.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Validating and wrapping a key.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ApiKey.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ApiKey$.html" t="n">ApiKey</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ChoiceAnswer$.html" t="n" class="documentableName ">ChoiceAnswer</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Instances for <a href="algebra/ChoiceAnswer.html">ChoiceAnswer</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Instances for <a href="algebra/ChoiceAnswer.html">ChoiceAnswer</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ChoiceAnswer.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ChoiceAnswer$.html" t="n">ChoiceAnswer</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ClientConfig$.html" t="n" class="documentableName ">ClientConfig</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The default configuration, and instances.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The default configuration, and instances.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ClientConfig.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ClientConfig$.html" t="n">ClientConfig</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Confidence$.html" t="n" class="documentableName ">Confidence</a><span t="k"> extends </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="t">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Double.html" t="t">Double</a>, <a href="algebra.html#UnitIntervalC-0" t="t">UnitIntervalC</a>]</span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>How certain the model is, between 0 and 1 inclusive.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>How certain the model is, between 0 and 1 inclusive.</p>
+              <p>Distinct from <a href="algebra.html#Probability-0">Probability</a> on purpose: confidence is derived from a whole distribution, and conflating the two is an easy mistake to make.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="n">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Double.html" t="t">Double</a>, <a href="algebra.html#UnitIntervalC-0" t="t">UnitIntervalC</a>]
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Confidence$.html" t="n">Confidence</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Evaluation$.html" t="n" class="documentableName ">Evaluation</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The response's codecs and instances.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The response's codecs and instances.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/Evaluation.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Evaluation$.html" t="n">Evaluation</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/EvaluationRequest$.html" t="n" class="documentableName ">EvaluationRequest</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The wire type of the question map, and the request's encoder.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The wire type of the question map, and the request's encoder.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/EvaluationRequest.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/EvaluationRequest$.html" t="n">EvaluationRequest</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Instructions$.html" t="n" class="documentableName ">Instructions</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Constructors for <a href="algebra.html#Instructions-0">Instructions</a>: plain text, structured JSON, or any encodable value. Each validates, rejecting what the API would reject.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Constructors for <a href="algebra.html#Instructions-0">Instructions</a>: plain text, structured JSON, or any encodable value. Each validates, rejecting what the API would reject.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Instructions$.html" t="n">Instructions</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Levels$.html" t="n" class="documentableName ">Levels</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Building a <a href="algebra/Levels.html">Levels</a> rubric: from strings at runtime, or derived from an <code>enum</code> with <code>derives Levels</code>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Building a <a href="algebra/Levels.html">Levels</a> rubric: from strings at runtime, or derived from an <code>enum</code> with <code>derives Levels</code>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/Levels.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Levels$.html" t="n">Levels</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Model$.html" t="n" class="documentableName ">Model</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The model aliases, and naming a specific model.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The model aliases, and naming a specific model.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Model$.html" t="n">Model</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ModelCard$.html" t="n" class="documentableName ">ModelCard</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Codecs and instances for <a href="algebra/ModelCard.html">ModelCard</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Codecs and instances for <a href="algebra/ModelCard.html">ModelCard</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ModelCard.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ModelCard$.html" t="n">ModelCard</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ModelId$.html" t="n" class="documentableName ">ModelId</a><span t="k"> extends </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="t">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <a href="algebra.html#NonBlankC-0" t="t">NonBlankC</a>]</span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A model identifier such as <code>jev-latest</code> or <code>jev-1.13.0</code>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A model identifier such as <code>jev-latest</code> or <code>jev-1.13.0</code>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="n">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <a href="algebra.html#NonBlankC-0" t="t">NonBlankC</a>]
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ModelId$.html" t="n">ModelId</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/NoulAnswer$.html" t="n" class="documentableName ">NoulAnswer</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Instances for <a href="algebra/NoulAnswer.html">NoulAnswer</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Instances for <a href="algebra/NoulAnswer.html">NoulAnswer</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/NoulAnswer.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/NoulAnswer$.html" t="n">NoulAnswer</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/NoulCriteria$.html" t="n" class="documentableName ">NoulCriteria</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The empty criteria, the encoder, and instances.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The empty criteria, the encoder, and instances.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/NoulCriteria.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/NoulCriteria$.html" t="n">NoulCriteria</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/OptionName$.html" t="n" class="documentableName ">OptionName</a><span t="k"> extends </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="t">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <a href="algebra.html#NonBlankC-0" t="t">NonBlankC</a>]</span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A Choice option name, as sent in <code>criteria</code> and returned in <code>choice</code>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A Choice option name, as sent in <code>criteria</code> and returned in <code>choice</code>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="n">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <a href="algebra.html#NonBlankC-0" t="t">NonBlankC</a>]
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/OptionName$.html" t="n">OptionName</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Options$.html" t="n" class="documentableName ">Options</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Building an <a href="algebra/Options.html">Options</a> set: from strings at runtime, or derived from an <code>enum</code> with <code>derives Options</code>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Building an <a href="algebra/Options.html">Options</a> set: from strings at runtime, or derived from an <code>enum</code> with <code>derives Options</code>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/Options.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Options$.html" t="n">Options</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Probability$.html" t="n" class="documentableName ">Probability</a><span t="k"> extends </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="t">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Double.html" t="t">Double</a>, <a href="algebra.html#UnitIntervalC-0" t="t">UnitIntervalC</a>]</span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A probability, between 0 and 1 inclusive.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A probability, between 0 and 1 inclusive.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="n">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Double.html" t="t">Double</a>, <a href="algebra.html#UnitIntervalC-0" t="t">UnitIntervalC</a>]
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Probability$.html" t="n">Probability</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Question$.html" t="n" class="documentableName ">Question</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Constructors for every question type, and the combinators that change how an answer is read.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Constructors for every question type, and the combinators that change how an answer is read.</p>
+              <p>Every constructor returns a validated <code>Question[A]</code>: it never throws, and problems accumulate rather than stopping at the first. <code>A</code> is what the answer decodes to -- <code>NoulAnswer</code>, <code>ChoiceAnswer[D]</code> for an option type <code>D</code>, or <code>ScoreAnswer</code> -- and <a href="algebra/Question$.html#map-fffff751">map</a> or <a href="algebra/Question$.html#emap-fffff751">emap</a> turn it into a type of your own.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Question$.html" t="n">Question</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/QuestionKey$.html" t="n" class="documentableName ">QuestionKey</a><span t="k"> extends </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="t">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <a href="algebra.html#NonBlankC-0" t="t">NonBlankC</a>]</span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A caller-chosen key in the <code>questions</code> map; answers return under the same key.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A caller-chosen key in the <code>questions</code> map; answers return under the same key.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html" t="n">RefinedType</a>[<a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <a href="algebra.html#NonBlankC-0" t="t">NonBlankC</a>]
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/QuestionKey$.html" t="n">QuestionKey</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/QuestionSpec$.html" t="n" class="documentableName ">QuestionSpec</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The wire encoding of a question.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The wire encoding of a question.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/QuestionSpec.html">enum</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Sum.html" t="n">Sum</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/QuestionSpec$.html" t="n">QuestionSpec</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/RetryPolicy$.html" t="n" class="documentableName ">RetryPolicy</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The default policy, a policy that never retries, and a validated constructor for your own.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The default policy, a policy that never retries, and a validated constructor for your own.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/RetryPolicy.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/RetryPolicy$.html" t="n">RetryPolicy</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/ScoreAnswer$.html" t="n" class="documentableName ">ScoreAnswer</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Instances for <a href="algebra/ScoreAnswer.html">ScoreAnswer</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Instances for <a href="algebra/ScoreAnswer.html">ScoreAnswer</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/ScoreAnswer.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/ScoreAnswer$.html" t="n">ScoreAnswer</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="algebra/Usage$.html" t="n" class="documentableName ">Usage</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Codecs and instances for <a href="algebra/Usage.html">Usage</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Codecs and instances for <a href="algebra/Usage.html">Usage</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="algebra/Usage.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Product.html" t="n">Product</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="algebra/Usage$.html" t="n">Usage</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+      <section id="Types">
+       <div class="documentableList expand">
+        <div class="documentableList-expander">
+         <button class="icon-button show-content expand"></button>
+         <h4 class="groupHeader h200">Types</h4>
+        </div>
+        <div class="documentableElement" id="ChoiceOptionsC-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#ChoiceOptionsC-0" t="n" class="documentableName ">ChoiceOptionsC</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/collection$$Length.html" t="t">Length</a>[<a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#GreaterEqual-0" t="t">GreaterEqual</a>[1]<span t="k"> &amp; </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#LessEqual-0" t="t">LessEqual</a>[255]]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Choice accepts between 1 and 255 options.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Choice accepts between 1 and 255 options.</p>
+              <p>Iron has no <code>MinLength</code>/<code>MaxLength</code>; cardinality is expressed by applying a numeric constraint to the collection's <code>Length</code>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="Confidence-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#Confidence-0" t="n" class="documentableName ">Confidence</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html#T-0" t="t">T</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>How certain the model is, between 0 and 1. Distinct from <a href="algebra.html#Probability-0">Probability</a>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>How certain the model is, between 0 and 1. Distinct from <a href="algebra.html#Probability-0">Probability</a>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="ModelId-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#ModelId-0" t="n" class="documentableName ">ModelId</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html#T-0" t="t">T</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A non-blank model identifier.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A non-blank model identifier.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="NonBlankC-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#NonBlankC-0" t="n" class="documentableName ">NonBlankC</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/any$$Not.html" t="t">Not</a>[<a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/all$.html#Blank-0" t="t">Blank</a>]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Constraint for identifiers that must carry actual content.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Constraint for identifiers that must carry actual content.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="OptionName-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#OptionName-0" t="n" class="documentableName ">OptionName</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html#T-0" t="t">T</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A non-blank Choice option name.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A non-blank Choice option name.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="Probability-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#Probability-0" t="n" class="documentableName ">Probability</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html#T-0" t="t">T</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A probability between 0 and 1 inclusive. Build one with <code>Probability</code>.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A probability between 0 and 1 inclusive. Build one with <code>Probability</code>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="QuestionKey-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#QuestionKey-0" t="n" class="documentableName ">QuestionKey</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/RefinedType.html#T-0" t="t">T</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A non-blank key in the <code>questions</code> map.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A non-blank key in the <code>questions</code> map.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="QuestionsC-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#QuestionsC-0" t="n" class="documentableName ">QuestionsC</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/collection$$Length.html" t="t">Length</a>[<a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#GreaterEqual-0" t="t">GreaterEqual</a>[1]]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A request must carry at least one question.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A request must carry at least one question.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="ScoreLevelsC-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#ScoreLevelsC-0" t="n" class="documentableName ">ScoreLevelsC</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/collection$$Length.html" t="t">Length</a>[<a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#GreaterEqual-0" t="t">GreaterEqual</a>[2]<span t="k"> &amp; </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#LessEqual-0" t="t">LessEqual</a>[10]]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Score accepts between 2 and 10 ordered levels.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Score accepts between 2 and 10 ordered levels.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="UnitIntervalC-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">type </span></span><a href="algebra.html#UnitIntervalC-0" t="n" class="documentableName ">UnitIntervalC</a> = <a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#GreaterEqual-0" t="t">GreaterEqual</a>[0.0d]<span t="k"> &amp; </span><a href="https://javadoc.io/static/io.github.iltotore/iron_3/3.3.2/io/github/iltotore/iron/constraint/numeric$.html#LessEqual-0" t="t">LessEqual</a>[1.0d]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Constraint shared by <a href="algebra.html#Probability-0">Probability</a> and <a href="algebra.html#Confidence-0">Confidence</a>: the closed unit interval.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Constraint shared by <a href="algebra.html#Probability-0">Probability</a> and <a href="algebra.html#Confidence-0">Confidence</a>: the closed unit interval.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+     </div>
+    </section>
+   </div>
+  </div>
+ </div>
+</section></div><div id="toc" class="body-small"><div id="toc-container"><span class="toc-title h200">In this article</span><nav class="toc-nav"><ul class="toc-list"><li><a href="#members-list">Members list</a><ul><li><a href="#Grouped-members">Grouped members</a></li><li><a href="#Type-members">Type members</a><ul><li><a href="#Classlikes">Classlikes</a></li><li><a href="#Types">Types</a></li></ul></li></ul></li></ul></nav></div></div></div><div id="footer" class="body-small mobile-footer"><div class="left-container">Generated with</div><div class="right-container"><a href="https://github.com/softinio/verdict4s"><button class="icon-button gh"></button></a><div class="text"></div></div><div class="text-mobile"></div></div></div></div></body></html>

@@ -1,0 +1,862 @@
+<!DOCTYPE html><html data-pathToRoot="../../" data-rawLocation="com/softinio/verdict4s" data-dynamicSideMenu="false"><head><meta charset="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta><title>com.softinio.verdict4s</title><link rel="shortcut icon" type="image/x-icon" href="../../favicon.ico"></link><script type="text/javascript" src="../../scripts/theme.js"></script><script type="text/javascript" src="../../scripts/searchData.js" defer="true"></script><script type="text/javascript" src="../../scripts/scastieConfiguration.js" defer="true"></script><link rel="stylesheet" href="../../styles/theme/bundle.css"></link><link rel="stylesheet" href="../../styles/theme/components/bundle.css"></link><link rel="stylesheet" href="../../styles/theme/components/button/bundle.css"></link><link rel="stylesheet" href="../../styles/theme/layout/bundle.css"></link><link rel="stylesheet" href="../../styles/nord-light.css"></link><link rel="stylesheet" href="../../styles/dotty-icons.css"></link><link rel="stylesheet" href="../../styles/filter-bar.css"></link><link rel="stylesheet" href="../../styles/code-snippets.css"></link><link rel="stylesheet" href="../../styles/searchbar.css"></link><link rel="stylesheet" href="../../styles/social-links.css"></link><link rel="stylesheet" href="../../styles/versions-dropdown.css"></link><link rel="stylesheet" href="../../styles/content-contributors.css"></link><link rel="stylesheet" href="../../styles/fontawesome.css"></link><script type="text/javascript" src="../../hljs/highlight.pack.js" defer="true"></script><script type="text/javascript" src="../../scripts/hljs-scala3.js" defer="true"></script><script type="text/javascript" src="../../scripts/ux.js" defer="true"></script><script type="text/javascript" src="../../scripts/common/component.js" defer="true"></script><script type="text/javascript" src="../../scripts/common/utils.js" defer="true"></script><script type="text/javascript" src="../../scripts/components/FilterBar.js" defer="true"></script><script type="text/javascript" src="../../scripts/components/DocumentableList.js" defer="true"></script><script type="text/javascript" src="../../scripts/components/Input.js" defer="true"></script><script type="text/javascript" src="../../scripts/components/FilterGroup.js" defer="true"></script><script type="text/javascript" src="../../scripts/components/Filter.js" defer="true"></script><script type="text/javascript" src="../../scripts/scaladoc-scalajs.js" defer="true"></script><script type="text/javascript" src="../../scripts/contributors.js" defer="true"></script><script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js" defer="true"></script><script type="text/javascript" src="https://d3js.org/d3.v6.min.js" defer="true"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/graphlib-dot@0.6.2/dist/graphlib-dot.min.js" defer="true"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js" defer="true"></script><script type="text/javascript" src="https://scastie.scala-lang.org/embedded.js" defer="true"></script><script type="text/javascript" src="../../scripts/data.js" defer="true"></script><link rel="stylesheet" href="../../styles/apistyles.css"></link><script>var pathToRoot = "../../";</script></head><body><div id=""><div id="header" class="body-small"><div class="header-container-left"><a href="../../" class="logo-container"><span class="project-name h300">Verdict4s</span></a><span onclick="dropdownHandler(event)" class="text-button with-arrow" id="dropdown-trigger"><a><div class="projectVersion">0.1.0</div></a></span><div id="version-dropdown" class="dropdown-menu"></div></div><div class="header-container-right"><button id="search-toggle" class="icon-button"></button><span id="theme-toggle" class="icon-button"></span><span id="mobile-menu-toggle" class="icon-button hamburger"></span></div></div><div id="mobile-menu"><div class="mobile-menu-header body-small"><span class="mobile-menu-logo"><span class="project-name h300">Verdict4s</span></span><button id="mobile-menu-close" class="icon-button close"></button></div><div class="mobile-menu-container body-medium"><input id="mobile-scaladoc-searchbar-input" class="scaladoc-searchbar-input" type="search" placeholder="Find anything"></input><span id="mobile-theme-toggle" class="mobile-menu-item mode"></span></div></div><span id="mobile-sidebar-toggle" class="floating-button"></span><div id="leftColumn" class="body-small"><div class="switcher-container"><a id="api-nav-button" class="switcher h100 selected" href="../../index.html">API</a></div><nav id="api-nav" class="side-menu"><div class="ni n0 expanded"><span class="nh h100 selected"><button class="ar icon-button expanded"></button><a href="#"><span class="micon pa"></span><span>com.softinio.verdict4s</span></a></span><div class="ni n1"><span class="nh "><button class="ar icon-button "></button><a href="verdict4s/algebra.html"><span class="micon pa"></span><span>algebra</span></a></span><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Answer$.html"><span class="micon ob"></span><span>Answer</span></a></span></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="verdict4s/algebra/Answer.html"><span class="micon en"></span><span>Answer</span></a></span><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/Answer$$Noul.html"><span class="micon cl"></span><span>Noul</span></a></span></div><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/Answer$$Choice.html"><span class="micon cl"></span><span>Choice</span></a></span></div><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/Answer$$Score.html"><span class="micon cl"></span><span>Score</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ApiErrorBody.html"><span class="micon cl"></span><span>ApiErrorBody</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ApiErrorBody$.html"><span class="micon ob"></span><span>ApiErrorBody</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ApiFailure$.html"><span class="micon ob"></span><span>ApiFailure</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ApiFailure.html"><span class="micon en"></span><span>ApiFailure</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ApiKey$.html"><span class="micon ob"></span><span>ApiKey</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ApiKey.html"><span class="micon cl"></span><span>ApiKey</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ChoiceAnswer$.html"><span class="micon ob"></span><span>ChoiceAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ChoiceAnswer.html"><span class="micon cl"></span><span>ChoiceAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ClientConfig.html"><span class="micon cl"></span><span>ClientConfig</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ClientConfig$.html"><span class="micon ob"></span><span>ClientConfig</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Confidence$.html"><span class="micon ob"></span><span>Confidence</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Defaults$.html"><span class="micon ob"></span><span>Defaults</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Evaluation.html"><span class="micon cl"></span><span>Evaluation</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Evaluation$.html"><span class="micon ob"></span><span>Evaluation</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/EvaluationRequest.html"><span class="micon cl"></span><span>EvaluationRequest</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/EvaluationRequest$.html"><span class="micon ob"></span><span>EvaluationRequest</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Instructions$.html"><span class="micon ob"></span><span>Instructions</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Levels.html"><span class="micon cl"></span><span>Levels</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Levels$.html"><span class="micon ob"></span><span>Levels</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Model$.html"><span class="micon ob"></span><span>Model</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ModelCard$.html"><span class="micon ob"></span><span>ModelCard</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ModelCard.html"><span class="micon cl"></span><span>ModelCard</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ModelId$.html"><span class="micon ob"></span><span>ModelId</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/NoulAnswer$.html"><span class="micon ob"></span><span>NoulAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/NoulAnswer.html"><span class="micon cl"></span><span>NoulAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/NoulCriteria.html"><span class="micon cl"></span><span>NoulCriteria</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/NoulCriteria$.html"><span class="micon ob"></span><span>NoulCriteria</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/OptionName$.html"><span class="micon ob"></span><span>OptionName</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Options.html"><span class="micon cl"></span><span>Options</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Options$.html"><span class="micon ob"></span><span>Options</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Probability$.html"><span class="micon ob"></span><span>Probability</span></a></span></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="verdict4s/algebra/Question$.html"><span class="micon ob"></span><span>Question</span></a></span><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/Question$$Spec.html"><span class="micon cl"></span><span>Spec</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/QuestionKey$.html"><span class="micon ob"></span><span>QuestionKey</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/QuestionSpec$.html"><span class="micon ob"></span><span>QuestionSpec</span></a></span></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="verdict4s/algebra/QuestionSpec.html"><span class="micon en"></span><span>QuestionSpec</span></a></span><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/QuestionSpec$$Noul.html"><span class="micon cl"></span><span>Noul</span></a></span></div><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/QuestionSpec$$Choice.html"><span class="micon cl"></span><span>Choice</span></a></span></div><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/QuestionSpec$$Score.html"><span class="micon cl"></span><span>Score</span></a></span></div><div class="ni n3 "><span class="nh "><a href="verdict4s/algebra/QuestionSpec$$Raw.html"><span class="micon cl"></span><span>Raw</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Refinements$.html"><span class="micon ob"></span><span>Refinements</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/RetryPolicy$.html"><span class="micon ob"></span><span>RetryPolicy</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/RetryPolicy.html"><span class="micon cl"></span><span>RetryPolicy</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ScoreAnswer.html"><span class="micon cl"></span><span>ScoreAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/ScoreAnswer$.html"><span class="micon ob"></span><span>ScoreAnswer</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Usage.html"><span class="micon cl"></span><span>Usage</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/algebra/Usage$.html"><span class="micon ob"></span><span>Usage</span></a></span></div></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Ask.html"><span class="micon cl"></span><span>Ask</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Ask$.html"><span class="micon ob"></span><span>Ask</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Jitter.html"><span class="micon tr"></span><span>Jitter</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Jitter$.html"><span class="micon ob"></span><span>Jitter</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/SystemOne$.html"><span class="micon ob"></span><span>SystemOne</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Verdict4s$.html"><span class="micon ob"></span><span>Verdict4s</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Verdict4sClient.html"><span class="micon cl"></span><span>Verdict4sClient</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Verdict4sClient$.html"><span class="micon ob"></span><span>Verdict4sClient</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Verdict4sEnv$.html"><span class="micon ob"></span><span>Verdict4sEnv</span></a></span></div><div class="ni n1"><span class="nh "><button class="ar icon-button "></button><a href="verdict4s/Verdict4sError$.html"><span class="micon ob"></span><span>Verdict4sError</span></a></span><div class="ni n2 "><span class="nh "><a href="verdict4s/Verdict4sError$$Api.html"><span class="micon cl"></span><span>Api</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/Verdict4sError$$Decoding.html"><span class="micon cl"></span><span>Decoding</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/Verdict4sError$$Invalid.html"><span class="micon cl"></span><span>Invalid</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/Verdict4sError$$Transport.html"><span class="micon cl"></span><span>Transport</span></a></span></div><div class="ni n2 "><span class="nh "><a href="verdict4s/Verdict4sError$$Validation.html"><span class="micon cl"></span><span>Validation</span></a></span></div></div><div class="ni n1 "><span class="nh "><a href="verdict4s/Verdict4sError.html"><span class="micon cl"></span><span>Verdict4sError</span></a></span></div><div class="ni n1 "><span class="nh "><a href="verdict4s/syntax$.html"><span class="micon ob"></span><span>syntax</span></a></span></div></div></nav></div><div id="footer" class="body-small"><div class="left-container">Generated with</div><div class="right-container"><a href="https://github.com/softinio/verdict4s"><button class="icon-button gh"></button></a><div class="text"></div></div><div class="text-mobile"></div></div><div id="scaladoc-searchBar"></div><div id="main"><div class="breadcrumbs container"><a href="../../index.html">Verdict4s</a>/<a href="verdict4s.html">com.softinio.verdict4s</a></div><div id="content" class="body-medium"><div><div class="cover-header">
+ <span class="icon"><span class="micon pa"></span></span>
+ <h1 class="h600 single">com.softinio.verdict4s</h1>
+</div>
+<div class="fqname body-large">
+ <span></span>
+</div>
+<div class="main-signature mono-small-block">
+ <div class="signature">
+  <span class="modifiers"></span><span class="kind"><span t="k">package </span></span><a href="verdict4s.html" t="n" class="documentableName ">com.softinio.verdict4s</a>
+ </div>
+</div>
+<section id="members-list">
+ <h2 class="h500">Members list</h2>
+ <div class="documentableFilter">
+  <div class="filtersContainer"></div><input class="filterableInput" placeholder="Filter by any phrase" data-test-id="filterBarInput" type="search"><button class="clearButton label-only-button" data-test-id="filterBarClearButton">Clear all</button>
+ </div>
+ <div class="membersList expand">
+  <div class="tabs">
+   <div class="contents">
+    <section id="Packages">
+     <div data-togglable="packages" class="tab expand">
+      <div class="documentableList expand">
+       <div class="documentableList-expander">
+        <button class="icon-button show-content expand"></button>
+        <h3 class="groupHeader h400">Packages</h3>
+       </div>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">package </span></span><a href="verdict4s/algebra.html" t="n" class="documentableName ">com.softinio.verdict4s.algebra</a>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="Grouped-members">
+     <div data-togglable="grouped_members" class="tab expand">
+      <div class="member-group-header">
+       <h3 data-togglable="grouped_members" class="h400">Grouped members</h3>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">No effect system</h3>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/SystemOne$.html" t="n" class="documentableName ">SystemOne</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Driving the protocol with no effect system at all.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Driving the protocol with no effect system at all.</p>
+             <p><code>verdict4s-core</code> carries only cats-core, circe and Iron: no effect type, no HTTP client, no fs2. That is what this object is for. Render a request to JSON, send it with whatever HTTP client you already have, and parse the reply back into typed answers:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>val body = SystemOne.render(request)
+</span><span line-number="2" class=""><span class="tooltip-container"></span>val text = myHttpClient.post(SystemOne.evaluateUrl, body) // your code
+</span><span line-number="3" class=""><span class="tooltip-container"></span>val evaluation = SystemOne.parse(text)
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+             <p>This is the path for Twitter <code>Future</code>, for Akka or Pekko HTTP, for sttp, and for a plain blocking client — anything without a lawful cats-effect instance. If you do have one, <code>verdict4s-client</code> is less work.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Self type
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <span></span>
+               <div>
+                <a href="verdict4s/SystemOne$.html" t="n">SystemOne</a>.<span t="k">type</span>
+               </div>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Errors</h3>
+       <div class="documentableElement" data-f-keywords="sealed,abstract">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="signature-short"><span class="modifiers"><span t="k">sealed abstract </span></span><span class="kind"><span t="k">class </span></span><a href="verdict4s/Verdict4sError.html" t="n" class="documentableName ">Verdict4sError</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">message</span>: <a href="https://scala-lang.org/api/3.x/scala/Predef$.html#String-0" t="t">String</a>, <span t="k"></span><span data-unresolved-link="" t="n">cause</span>: <a href="https://scala-lang.org/api/3.x/scala/Option.html" t="t">Option</a>[<a href="https://scala-lang.org/api/3.x/scala.html#Throwable-0" t="t">Throwable</a>] = ...)<span t="k"> extends </span><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Exception.html" t="t">Exception</a></span><span class="signature-long"></span>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Failures a verdict4s call can produce.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Failures a verdict4s call can produce.</p>
+             <p>Lives in the effect-free core so that callers can pattern match on it without taking a dependency on cats-effect or http4s.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="verdict4s/Verdict4sError$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Exception.html" t="n">Exception</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Throwable.html" t="n">Throwable</a>
+               </div>
+               <div>
+                trait <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/io/Serializable.html" t="n">Serializable</a>
+               </div>
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span class="show-all-code show-content text-button h100">Show all</span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Known subtypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block subtypes">
+               <div>
+                class <a href="verdict4s/Verdict4sError$$Api.html" t="n">Api</a>
+               </div>
+               <div>
+                class <a href="verdict4s/Verdict4sError$$Decoding.html" t="n">Decoding</a>
+               </div>
+               <div>
+                class <a href="verdict4s/Verdict4sError$$Invalid.html" t="n">Invalid</a>
+               </div>
+               <div>
+                class <a href="verdict4s/Verdict4sError$$Transport.html" t="n">Transport</a>
+               </div>
+               <div>
+                class <a href="verdict4s/Verdict4sError$$Validation.html" t="n">Validation</a>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Questions</h3>
+       <div class="documentableElement" data-f-keywords="final">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final </span></span><span class="kind"><span t="k">class </span></span><a href="verdict4s/Ask.html" t="n" class="documentableName ">Ask</a>[<span t="k"></span><span data-unresolved-link="" t="t">Q</span><span t="k"> &lt;: </span><a href="https://scala-lang.org/api/3.x/scala/Tuple.html" t="t">Tuple</a>]
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A set of questions asked together, answered at exactly the right types.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A set of questions asked together, answered at exactly the right types.</p>
+             <p>One request carrying several questions is both cheaper and faster than one request each, and it is the shape the service is designed around. <code>Ask</code> keeps that batching while preserving each question's own answer type:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>val (urgent, dept, mood) = client.ask(
+</span><span line-number="2" class=""><span class="tooltip-container"></span> Ask(
+</span><span line-number="3" class=""><span class="tooltip-container"></span>   Question.noul("Does this convey urgency?"),
+</span><span line-number="4" class=""><span class="tooltip-container"></span>   Question.choice[Dept]("Which team should handle this?"),
+</span><span line-number="5" class=""><span class="tooltip-container"></span>   Question.score("How frustrated?", Seq("Calm", "Cross", "Livid"))
+</span><span line-number="6" class=""><span class="tooltip-container"></span> ),
+</span><span line-number="7" class=""><span class="tooltip-container"></span> state
+</span><span line-number="8" class=""><span class="tooltip-container"></span>)
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+             <p><code>urgent</code> is a <code>NoulAnswer</code>, <code>dept</code> a <code>ChoiceAnswer[Dept]</code> and <code>mood</code> a <code>ScoreAnswer</code> -- destructured positionally, with no casts and no lookups by string. The map-based <a href="verdict4s/algebra/Evaluation.html">algebra.Evaluation</a> remains available for cases where the questions are not known statically.</p>
+             <p>Question keys are generated positionally, so callers never name them. Use <a href="verdict4s/Ask.html#withKeys-fffff428">withKeys</a> if you need them to match something else.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="verdict4s/Ask$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Configuration</h3>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">trait </span></span><a href="verdict4s/Jitter.html" t="n" class="documentableName ">Jitter</a>[<span t="k"></span><span data-unresolved-link="" t="t">F</span>[<span t="t">_</span>]]
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Where a retry delay's randomness comes from.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Where a retry delay's randomness comes from.</p>
+             <p>A two-method trait rather than a direct call to a random source, for two reasons. Tests get a fully deterministic schedule from <a href="verdict4s/Jitter$.html#constant-935">Jitter.constant</a> without a mocking library. And the obvious alternatives are both worse here: <code>cats.effect.std.Random</code> is only transitively on the classpath, and deriving randomness from <code>Temporal.monotonic</code> yields a constant on Scala.js, where the clock is millisecond-granular.</p>
+             <p>This lives in the client, not in <code>algebra</code>, because drawing a sample is an effect and the core must stay effect-free.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="verdict4s/Jitter$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/Verdict4sEnv$.html" t="n" class="documentableName ">Verdict4sEnv</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Reading configuration from the environment. JVM only.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Reading configuration from the environment. JVM only.</p>
+             <p>A separate object rather than methods on <a href="verdict4s/Verdict4s$.html">Verdict4s</a>, and not by preference: a Scala <code>object</code> cannot be split across <code>src/</code> and <code>src-jvm/</code>, so adding these there would force <code>default</code> to be duplicated into both platform directories — exactly the drift that keeping one signature on both platforms is meant to prevent.</p>
+             <p>Scala.js has no environment to read, so this simply does not exist there. The JVM artifact having a slightly larger surface than the JS one is normal and does not affect <a href="verdict4s/Verdict4s$.html#default-fffff592">Verdict4s.default</a>.</p>
+             <p>Variable names match the official SDKs, so a project can share them.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Self type
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <span></span>
+               <div>
+                <a href="verdict4s/Verdict4sEnv$.html" t="n">Verdict4sEnv</a>.<span t="k">type</span>
+               </div>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="documentableList expand">
+       <button class="icon-button show-content expand"></button>
+       <h3 class="h200">Client</h3>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/Verdict4s$.html" t="n" class="documentableName ">Verdict4s</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Batteries-included entry point.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Batteries-included entry point.</p>
+             <p>Picks a sensible transport for whichever platform you are on — Ember on the JVM, the browser and Node Fetch API on Scala.js — so getting a working client is a one-liner:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>Verdict4s.default[IO](apiKey).use { client =&gt;
+</span><span line-number="2" class=""><span class="tooltip-container"></span> client.ask(Ask(Question.noul("Is this urgent?")), ticket)
+</span><span line-number="3" class=""><span class="tooltip-container"></span>}
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+             <p>If you already have an http4s <code>Client[F]</code>, or want a backend other than the default, depend on <code>verdict4s-client</code> and construct <a href="verdict4s/Verdict4sClient.html">Verdict4sClient</a> directly.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Self type
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <span></span>
+               <div>
+                <a href="verdict4s/Verdict4s$.html" t="n">Verdict4s</a>.<span t="k">type</span>
+               </div>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement" data-f-keywords="final">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"><span t="k">final </span></span><span class="kind"><span t="k">class </span></span><a href="verdict4s/Verdict4sClient.html" t="n" class="documentableName ">Verdict4sClient</a>[<span t="k"></span><span data-unresolved-link="" t="t">F</span>[<span t="t">_</span>]]
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>A client for the TypeSafe evaluation API.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>A client for the TypeSafe evaluation API.</p>
+             <p>Takes an http4s <code>Client[F]</code> rather than building one. That single decision buys every backend and every platform without this library owning any of them — Ember, Fetch, Blaze, Netty, the JDK client — and it is why the test suite needs no network: <code>Client.fromHttpApp</code> serves routes in memory, so the same tests run on the JVM and on Node.</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>val client = Verdict4sClient[IO](httpClient, apiKey)
+</span><span line-number="2" class=""><span class="tooltip-container"></span>
+</span><span line-number="3" class=""><span class="tooltip-container"></span>val (urgent, dept) = client.ask(
+</span><span line-number="4" class=""><span class="tooltip-container"></span> Ask(
+</span><span line-number="5" class=""><span class="tooltip-container"></span>   Question.noul("Does this convey urgency?"),
+</span><span line-number="6" class=""><span class="tooltip-container"></span>   Question.choice[Dept]("Which team should handle this?")
+</span><span line-number="7" class=""><span class="tooltip-container"></span> ),
+</span><span line-number="8" class=""><span class="tooltip-container"></span> "Help! My payouts have been failing for 3 days."
+</span><span line-number="9" class=""><span class="tooltip-container"></span>)
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+             <p>Retries are on by default, matching the official SDKs; see <a href="verdict4s/algebra/RetryPolicy.html">algebra.RetryPolicy</a> to tune or disable them.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Companion
+             </dt>
+             <dd class="body-medium">
+              <a href="verdict4s/Verdict4sClient$.html">object</a>
+             </dd>
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="documentableElement">
+        <div class="documentableElement-expander">
+         <button class="icon-button ar show-content"></button>
+         <div class="header monospace mono-medium">
+          <div class="signature">
+           <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/syntax$.html" t="n" class="documentableName ">syntax</a>
+          </div>
+         </div>
+        </div>
+        <div class="docs">
+         <span class="modifiers"></span>
+         <div>
+          <div class="originInfo"></div>
+          <div class="memberDocumentation">
+           <div class="documentableBrief doc">
+            <p>Optional sugar for the call site.</p>
+           </div>
+           <div class="cover">
+            <div class="doc">
+             <p>Optional sugar for the call site.</p>
+             <p>The documented form is <code>client.ask(questions, state)</code>, which needs nothing in implicit scope and infers <code>F</code> from the client. This import adds a reading-order alternative for those who prefer it:</p>
+             <div class="snippet mono-small-block" scala-snippet="">
+              <pre><code class="language-scala"><span line-number="1" class=""><span class="tooltip-container"></span>import com.softinio.verdict4s.syntax.*
+</span><span line-number="2" class=""><span class="tooltip-container"></span>
+</span><span line-number="3" class=""><span class="tooltip-container"></span>given Verdict4sClient[IO] = client
+</span><span line-number="4" class=""><span class="tooltip-container"></span>val (urgent, dept) = Ask(q1, q2).run("payouts failing")
+</span></code></pre>
+              <div class="buttons"></div>
+             </div>
+             <p><code>run</code> needs the client as a <code>given</code> for <code>F</code> to be inferable, which is an unusual idiom; <a href="verdict4s/syntax$.html#runWith-d25">runWith</a> is the same thing with the client passed explicitly.</p>
+            </div>
+            <h2 class="h200">Attributes</h2>
+            <dl class="attributes attributes-small">
+             <dt class="body-small">
+              Supertypes
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <div>
+                class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+               </div>
+               <div>
+                trait <span data-unresolved-link="" t="n">Matchable</span>
+               </div>
+               <div>
+                class <span data-unresolved-link="" t="n">Any</span>
+               </div><span></span>
+              </div>
+             </dd>
+             <dt class="body-small">
+              Self type
+             </dt>
+             <dd class="body-medium">
+              <div class="mono-small-block supertypes">
+               <span></span>
+               <div>
+                <a href="verdict4s/syntax$.html" t="n">syntax</a>.<span t="k">type</span>
+               </div>
+              </div>
+             </dd>
+            </dl>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="Type-members">
+     <div data-togglable="Type members" class="tab expand">
+      <div class="member-group-header">
+       <h3 data-togglable="Type members" class="h400">Type members</h3>
+      </div>
+      <section id="Classlikes">
+       <div class="documentableList expand">
+        <div class="documentableList-expander">
+         <button class="icon-button show-content expand"></button>
+         <h4 class="groupHeader h200">Classlikes</h4>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/Ask$.html" t="n" class="documentableName ">Ask</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Building an <a href="verdict4s/Ask.html">Ask</a> from one to twelve questions, and the type that computes its answers.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Building an <a href="verdict4s/Ask.html">Ask</a> from one to twelve questions, and the type that computes its answers.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="verdict4s/Ask.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="verdict4s/Ask$.html" t="n">Ask</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/Jitter$.html" t="n" class="documentableName ">Jitter</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Ready-made sources of jitter: a random one, and a constant one for tests.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Ready-made sources of jitter: a random one, and a constant one for tests.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="verdict4s/Jitter.html">trait</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="verdict4s/Jitter$.html" t="n">Jitter</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/Verdict4sClient$.html" t="n" class="documentableName ">Verdict4sClient</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Constructing a <a href="verdict4s/Verdict4sClient.html">Verdict4sClient</a> over a transport you supply.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Constructing a <a href="verdict4s/Verdict4sClient.html">Verdict4sClient</a> over a transport you supply.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="verdict4s/Verdict4sClient.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="verdict4s/Verdict4sClient$.html" t="n">Verdict4sClient</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="verdict4s/Verdict4sError$.html" t="n" class="documentableName ">Verdict4sError</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>The cases of <a href="verdict4s/Verdict4sError.html">Verdict4sError</a>, and a constructor for API errors built from a raw response.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>The cases of <a href="verdict4s/Verdict4sError.html">Verdict4sError</a>, and a constructor for API errors built from a raw response.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="verdict4s/Verdict4sError.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror$$Sum.html" t="n">Sum</a>
+                </div>
+                <div>
+                 trait <a href="https://scala-lang.org/api/3.x/scala/deriving/Mirror.html" t="n">Mirror</a>
+                </div>
+                <div>
+                 class <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java/lang/Object.html" t="n">Object</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="verdict4s/Verdict4sError$.html" t="n">Verdict4sError</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+     </div>
+    </section>
+   </div>
+  </div>
+ </div>
+</section></div><div id="toc" class="body-small"><div id="toc-container"><span class="toc-title h200">In this article</span><nav class="toc-nav"><ul class="toc-list"><li><a href="#members-list">Members list</a><ul><li><a href="#Packages">Packages</a></li><li><a href="#Grouped-members">Grouped members</a></li><li><a href="#Type-members">Type members</a><ul><li><a href="#Classlikes">Classlikes</a></li></ul></li></ul></li></ul></nav></div></div></div><div id="footer" class="body-small mobile-footer"><div class="left-container">Generated with</div><div class="right-container"><a href="https://github.com/softinio/verdict4s"><button class="icon-button gh"></button></a><div class="text"></div></div><div class="text-mobile"></div></div></div></div></body></html>
