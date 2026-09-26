@@ -51,20 +51,20 @@ one that matches how much you want the library to decide for you.
 | `verdict4s-core` | You want the types and codecs only, with no effect system at all. |
 
 Each layer depends on the one below it, so taking `verdict4s` gives you all
-three.
+three. On the JVM they need Java 17 or later.
 
 ### Mill
 
 ```scala
 def mvnDeps = Seq(
-  mvn"com.softinio::verdict4s::<version>"
+  mvn"com.softinio::verdict4s::@VERSION@"
 )
 ```
 
 ### sbt
 
 ```scala
-libraryDependencies += "com.softinio" %%% "verdict4s" % "<version>"
+libraryDependencies += "com.softinio" %%% "verdict4s" % "@VERSION@"
 ```
 
 The `::` (Mill) and `%%%` (sbt) forms resolve the right artifact for whichever

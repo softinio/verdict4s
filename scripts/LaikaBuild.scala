@@ -29,6 +29,8 @@ import laika.config.LinkValidation
 import laika.config.SyntaxHighlighting
 import laika.helium.Helium
 import laika.helium.config.*
+import java.nio.file.{Files, Paths}
+import java.util.Comparator
 
 /** Renders `docs/` into `site/target/docs/site`.
   *
@@ -39,8 +41,36 @@ import laika.helium.config.*
   */
 object LaikaBuild extends IOApp.Simple {
 
+  /** The release the site documents, substituted for `@VERSION@` in the pages.
+    *
+    * `mill docs.build` passes it in, from the release tag in CI or the
+    * git-derived version locally. Run on its own, the script falls back to a
+    * placeholder.
+    */
+  val version: String = sys.env.getOrElse("VERDICT4S_DOC_VERSION", "<version>")
+
+  /** `docs/` with `@VERSION@` replaced, which is what Laika actually renders.
+    *
+    * Laika's own `${...}` substitution cannot do this: every version appears in
+    * a dependency line inside a fenced Scala block, and the highlighter claims
+    * `${...}` in a string literal as Scala interpolation before Laika resolves
+    * it, so the variable reaches the page verbatim.
+    */
+  val sources = Paths.get("site/target/docs/src")
+
+  def stageSources: IO[Unit] = IO.blocking {
+    val from = Paths.get("docs")
+    if Files.exists(sources) then
+      Files.walk(sources).sorted(Comparator.reverseOrder()).forEach(Files.delete)
+    Files.walk(from).forEach { path =>
+      val to = sources.resolve(from.relativize(path))
+      if Files.isDirectory(path) then Files.createDirectories(to)
+      else Files.writeString(to, Files.readString(path).replace("@VERSION@", version))
+    }
+  }
+
   def run: IO[Unit] = for {
-    _ <- IO.println("Starting Laika documentation build...")
+    _ <- IO.println(s"Starting Laika documentation build for $version...")
 
     heliumTheme = Helium.defaults
       .all.metadata(
@@ -79,9 +109,10 @@ object LaikaBuild extends IOApp.Simple {
       .withTheme(heliumTheme)
       .build
 
+    _ <- stageSources
     _ <- IO.println("Running transformation...")
     _ <- transformer.use { t =>
-      t.fromDirectory("docs")
+      t.fromDirectory(sources.toString)
         .toDirectory("site/target/docs/site")
         .transform
     }

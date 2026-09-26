@@ -98,12 +98,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: ["25"]
+        jdk: ["17", "25"]
         scala-version: ["3.3.8", "3.9.0"]
-    # The `tests` job above already covers Java 21 -- the version these
-    # artifacts target and the one the devshell's Mill runs on. This job checks
-    # the code also behaves on a newer runtime, which `--release 21` does not
-    # guarantee on its own.
+    # The `tests` job above already covers Java 21, the JDK the devshell's Mill
+    # runs on. The artifacts target 17 (`--release 17`), which guarantees the
+    # API surface exists there but not that the code behaves identically, so
+    # this job runs the suite on that floor and on the newest LTS as well.
     env:
       VERDICT4S_JVM: "temurin:${{ matrix.jdk }}"
     steps:
@@ -158,17 +158,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-mill-docs-
 
-    # docs.build renders the narrative site and copies each module's scaladoc
-    # in under api/<module>, so the reference links resolve.
+    # docs.build renders the narrative site and copies the combined scaladoc
+    # in under api/, so the reference links resolve. This only proves the site
+    # builds; it is published from a release tag by docs.yml.
     - name: Generate site
       run: |
         nix develop --command mill --no-daemon docs.build
-
-    # Publish site
-    - name: Publish site
-      if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v4.0.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: site/target/docs/site
-        keep_files: true
