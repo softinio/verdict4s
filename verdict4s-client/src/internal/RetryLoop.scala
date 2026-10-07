@@ -16,9 +16,12 @@
 
 package com.softinio.verdict4s.internal
 
+import scala.concurrent.duration.FiniteDuration
+
 import cats.effect.kernel.Temporal
 import cats.syntax.all.*
 import com.softinio.verdict4s.Jitter
+import com.softinio.verdict4s.Vendor
 import com.softinio.verdict4s.Verdict4sError
 import com.softinio.verdict4s.algebra.RetryPolicy
 import org.http4s.Request
@@ -41,17 +44,24 @@ private[verdict4s] object RetryLoop:
 
   /** Run `request`, handling the response inside the resource scope.
     *
+    * @param vendor
+    *   where to find the request id and the retry delay in an error response
+    * @param requestTimeout
+    *   ceiling on one attempt, from sending to having read the body. Exceeding
+    *   it is a [[Verdict4sError.Transport]], and is not retried
     * @param onSuccess
     *   how to read a 2xx response; runs before the connection is released
     */
   def run[F[_]: Temporal, A](
       client: Client[F],
       request: Request[F],
+      vendor: Vendor,
       policy: RetryPolicy,
+      requestTimeout: FiniteDuration,
       jitter: Jitter[F]
   )(onSuccess: Response[F] => F[Either[Verdict4sError, A]]): F[A] =
 
-    def attempt(number: Int): F[A] =
+    def once: F[Either[Verdict4sError.Api, Either[Verdict4sError, A]]] =
       client
         .run(request)
         .use: response =>
@@ -59,14 +69,29 @@ private[verdict4s] object RetryLoop:
             onSuccess(response).map(
               Right(_): Either[Verdict4sError.Api, Either[Verdict4sError, A]]
             )
-          else nowSeconds.flatMap(now => Wire.error(response, now).map(Left(_)))
+          else
+            nowSeconds.flatMap(now =>
+              Wire.error(response, vendor, now).map(Left(_))
+            )
+
+    def attempt(number: Int): F[A] =
+      Temporal[F]
+        .timeoutTo(
+          once,
+          requestTimeout,
+          Temporal[F].raiseError(
+            Verdict4sError.Transport(
+              s"no response from ${vendor.name} within $requestTimeout"
+            )
+          )
+        )
         .flatMap:
           case Right(decoded) => Temporal[F].fromEither(decoded)
           case Left(apiError) => retryOrRaise(apiError, number)
 
     def retryOrRaise(apiError: Verdict4sError.Api, number: Int): F[A] =
-      if !policy.retriesStatus(apiError.status) then
-        Temporal[F].raiseError(apiError)
+      if !policy.retriesStatus(apiError.status) || !vendor.retryable(apiError)
+      then Temporal[F].raiseError(apiError)
       else
         jitter.sample.flatMap: sample =>
           policy.delayFor(number, apiError.retryAfter, sample) match

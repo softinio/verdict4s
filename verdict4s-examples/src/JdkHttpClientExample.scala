@@ -30,7 +30,7 @@ import com.softinio.verdict4s.algebra.*
 /** **Strategy C — no effect system.**
   *
   * `verdict4s-core` carries only cats-core, circe and Iron: no effect type, no
-  * HTTP client. [[SystemOne]] renders a request to JSON and parses a reply back
+  * HTTP client. [[Vendor]] renders a request to JSON and parses a reply back
   * into typed answers, so the transport can be anything. Here it is the JDK's
   * own `java.net.http.HttpClient`, which needs no dependency at all.
   *
@@ -60,7 +60,7 @@ object JdkHttpClientExample:
       http: HttpClient
   ): Either[Verdict4sError, (Boolean, Dept)] =
     for
-      body <- SystemOne.renderAsk(questions, ticket)
+      body <- Vendor.Jev.renderAsk(questions, ticket)
       response <- send(http, apiKey, body)
       answers <- read(response)
     yield
@@ -73,9 +73,9 @@ object JdkHttpClientExample:
       body: String
   ): Either[Verdict4sError, HttpResponse[String]] =
     val builder = HttpRequest
-      .newBuilder(URI.create(SystemOne.evaluateUrl))
+      .newBuilder(URI.create(Vendor.Jev.evaluateUrl))
       .POST(HttpRequest.BodyPublishers.ofString(body))
-    val request = SystemOne
+    val request = Vendor.Jev
       .headers(apiKey)
       .foldLeft(builder)((b, header) => b.header(header._1, header._2))
       .build()
@@ -93,6 +93,6 @@ object JdkHttpClientExample:
         name -> values.asScala.headOption.getOrElse("")
       )
       Left(
-        SystemOne.parseError(response.statusCode, response.body, headers.toMap)
+        Vendor.Jev.parseError(response.statusCode, response.body, headers.toMap)
       )
-    else SystemOne.parseAsk(questions, response.body)
+    else Vendor.Jev.parseAsk(questions, response.body)

@@ -10,9 +10,10 @@
 [![Documentation](https://github.com/softinio/verdict4s/actions/workflows/docs.yml/badge.svg)](https://verdict4s.softinio.dev)
 [![Maven Central](https://img.shields.io/maven-central/v/com.softinio/verdict4s_3)](https://central.sonatype.com/artifact/com.softinio/verdict4s_3)
 
-A Scala 3 client for [TypeSafe AI](https://typesafe.ai)'s **Jev**, a decision
-model that answers typed questions about your program state with choices,
-scores and calibrated probabilities instead of text.
+A Scala 3 client for typed decision models: [TypeSafe AI](https://typesafe.ai)'s
+**Jev** and **OpenAI Decisions**. A decision model answers typed questions about
+your program state with choices, scores and calibrated probabilities instead of
+text. The same questions and the same typed answers work with either vendor.
 
 Cross-built for the **JVM** and **Scala.js** from one source tree.
 
@@ -34,11 +35,17 @@ val (urgent, team, mood) = client.ask(
 `ScoreAnswer` — destructured positionally, at exactly the right types, with no
 casts and no lookups by string.
 
+`client` comes from `Verdict4s.jev[IO](key)` or `Verdict4s.openAI[IO](key)`.
+Nothing else changes between the two vendors. A feature only one vendor has,
+such as Jev's model list, is a capability on that vendor's client, so the
+compiler catches a call the other vendor cannot serve.
+
 ## Why the types matter
 
-The service enforces real limits: a Choice takes 1 to 255 options, a Score 2 to
-10 ordered levels, probabilities live in the unit interval. Those are carried
-by the types rather than discovered a network round trip later.
+The services enforce real limits: a Choice takes at most 255 options, a Score 2
+to 10 ordered levels, probabilities live in the unit interval. Those are carried
+by the types rather than discovered a network round trip later, and each
+vendor's own stricter rules are checked before a request is sent.
 
 ```scala
 Probability(0.95)   // fine
@@ -70,10 +77,11 @@ libraryDependencies += "com.softinio" %%% "verdict4s" % "<version>"
 ## Documentation
 
 - [Getting started](https://verdict4s.softinio.dev/getting-started.html)
+- [Choosing a vendor](https://verdict4s.softinio.dev/choosing-a-vendor.html) — Jev or OpenAI Decisions, and what differs
 - [Typed questions](https://verdict4s.softinio.dev/typed-questions.html)
 - [Errors and retries](https://verdict4s.softinio.dev/errors-and-retries.html)
 - [Bring your own client](https://verdict4s.softinio.dev/client-module.html) — any http4s backend, or an in-memory fake
-- [No effect system](https://verdict4s.softinio.dev/core-module.html) — driving the protocol by hand
+- [No effect system](https://verdict4s.softinio.dev/core-module.html) — driving either vendor by hand
 - [Other effect systems](https://verdict4s.softinio.dev/effect-systems.html) — ZIO, Future, and anything without a cats-effect instance
 - [API reference](https://verdict4s.softinio.dev/api-reference.html) — all three modules in one Scaladoc site
 
@@ -95,12 +103,17 @@ buildDocs / previewDocs                   # Laika site, or serve on :4242
 mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient examples
 ```
 
-Integration tests run against the real service and are gated on an API key.
-Without one they report as ignored, so the suite stays green offline:
+Integration tests run against the real services and are gated on each vendor's
+API key. Without one they report as ignored, so the suite stays green offline:
 
 ```bash
 TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveApiIT
+OPENAI_API_KEY=…   mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveOpenAIIT
 ```
+
+`LiveOpenAIIT` needs an OpenAI account with credits. Without them, the request
+schema test still passes, because OpenAI checks a body before it checks credit,
+but every test that reads an answer fails with "the account has no credits".
 
 `mill docs.preview` holds Mill's workspace lock while it runs; stop it before
 building anything else.
@@ -121,12 +134,12 @@ git tag v0.1.0 && git push origin v0.1.0
    It can be re-run by hand for a tag from the Actions tab.
 
 Run the integration tests above before tagging; they are the only check
-against the live service.
+against the live services.
 
 ## Structure
 
 ```
-verdict4s-core/      effect-free: models, codecs, Ask, no HTTP client
+verdict4s-core/      effect-free: models, Ask, the Vendor trait, Jev and OpenAI codecs
 verdict4s-client/    a client over a caller-supplied http4s Client[F]
 verdict4s/           batteries included: Ember on JVM, Fetch on Scala.js
 verdict4s-examples/  interop examples, compiled by CI, never published

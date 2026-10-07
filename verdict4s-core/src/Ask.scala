@@ -19,6 +19,7 @@ package com.softinio.verdict4s
 import scala.collection.immutable.SortedMap
 
 import cats.data.NonEmptyChain
+import cats.data.NonEmptyList
 import cats.data.ValidatedNec
 import cats.syntax.all.*
 import com.softinio.verdict4s.algebra.*
@@ -104,35 +105,55 @@ final class Ask[Q <: Tuple] private (
 
   /** Project a response back into the positional answer tuple.
     *
+    * A refused question fails the whole projection with
+    * [[Verdict4sError.Refused]], naming every refused question at once and
+    * carrying the full response, unless the question was built with
+    * `orRefused`, in which case it reads as `None`. Any other problem is
+    * reported as the first one found.
+    *
     * This is the only place in the library that casts. Both are justified by
     * the same fact: the list is built by walking the very tuple that
     * [[Ask.Answers]] is computed from, in the same order, so element `i` has
     * the type the match type assigns to position `i`.
     */
   def answers(evaluation: Evaluation): Either[Verdict4sError, Ask.Answers[Q]] =
-    for
-      ss <- specs.toEither.leftMap(Verdict4sError.Invalid(_))
-      vs <- ss.zipWithIndex.traverse((spec, i) => answerAt(evaluation, spec, i))
-    yield Tuple.fromArray(vs.toArray).asInstanceOf[Ask.Answers[Q]]
+    specs.toEither
+      .leftMap(Verdict4sError.Invalid(_))
+      .flatMap: ss =>
+        val results =
+          ss.zipWithIndex.map((spec, i) => answerAt(evaluation, spec, i))
+        val refused = results.collect:
+          case (Some(k), Left(_))
+              if evaluation.answer(k).contains(Answer.Refused) =>
+            k
+        NonEmptyList.fromList(refused) match
+          case Some(keys) => Left(Verdict4sError.Refused(keys, evaluation))
+          case None       =>
+            results
+              .traverse(_._2)
+              .map(vs =>
+                Tuple.fromArray(vs.toArray).asInstanceOf[Ask.Answers[Q]]
+              )
 
+  /** The answer at one position, with the key it was looked up under. */
   private def answerAt(
       evaluation: Evaluation,
       spec: Question.Spec[?],
       index: Int
-  ): Either[Verdict4sError, Any] =
+  ): (Option[QuestionKey], Either[Verdict4sError, Any]) =
     val raw = keyFor(index)
-    QuestionKey
-      .either(raw)
-      .leftMap(_ =>
-        Verdict4sError.Decoding(s"'$raw' is not a usable question key")
-      )
-      .flatMap: k =>
-        evaluation
+    QuestionKey.either(raw) match
+      case Left(_) =>
+        None -> Left(
+          Verdict4sError.Decoding(s"'$raw' is not a usable question key")
+        )
+      case Right(k) =>
+        Some(k) -> evaluation
           .answer(k)
           .toRight(
             Verdict4sError.Decoding(s"the service sent no answer for '$raw'")
           )
-      .flatMap(spec.decode)
+          .flatMap(spec.decode)
 
   private def key(
       index: Int
@@ -153,10 +174,11 @@ final class Ask[Q <: Tuple] private (
   */
 object Ask:
 
-  /** There is no arity limit of ours. The service documents none either -- it
-    * caps Choice options and Score levels, not how many questions a request
-    * carries, and its own examples batch more than a dozen, since one request
-    * is markedly cheaper and faster than several.
+  /** There is no arity limit of ours. Jev documents none either -- it caps
+    * Choice options and Score levels, not how many questions a request carries,
+    * and its own examples batch more than a dozen, since one request is
+    * markedly cheaper and faster than several. OpenAI Decisions caps a request
+    * at 200 questions, which its protocol checks before sending.
     *
     * In practice Scala's tuple-literal syntax stops at 22, which is also the
     * largest result a caller can unpack with `val (a, b, ...) = `. Beyond that,

@@ -18,10 +18,6 @@ package com.softinio.verdict4s.algebra
 
 import cats.Eq
 import cats.Show
-import io.circe.Decoder
-import io.circe.Encoder
-import io.circe.Json
-import io.circe.syntax.*
 
 /** Metadata for a model available to the account.
   *
@@ -37,35 +33,10 @@ final case class ModelCard(
     releaseDate: String
 )
 
-/** Codecs and instances for [[ModelCard]]. */
+/** Instances for [[ModelCard]]. The wire codec is Jev's; see
+  * `com.softinio.verdict4s.jev.JevCodecs`.
+  */
 object ModelCard:
 
-  given Decoder[ModelCard] = Decoder.instance: c =>
-    for
-      name <- c.downField("name").as[Model]
-      description <- c.downField("description").as[String]
-      releaseDate <- c.downField("release_date").as[String]
-    yield ModelCard(name, description, releaseDate)
-
-  given Encoder[ModelCard] = Encoder.instance: m =>
-    Json.obj(
-      "name" -> m.name.asJson,
-      "description" -> m.description.asJson,
-      "release_date" -> m.releaseDate.asJson
-    )
-
-  /** The models endpoint wraps its array in a `models` field:
-    *
-    * ```json
-    * {"models": [{"name": "jev-latest", "description": "...", "release_date": "..."}]}
-    * ```
-    *
-    * That envelope is a wire detail the official SDKs unwrap, and so does
-    * `Verdict4sClient.models`, so it gets a decoder rather than a type of its
-    * own.
-    */
-  val listDecoder: Decoder[List[ModelCard]] =
-    Decoder.instance(_.downField("models").as[List[ModelCard]])
-
   given Eq[ModelCard] = Eq.fromUniversalEquals
-  given Show[ModelCard] = Show.show(_.asJson.noSpaces)
+  given Show[ModelCard] = Show.fromToString

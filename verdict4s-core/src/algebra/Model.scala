@@ -31,6 +31,10 @@ import io.circe.Encoder
   * library release, so pinning it in a closed sum would make every new model a
   * breaking change. The aliases below are provided as constants instead.
   *
+  * Not tied to a vendor either: a model name only means something to the
+  * service it is sent to, and naming a Jev model in a request to OpenAI is a
+  * mistake the service reports, not one this type can prevent.
+  *
   * @group Protocol
   */
 opaque type Model = String
@@ -43,6 +47,9 @@ object Model:
 
   /** The newest release, official or preview. */
   val JevPreview: Model = "jev-preview"
+
+  /** OpenAI Decisions' model, and the only one it supports. */
+  val GptLuna: Model = "gpt-6-luna"
 
   /** Name a model explicitly, for example a pinned `jev-1.13.0`. */
   def fromString(

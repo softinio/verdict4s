@@ -25,7 +25,7 @@ import io.circe.parser
   * touches cats-effect, http4s or a network, and none of it could, because the
   * module does not depend on them.
   */
-class SystemOneTest extends munit.FunSuite:
+class JevVendorTest extends munit.FunSuite:
 
   enum Dept derives Options:
     case Billing, Technical, Sales
@@ -52,13 +52,13 @@ class SystemOneTest extends munit.FunSuite:
   """
 
   test("endpoints are built from the documented base URL"):
-    assertEquals(SystemOne.evaluateUrl, "https://api.typesafe.ai/v1/systemone")
-    assertEquals(SystemOne.modelsUrl, "https://api.typesafe.ai/v1/models")
+    assertEquals(Vendor.Jev.evaluateUrl, "https://api.typesafe.ai/v1/systemone")
+    assertEquals(Vendor.Jev.modelsUrl, "https://api.typesafe.ai/v1/models")
 
   test("headers carry a bearer token and a JSON content type"):
     val key = ApiKey.fromString("sk-test").toOption.get
     assertEquals(
-      SystemOne.headers(key).toMap,
+      Vendor.Jev.headers(key).toMap,
       Map(
         "Authorization" -> "Bearer sk-test",
         "Content-Type" -> "application/json"
@@ -67,7 +67,7 @@ class SystemOneTest extends munit.FunSuite:
 
   test("render produces the JSON the service expects"):
     val body =
-      SystemOne.renderAsk(ask, "Help! My payouts are failing.").toOption.get
+      Vendor.Jev.renderAsk(ask, "Help! My payouts are failing.").toOption.get
     val json = parser.parse(body).toOption.get
     assertEquals(
       json.hcursor.downField("state").as[String],
@@ -86,18 +86,18 @@ class SystemOneTest extends munit.FunSuite:
     "an invalid question stops a request being rendered, reporting all of it"
   ):
     val bad = Ask(Question.noul("", "", ""))
-    SystemOne.renderAsk(bad, "s") match
+    Vendor.Jev.renderAsk(bad, "s") match
       case Left(Verdict4sError.Invalid(errors)) =>
         assertEquals(errors.length, 3L)
       case other => fail(s"expected Invalid, got $other")
 
   test("parse turns a response body into typed answers"):
-    val evaluation = SystemOne.parse(responseBody).toOption.get
+    val evaluation = Vendor.Jev.parse(responseBody).toOption.get
     assertEquals(evaluation.usage, Usage(296, 20))
     assertEquals(evaluation.model.name, "jev-1.13.0")
 
   test("parseAsk projects the response through the questions that produced it"):
-    SystemOne.parseAsk(ask, responseBody) match
+    Vendor.Jev.parseAsk(ask, responseBody) match
       case Right((urgency, dept)) =>
         val u: NoulAnswer = urgency
         val d: ChoiceAnswer[Dept] = dept
@@ -106,11 +106,11 @@ class SystemOneTest extends munit.FunSuite:
       case Left(e) => fail(s"parseAsk failed: $e")
 
   test("a body that is not JSON fails with a decoding error, not an exception"):
-    val err = SystemOne.parse("<html>502 Bad Gateway</html>").swap.toOption.get
+    val err = Vendor.Jev.parse("<html>502 Bad Gateway</html>").swap.toOption.get
     assert(err.getMessage.contains("not JSON"), err.getMessage)
 
   test("a structurally wrong body reports where it went wrong"):
-    val err = SystemOne
+    val err = Vendor.Jev
       .parse(
         """{"model":"jev-1.13.0","usage":{"input_tokens":1,"output_tokens":1}}"""
       )
@@ -120,7 +120,7 @@ class SystemOneTest extends munit.FunSuite:
     assert(err.isInstanceOf[Verdict4sError.Decoding], err.toString)
 
   test("parseError builds a typed API error from status, body and headers"):
-    val err = SystemOne.parseError(
+    val err = Vendor.Jev.parseError(
       429,
       """{"message":"slow down"}""",
       Map("Retry-After" -> "2", "X-TypeSafe-Request-Id" -> "req-123")
@@ -132,15 +132,19 @@ class SystemOneTest extends munit.FunSuite:
     assertEquals(err.retryAfter.map(_.toSeconds), Some(2L))
 
   test("parseError copes with a non-JSON error body"):
-    val err = SystemOne.parseError(502, "<html>Bad Gateway</html>")
+    val err = Vendor.Jev.parseError(502, "<html>Bad Gateway</html>")
     assertEquals(err.status, 502)
     assertEquals(err.failure, ApiFailure.Server)
     assert(err.body.isDefined)
 
   test("render and parse round trip through the wire format"):
-    val body = SystemOne.renderAsk(ask, "state").toOption.get
+    val body = Vendor.Jev.renderAsk(ask, "state").toOption.get
     assert(parser.parse(body).isRight)
     assertEquals(
-      SystemOne.parse(responseBody).map(_.answers.size),
+      Vendor.Jev.parse(responseBody).map(_.answers.size),
       Right(2)
     )
+
+  test("Jev adds no validation of its own"):
+    val one = Ask(Question.choiceOfStrings("Only one?", Seq("only" -> None)))
+    assert(Vendor.Jev.renderAsk(one, "s").isRight)

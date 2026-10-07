@@ -19,8 +19,11 @@ package com.softinio.verdict4s
 import scala.concurrent.duration.FiniteDuration
 
 import cats.data.NonEmptyChain
+import cats.data.NonEmptyList
 import com.softinio.verdict4s.algebra.ApiErrorBody
 import com.softinio.verdict4s.algebra.ApiFailure
+import com.softinio.verdict4s.algebra.Evaluation
+import com.softinio.verdict4s.algebra.QuestionKey
 import io.circe.Json
 
 /** Failures a verdict4s call can produce.
@@ -79,6 +82,26 @@ object Verdict4sError:
           errors.toNonEmptyList.toList.map(_.getMessage).mkString("; ")
       )
 
+  /** The service declined to answer one or more questions.
+    *
+    * Only OpenAI Decisions refuses, and it does so per question, without saying
+    * why. Every other question in the request may still have been answered:
+    * [[evaluation]] holds them all, with [[algebra.Answer.Refused]] under each
+    * key listed here. A question built with `orRefused` reads a refusal as
+    * `None` instead, and never contributes to this error.
+    *
+    * @param keys
+    *   the questions that were refused
+    * @param evaluation
+    *   the complete response
+    */
+  final case class Refused(
+      keys: NonEmptyList[QuestionKey],
+      evaluation: Evaluation
+  ) extends Verdict4sError(
+        s"The service declined to answer ${keys.toList.map(k => k.value: String).mkString(", ")}"
+      )
+
   /** The service answered with a non-success status.
     *
     * @param status
@@ -86,7 +109,8 @@ object Verdict4sError:
     * @param details
     *   a short human-readable summary
     * @param requestId
-    *   the `x-typesafe-request-id` header, for support
+    *   the vendor's request id header (`x-typesafe-request-id` for Jev,
+    *   `x-request-id` for OpenAI), for support
     * @param retryAfter
     *   the `Retry-After` header, already parsed
     * @param body
@@ -117,6 +141,15 @@ object Verdict4sError:
     val parsed = ApiErrorBody.fromJson(rawBody)
     val details = parsed.message.filter(_.nonEmpty).getOrElse(describe(status))
     Api(status, details, requestId, retryAfter, Some(parsed))
+
+  /** A circe failure, keeping the path to the offending value. */
+  private[verdict4s] def fromDecodingFailure(
+      failure: io.circe.DecodingFailure
+  ): Decoding =
+    Decoding(
+      failure.message,
+      Option(io.circe.CursorOp.opsToPath(failure.history)).filter(_.nonEmpty)
+    )
 
   /** Fallback wording when the body carries no message of its own. */
   private def describe(status: Int): String =

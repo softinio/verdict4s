@@ -117,7 +117,7 @@ class RetryPolicyTest extends munit.FunSuite:
     assertEquals(fixed.delayFor(1, None, 0.0), fixed.delayFor(1, None, 1.0))
 
   test("ClientConfig defaults to the recommended model and retry policy"):
-    assertEquals(ClientConfig.default.model, Model.JevLatest)
+    assertEquals(ClientConfig.default.model, None)
     assertEquals(ClientConfig.default.retry, RetryPolicy.default)
     assertEquals(ClientConfig.default.requestTimeout, 10.seconds)
     assertEquals(ClientConfig.default.withoutRetries.retry, RetryPolicy.none)

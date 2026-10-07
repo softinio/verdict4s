@@ -1,7 +1,7 @@
 # No effect system
 
 `verdict4s-core` carries only cats-core, circe and Iron. No effect type, no
-HTTP client, deliberately no fs2. You can drive the protocol with whatever you
+HTTP client, deliberately no fs2. You can drive either vendor with whatever you
 already use — including nothing at all.
 
 ```scala
@@ -22,19 +22,23 @@ val questions = Ask(
   Question.choice[Dept]("Which team should handle this?")
 )
 
-// 1. render
+val vendor = Vendor.Jev   // or Vendor.OpenAI
+
+// 1. render, checked against the vendor's own limits
 val body: Either[Verdict4sError, String] =
-  SystemOne.renderAsk(questions, "Help! My payouts are failing.")
+  vendor.renderAsk(questions, "Help! My payouts are failing.")
 
 // 2. send it however you like -- your code, your HTTP client
-//    POST to SystemOne.evaluateUrl with SystemOne.headers(apiKey)
+//    POST to vendor.evaluateUrl with vendor.headers(apiKey)
 
 // 3. read the answers back, at exactly the right types
-val answers = SystemOne.parseAsk(questions, responseBody)
+val answers = vendor.parseAsk(questions, responseBody)
 ```
 
-`SystemOne` also gives you `evaluateUrl`, `modelsUrl`, `headers`, and
-`parseError` for turning a failed response into a typed error.
+Every `Vendor` also gives you `evaluateUrl`, `headers`, and `parseError`, which
+turns a failed response into a typed error. `Vendor.Jev` adds `modelsUrl` and
+`parseModels`. (In 0.1 this was the `SystemOne` object; `Vendor.Jev` replaces
+it.)
 
 ## Why this layer exists
 
@@ -62,4 +66,7 @@ val result = Ask(Question.score("How frustrated?", levels))
   .request(state, Model.JevLatest)
 
 result.isValid  // false if `levels` is not 2..10 entries
+
+// and against a particular vendor's stricter rules:
+result.toEither.flatMap(Vendor.OpenAI.validate(_).toEither)
 ```

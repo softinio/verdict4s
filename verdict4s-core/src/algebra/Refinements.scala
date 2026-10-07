@@ -143,18 +143,6 @@ object QuestionKey extends RefinedType[String, NonBlankC]:
 /** A non-blank key in the `questions` map. */
 type QuestionKey = QuestionKey.T
 
-/** A model identifier such as `jev-latest` or `jev-1.13.0`. */
-object ModelId extends RefinedType[String, NonBlankC]:
-
-  /** Refine at runtime, throwing `IllegalArgumentException` if the value is not
-    * a non-blank string. Prefer `either` or `option`, which return the failure
-    * instead.
-    */
-  override def applyUnsafe(value: String): T = super.applyUnsafe(value)
-
-/** A non-blank model identifier. */
-type ModelId = ModelId.T
-
 /** Choice accepts between 1 and 255 options.
   *
   * Iron has no `MinLength`/`MaxLength`; cardinality is expressed by applying a

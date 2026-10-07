@@ -18,6 +18,8 @@ package com.softinio.verdict4s.algebra
 
 import scala.collection.immutable.SortedMap
 
+import com.softinio.verdict4s.jev.JevCodecs
+import com.softinio.verdict4s.jev.JevCodecs.given
 import io.circe.Json
 import io.circe.parser.parse
 import io.circe.syntax.*
@@ -164,7 +166,7 @@ class EvaluationCodecTest extends munit.FunSuite:
     // The wire format wraps the array in a `models` field. Verbatim from a
     // live GET /v1/models; an earlier version modelled it as a bare array,
     // which the integration suite caught.
-    val cards = ModelCard.listDecoder.decodeJson(golden("""
+    val cards = JevCodecs.modelListDecoder.decodeJson(golden("""
       {
         "models": [
           {
@@ -190,7 +192,7 @@ class EvaluationCodecTest extends munit.FunSuite:
     )
 
   test("a bare array is not accepted for the models endpoint"):
-    assert(ModelCard.listDecoder.decodeJson(golden("""[]""")).isLeft)
+    assert(JevCodecs.modelListDecoder.decodeJson(golden("""[]""")).isLeft)
 
   test("a list of model cards decodes"):
     val cards = golden("""

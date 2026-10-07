@@ -16,6 +16,7 @@
 
 package com.softinio.verdict4s.algebra
 
+import com.softinio.verdict4s.jev.JevCodecs.given
 import io.circe.Json
 import io.circe.syntax.*
 

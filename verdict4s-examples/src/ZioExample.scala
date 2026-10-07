@@ -34,10 +34,12 @@ object ZioExample:
   enum Dept derives Options:
     case Billing, Technical, Sales
 
-  /** Ask three questions in one request, answered in `Task`. */
-  def triage(apiKey: ApiKey, ticket: String): Task[String] =
+  /** Ask three questions in one request, answered in `Task`, by whichever
+    * vendor the caller picks: `Vendor.Jev` or `Vendor.OpenAI`.
+    */
+  def triage(vendor: Vendor, apiKey: ApiKey, ticket: String): Task[String] =
     Verdict4s
-      .default[Task](apiKey)
+      .of[Task](vendor, apiKey)
       .use: client =>
         client
           .ask(

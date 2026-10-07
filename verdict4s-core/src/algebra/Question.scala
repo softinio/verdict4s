@@ -16,7 +16,6 @@
 
 package com.softinio.verdict4s.algebra
 
-import cats.data.NonEmptyChain
 import cats.data.ValidatedNec
 import cats.syntax.all.*
 import com.softinio.verdict4s.Verdict4sError
@@ -79,6 +78,9 @@ object Question:
       Instructions.text(ifTrue),
       Instructions.text(ifFalse)
     ).mapN((i, t, f) => noulSpec(i, Some(NoulCriteria(Some(t), Some(f)))))
+
+  /** A yes/no question. The same as [[noul]], under OpenAI's name for it. */
+  def predicate(instructions: String): Question[NoulAnswer] = noul(instructions)
 
   /** A yes/no question built from structured instructions. */
   def noulOf(
@@ -184,10 +186,32 @@ object Question:
         Spec(s.wire, a => s.decode(a).flatMap(f))
       )
 
-  /** Erase the answer type, for the places that only need the wire shape. */
-  private[verdict4s] def widen[A](q: Question[A]): Question[Any] =
-    (q: ValidatedNec[Verdict4sError.Validation, Spec[A]])
-      .map(s => Spec[Any](s.wire, a => s.decode(a)))
+    /** Accept a refusal for this question, reading it as `None`.
+      *
+      * OpenAI Decisions may decline one question while answering the rest. By
+      * default `Ask` treats that as a failure of the whole call, raising
+      * `Verdict4sError.Refused`; use this on the questions where an unanswered
+      * question is an answer you can work with:
+      *
+      * ```scala
+      * Ask(
+      *   Question.noul("Is this abusive?").orRefused,
+      *   Question.choice[Dept]("Who handles it?")
+      * )
+      * ```
+      *
+      * Jev never refuses, so on Jev this is always `Some`.
+      */
+    def orRefused: Question[Option[A]] =
+      (q: ValidatedNec[Verdict4sError.Validation, Spec[A]]).map(s =>
+        Spec(
+          s.wire,
+          {
+            case Answer.Refused => Right(None)
+            case other          => s.decode(other).map(Some(_))
+          }
+        )
+      )
 
   // -- Internals -----------------------------------------------------------
 

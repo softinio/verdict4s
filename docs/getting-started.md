@@ -8,7 +8,9 @@ def mvnDeps = Seq(mvn"com.softinio::verdict4s::@VERSION@")
 
 ## Get an API key
 
-Every request carries a key. Wrap it once, at the edge of your application:
+Every request carries a key from the vendor you use: `TYPESAFE_API_KEY` for
+Jev, `OPENAI_API_KEY` for OpenAI Decisions. Wrap it once, at the edge of your
+application:
 
 ```scala
 import com.softinio.verdict4s.algebra.ApiKey
@@ -27,9 +29,12 @@ On the JVM you can skip the boilerplate:
 Verdict4sEnv.default[IO].use { client => ??? }
 ```
 
-which reads `TYPESAFE_API_KEY`, `TYPESAFE_BASE_URL` and
-`TYPESAFE_DEFAULT_MODEL`, matching the official SDKs. That object is JVM-only,
-because Scala.js has no environment to read.
+This picks the vendor from `VERDICT4S_VENDOR` (`jev`, the default, or
+`openai`). It then reads `TYPESAFE_API_KEY`, `TYPESAFE_BASE_URL` and
+`TYPESAFE_DEFAULT_MODEL` for Jev, or `OPENAI_API_KEY` and `OPENAI_BASE_URL` for
+OpenAI, matching each vendor's official SDKs. `Verdict4sEnv.jev` and
+`Verdict4sEnv.openAI` pin the vendor. The object is JVM-only, because Scala.js
+has no environment to read.
 
 ## Your first request
 
@@ -46,7 +51,7 @@ object Main extends IOApp.Simple:
   def run: IO[Unit] =
     val key = ApiKey.fromString(sys.env("TYPESAFE_API_KEY")).toOption.get
 
-    Verdict4s.default[IO](key).use { client =>
+    Verdict4s.jev[IO](key).use { client =>
       client
         .ask(
           Ask(
@@ -61,12 +66,15 @@ object Main extends IOApp.Simple:
     }
 ```
 
+For OpenAI Decisions, use `Verdict4s.openAI[IO](key)` with an OpenAI key.
+Nothing else changes.
+
 The `Resource` owns the connection pool, so allocate it once for the lifetime
 of your application rather than once per call.
 
 ## The same code on Scala.js
 
-There is nothing to change. `Verdict4s.default` has one signature on both
+There is nothing to change. `Verdict4s.jev` and `Verdict4s.openAI` have one signature on both
 platforms and picks the transport for you — Ember on the JVM, the Fetch API on
 Scala.js, which works in the browser and on Node 18+.
 
@@ -80,8 +88,8 @@ service directly from a page.
 ## Batch your questions
 
 Asking three questions in one request is markedly cheaper and faster than three
-requests, and it is the shape the service is designed around. `Ask` takes up to
-twelve, and each keeps its own answer type.
+requests, and it is the shape both services are designed around. Each question
+keeps its own answer type.
 
 Speculative questions are cheap: ask something you *might* need and let your
 code decide whether to read it.

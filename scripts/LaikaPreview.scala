@@ -1,6 +1,9 @@
 //> using scala 3.9.0
 //> using dep org.http4s::http4s-ember-server:0.23.37
 //> using dep org.http4s::http4s-dsl:0.23.37
+// http4s logs through log4cats -> slf4j-api 1.7.36, which warns at startup when
+// it finds no backend. nop is the backend we want: silence, explicitly.
+//> using dep org.slf4j:slf4j-nop:1.7.36
 
 /*
  * Copyright 2026 Salar Rahmanian
@@ -45,7 +48,7 @@ object LaikaPreview extends IOApp.Simple {
       val file = Paths.get(siteDir, rel).toFile match
         case dir if dir.isDirectory => Paths.get(dir.getPath, "index.html").toFile
         case other                  => other
-      if file.exists() then StaticFile.fromFile[IO](file, Some(request)).getOrElseF(NotFound())
+      if file.exists() then StaticFile.fromPath[IO](fs2.io.file.Path.fromNioPath(file.toPath), Some(request)).getOrElseF(NotFound())
       else NotFound()
     }
     .orNotFound

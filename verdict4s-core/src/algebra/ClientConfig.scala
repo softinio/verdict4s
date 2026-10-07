@@ -25,11 +25,12 @@ import cats.Show
   *
   * Deliberately carries no base URL. `org.http4s.Uri` is not available in the
   * effect-free core, and holding the address as a `String` here would push a
-  * parse failure into the happy path at runtime; the client turns
-  * [[Defaults.BaseUrl]] into a compile-time-checked literal instead.
+  * parse failure into the happy path at runtime; the base URL comes from the
+  * vendor's [[com.softinio.verdict4s.Vendor]] or the client's constructor.
   *
   * @param model
-  *   the model used when a request does not name one
+  *   the model used when a request does not name one; `None` uses the vendor's
+  *   own default (`jev-latest` for Jev, `gpt-6-luna` for OpenAI)
   * @param retry
   *   how to back off and retry
   * @param requestTimeout
@@ -38,12 +39,12 @@ import cats.Show
   * @group Configuration
   */
 final case class ClientConfig(
-    model: Model = Model.JevLatest,
+    model: Option[Model] = None,
     retry: RetryPolicy = RetryPolicy.default,
     requestTimeout: FiniteDuration = 10.seconds
 ):
   /** A copy using a different default model. */
-  def withModel(m: Model): ClientConfig = copy(model = m)
+  def withModel(m: Model): ClientConfig = copy(model = Some(m))
 
   /** A copy using a different retry policy. */
   def withRetry(r: RetryPolicy): ClientConfig = copy(retry = r)
@@ -57,7 +58,9 @@ final case class ClientConfig(
 
 /** The default configuration, and instances. */
 object ClientConfig:
-  /** Retries on, `jev-latest`, and a 10 second timeout per attempt. */
+  /** Retries on, the vendor's default model, and a 10 second timeout per
+    * attempt.
+    */
   val default: ClientConfig = ClientConfig()
 
   given Eq[ClientConfig] = Eq.fromUniversalEquals

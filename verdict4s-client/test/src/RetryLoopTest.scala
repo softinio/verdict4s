@@ -70,12 +70,14 @@ class RetryLoopTest extends CatsEffectSuite:
             }
           }
           .orNotFound
-        val client = Verdict4sClient[IO](
-          Client.fromHttpApp(app),
-          key,
-          baseUri,
-          ClientConfig.default.withRetry(policy)
-        ).withJitter(Jitter.constant[IO](0.5))
+        val client = Verdict4sClient
+          .jev[IO](
+            Client.fromHttpApp(app),
+            key,
+            baseUri,
+            ClientConfig.default.withRetry(policy)
+          )
+          .withJitter(Jitter.constant[IO](0.5))
         (client, calls)
 
   test("a 429 is retried and the eventual success is returned"):
@@ -90,7 +92,7 @@ class RetryLoopTest extends CatsEffectSuite:
 
   test("529 Overloaded is retried too"):
     for
-      pair <- flaky(List(Status(529)))
+      pair <- flaky(List(Status.fromInt(529).toOption.get))
       (client, calls) = pair
       _ <- client.ask(ask, "s")
       n <- calls.get
@@ -116,7 +118,7 @@ class RetryLoopTest extends CatsEffectSuite:
 
   test("422 is not retried either"):
     for
-      pair <- flaky(List.fill(5)(Status.UnprocessableEntity))
+      pair <- flaky(List.fill(5)(Status.UnprocessableContent))
       (client, calls) = pair
       _ <- client.ask(ask, "s").attempt
       n <- calls.get
@@ -175,12 +177,14 @@ class RetryLoopTest extends CatsEffectSuite:
             )
         }
         .orNotFound
-      client = Verdict4sClient[IO](
-        Client.fromHttpApp(app),
-        key,
-        baseUri,
-        ClientConfig.default.withRetry(fastRetries)
-      ).withJitter(Jitter.constant[IO](0.5))
+      client = Verdict4sClient
+        .jev[IO](
+          Client.fromHttpApp(app),
+          key,
+          baseUri,
+          ClientConfig.default.withRetry(fastRetries)
+        )
+        .withJitter(Jitter.constant[IO](0.5))
       result <- client.ask(ask, "s").attempt
     yield result match
       case Left(e: Verdict4sError.Api) =>

@@ -20,7 +20,6 @@ import cats.effect.IO
 import com.softinio.verdict4s.algebra.*
 import munit.CatsEffectSuite
 import org.http4s.*
-import org.http4s.circe.*
 import org.http4s.client.Client
 import org.http4s.dsl.io.*
 import org.http4s.implicits.*
@@ -51,7 +50,7 @@ class ClientErrorMappingTest extends CatsEffectSuite:
         )
       }
       .orNotFound
-    Verdict4sClient[IO](
+    Verdict4sClient.jev[IO](
       Client.fromHttpApp(app),
       key,
       baseUri,
@@ -74,7 +73,7 @@ class ClientErrorMappingTest extends CatsEffectSuite:
       assertEquals(e.failure, ApiFailure.Unauthorized)
 
   test("422 maps to Unprocessable"):
-    apiErrorFrom(failWith(Status.UnprocessableEntity)).map: e =>
+    apiErrorFrom(failWith(Status.UnprocessableContent)).map: e =>
       assertEquals(e.failure, ApiFailure.Unprocessable)
 
   test("429 maps to RateLimited"):
@@ -84,7 +83,7 @@ class ClientErrorMappingTest extends CatsEffectSuite:
   test("529 maps to Overloaded, not to the generic 5xx"):
     // 529 is not a registered status, so http4s will not hand one over
     // without being asked directly.
-    apiErrorFrom(failWith(Status(529))).map: e =>
+    apiErrorFrom(failWith(Status.fromInt(529).toOption.get)).map: e =>
       assertEquals(e.status, 529)
       assertEquals(e.failure, ApiFailure.Overloaded)
 
@@ -105,7 +104,7 @@ class ClientErrorMappingTest extends CatsEffectSuite:
 
   test("the error body is parsed for its message"):
     apiErrorFrom(
-      failWith(Status.UnprocessableEntity, """{"message":"bad question"}""")
+      failWith(Status.UnprocessableContent, """{"message":"bad question"}""")
     ).map: e =>
       assertEquals(e.details, "bad question")
 

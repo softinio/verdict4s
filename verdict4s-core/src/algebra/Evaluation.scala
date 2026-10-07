@@ -20,10 +20,7 @@ import scala.collection.immutable.SortedMap
 
 import cats.Eq
 import cats.Show
-import io.circe.Decoder
-import io.circe.Encoder
 import io.circe.Json
-import io.circe.syntax.*
 import io.github.iltotore.iron.*
 
 /** A complete evaluation request.
@@ -35,7 +32,7 @@ import io.github.iltotore.iron.*
   *   the model that handles the request
   * @param questions
   *   the typed questions, keyed by names you choose; answers come back under
-  *   the same keys
+  *   the same keys. Sorted, so every vendor sees them in the same order
   *
   * @group Protocol
   */
@@ -45,27 +42,20 @@ final case class EvaluationRequest(
     questions: EvaluationRequest.Questions
 )
 
-/** The wire type of the question map, and the request's encoder. */
+/** The type of the question map, and instances. The wire encodings live with
+  * each vendor's protocol.
+  */
 object EvaluationRequest:
 
   /** The question map as it goes on the wire.
     *
     * `SortedMap` for deterministic encoding, refined to reject an empty request
-    * — which the service would reject anyway, a round trip later.
+    * — which every service would reject anyway, a round trip later.
     */
   type Questions = SortedMap[QuestionKey, QuestionSpec] :| QuestionsC
 
-  given Encoder[EvaluationRequest] = Encoder.instance: r =>
-    Json.obj(
-      "state" -> r.state,
-      "model" -> r.model.asJson,
-      "questions" -> Json.fromFields(
-        r.questions.map((key, spec) => (key.value: String) -> spec.asJson)
-      )
-    )
-
   given Eq[EvaluationRequest] = Eq.fromUniversalEquals
-  given Show[EvaluationRequest] = Show.show(_.asJson.noSpaces)
+  given Show[EvaluationRequest] = Show.fromToString
 
 /** A complete evaluation response.
   *
@@ -88,28 +78,13 @@ final case class Evaluation(
   /** The answer under one key, if the service returned one. */
   def answer(key: QuestionKey): Option[Answer] = answers.get(key)
 
-/** The response's codecs and instances. */
+/** Instances for [[Evaluation]].
+  *
+  * Note `answers` is a plain `SortedMap`, not refined to be non-empty.
+  * Non-emptiness is a *request* invariant; being lenient here keeps a
+  * degenerate but parseable response from becoming a decoding failure.
+  */
 object Evaluation:
 
-  /** Note `answers` is a plain `SortedMap`, not refined to be non-empty.
-    * Non-emptiness is a *request* invariant; being lenient here keeps a
-    * degenerate but parseable response from becoming a decoding failure.
-    */
-  given Decoder[Evaluation] = Decoder.instance: c =>
-    for
-      model <- c.downField("model").as[Model]
-      answers <- c.downField("answers").as[SortedMap[QuestionKey, Answer]]
-      usage <- c.downField("usage").as[Usage]
-    yield Evaluation(model, answers, usage)
-
-  given Encoder[Evaluation] = Encoder.instance: e =>
-    Json.obj(
-      "model" -> e.model.asJson,
-      "answers" -> Json.fromFields(
-        e.answers.map((key, answer) => (key.value: String) -> answer.asJson)
-      ),
-      "usage" -> e.usage.asJson
-    )
-
   given Eq[Evaluation] = Eq.fromUniversalEquals
-  given Show[Evaluation] = Show.show(_.asJson.noSpaces)
+  given Show[Evaluation] = Show.fromToString

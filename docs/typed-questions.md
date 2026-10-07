@@ -1,6 +1,6 @@
 # Typed questions
 
-The service offers exactly three question types. This page is about getting
+Both vendors offer exactly the same three question types. This page is about getting
 answers back in *your* types rather than in strings and numbers.
 
 ## The three shapes
@@ -10,8 +10,11 @@ yes. It carries no confidence — the probability *is* the answer.
 
 ```scala
 Question.noul("Does this convey urgency?")
-Question.noul("Is this urgent?", ifTrue = "Time-sensitive", ifFalse = "Routine")
+Question.noul("Is this urgent?", ifTrue = "Time-sensitive", ifFalse = "Routine")  // Jev only
 ```
+
+The second form says what a yes and a no mean. Only Jev supports that; see
+[vendor differences](#vendor-differences).
 
 **Choice** picks one option from a set you define, and returns the chosen
 option, the full distribution, and a confidence.
@@ -111,13 +114,30 @@ evaluation.answers.foreach { (key, answer) =>
     case Answer.Noul(p)                       => ???
     case Answer.Choice(choice, probs, conf)   => ???
     case Answer.Score(score, legend, _, conf) => ???
+    case Answer.Refused                       => ???  // OpenAI declined this one
 }
 ```
 
 ## A question type this release does not model
 
-If the service grows a fourth type, you do not have to wait for a release:
+If a vendor grows a fourth type, you do not have to wait for a release:
 
 ```scala
 Question.raw[MyAnswer]("ranking", body) { answer => ??? }
 ```
+
+## Vendor differences
+
+Everything on this page works with both vendors, except for three things,
+which OpenAI Decisions treats differently from Jev:
+
+- **Noul criteria.** `Question.noul(instructions, ifTrue, ifFalse)` is Jev only.
+  Against OpenAI the request fails with `Verdict4sError.Invalid` before it is
+  sent. Describe what yes and no mean in the instructions instead.
+- **One-option choices.** OpenAI needs at least two options, so an enum with a
+  single case compiles but is rejected the same way. Jev accepts one.
+- **`Question.raw`.** The body is sent as it is, so write it in the format of
+  the vendor you are calling.
+
+All three are checked before anything is sent, with every problem reported at
+once. The full comparison is in [choosing a vendor](choosing-a-vendor.md).
