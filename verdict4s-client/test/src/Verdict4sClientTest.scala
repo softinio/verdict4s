@@ -16,13 +16,10 @@
 
 package com.softinio.verdict4s
 
-import scala.concurrent.duration.*
-
 import cats.effect.IO
 import cats.effect.Ref
 import com.softinio.verdict4s.algebra.*
 import io.circe.Json
-import io.circe.parser
 import munit.CatsEffectSuite
 import org.http4s.*
 import org.http4s.circe.*
@@ -67,8 +64,9 @@ class Verdict4sClientTest extends CatsEffectSuite:
   private def clientFor(
       app: HttpApp[IO],
       config: ClientConfig = ClientConfig.default
-  ): Verdict4sClient[IO] =
-    Verdict4sClient[IO](Client.fromHttpApp(app), key, baseUri, config)
+  ): JevClient[IO] =
+    Verdict4sClient
+      .jev[IO](Client.fromHttpApp(app), key, baseUri, config)
       .withJitter(Jitter.constant[IO](0.5))
 
   private def respond(body: String): HttpApp[IO] =

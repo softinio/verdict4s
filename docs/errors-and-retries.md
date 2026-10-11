@@ -1,6 +1,6 @@
 # Errors and retries
 
-Everything that can go wrong is one of five cases of `Verdict4sError`, all of
+Everything that can go wrong is one of six cases of `Verdict4sError`, all of
 which live in `verdict4s-core` so you can match on them without depending on
 cats-effect or http4s.
 
@@ -14,7 +14,11 @@ val describe: Verdict4sError => String =
   case e: Verdict4sError.Transport  => s"could not reach the service: ${e.details}"
   case e: Verdict4sError.Validation => s"bad question: ${e.getMessage}"
   case e: Verdict4sError.Invalid    => s"${e.errors.length} problems with the request"
+  case e: Verdict4sError.Refused    => s"the service declined ${e.keys.length} question(s)"
 ```
+
+`Refused` only comes from OpenAI Decisions, which may decline a single question.
+See [refusals](choosing-a-vendor.md#refusals).
 
 ## Validation happens before the network
 
@@ -42,7 +46,7 @@ error.failure match
 
 Every `Api` error also carries `requestId` — the service's own correlation id,
 which is what to quote in a support request — and `retryAfter` when the server
-sent one.
+sent one. For OpenAI, `retry-after-ms` is read ahead of `Retry-After`.
 
 An error body this version does not recognise is **never** downgraded into a
 decoding failure: the raw payload is preserved on the error, because it is
@@ -50,8 +54,8 @@ usually the only diagnostic you have.
 
 ## Retries are on by default
 
-The API documents `429` and `529` with an explicit instruction to retry with
-exponential backoff, so verdict4s does, matching the official SDKs: two
+Jev documents `429` and `529` with an explicit instruction to retry with
+exponential backoff, so verdict4s does, for both vendors, matching the official SDKs: two
 retries, 500ms doubling to a five second ceiling, 25% jitter, honouring
 `Retry-After`, with a thirty second ceiling on the whole call.
 
@@ -73,7 +77,13 @@ ClientConfig.default.withoutRetries
 ```
 
 Only `408`, `429` and `5xx` are retried. `401`, `403`, `404` and `422` are not:
-retrying them would just be slower failure.
+retrying them would just be slower failure. Nor is OpenAI's
+`insufficient_quota`, which arrives as a `429` like a rate limit but means
+the account has no credits, so no amount of waiting fixes it.
+
+Each attempt is also capped by `ClientConfig.requestTimeout`, 10 seconds by
+default. An attempt that exceeds it fails as a `Transport` error and is not
+retried.
 
 `Retry-After` wins only when it asks for **longer** than the computed backoff —
 waiting less than you already planned to would defeat the purpose.

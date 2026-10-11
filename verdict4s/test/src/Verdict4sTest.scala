@@ -30,16 +30,42 @@ class Verdict4sTest extends CatsEffectSuite:
 
   private val key = ApiKey.fromString("sk-not-used").toOption.get
 
-  test("default allocates a client on whichever platform this is"):
+  test("jev allocates a client on whichever platform this is"):
     Verdict4s
-      .default[IO](key)
+      .jev[IO](key)
       .use(IO.pure)
-      .map(client => assert(client ne null))
+      .map(client => assertEquals(client.vendor.name, "Jev"))
 
-  test("default points at the service unless told otherwise"):
+  test("openAI allocates a client on whichever platform this is"):
+    Verdict4s
+      .openAI[IO](key)
+      .use(IO.pure)
+      .map(client => assertEquals(client.vendor.name, "OpenAI Decisions"))
+
+  test("of allocates a client for a vendor chosen at runtime"):
+    Verdict4s
+      .of[IO](Vendor.OpenAI, key)
+      .use(IO.pure)
+      .map(client => assert(client.isInstanceOf[OpenAIClient[IO]]))
+
+  test("each vendor points at its own service unless told otherwise"):
     assertEquals(
-      Verdict4sClient.DefaultBaseUri.renderString,
+      Verdict4sClient.JevBaseUri.renderString,
       "https://api.typesafe.ai"
+    )
+    assertEquals(
+      Verdict4sClient.OpenAIBaseUri.renderString,
+      "https://api.openai.com/v1"
+    )
+
+  test("the built-in vendors' base URLs match the client's literals"):
+    assertEquals(
+      Vendor.Jev.defaultBaseUrl,
+      Verdict4sClient.JevBaseUri.renderString
+    )
+    assertEquals(
+      Vendor.OpenAI.defaultBaseUrl,
+      Verdict4sClient.OpenAIBaseUri.renderString
     )
 
   test("configuration is carried through to the client"):
@@ -47,8 +73,8 @@ class Verdict4sTest extends CatsEffectSuite:
       .withModel(Model.JevPreview)
       .withoutRetries
     Verdict4s
-      .default[IO](key, uri"https://example.invalid", config)
+      .jev[IO](key, uri"https://example.invalid", config)
       .use(IO.pure)
       .map: client =>
-        assertEquals(client.config.model, Model.JevPreview)
+        assertEquals(client.config.model, Some(Model.JevPreview))
         assertEquals(client.config.retry.maxRetries, 0)

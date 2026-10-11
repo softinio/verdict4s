@@ -54,7 +54,7 @@ object FutureExample:
 
     def triage(ticket: String): Future[(Boolean, Dept)] =
       Verdict4s
-        .default[IO](apiKey)
+        .jev[IO](apiKey)
         .use(_.ask(questions, ticket))
         .map((urgent, dept) => (urgent.isTrue(), dept.choice))
         .unsafeToFuture()

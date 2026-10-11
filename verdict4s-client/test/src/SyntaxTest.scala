@@ -37,7 +37,7 @@ class SyntaxTest extends CatsEffectSuite:
   """
 
   private val client: Verdict4sClient[IO] =
-    Verdict4sClient[IO](
+    Verdict4sClient.jev[IO](
       Client.fromHttpApp(
         HttpRoutes
           .of[IO] { case POST -> Root / "v1" / "systemone" => Ok(okBody) }

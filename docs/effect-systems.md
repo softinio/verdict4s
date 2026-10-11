@@ -37,8 +37,8 @@ effect type directly and nothing needs bridging.
 import zio.Task
 import zio.interop.catz.*
 
-def triage(apiKey: ApiKey, ticket: String): Task[String] =
-  Verdict4s.default[Task](apiKey).use { client =>
+def triage(vendor: Vendor, apiKey: ApiKey, ticket: String): Task[String] =
+  Verdict4s.of[Task](vendor, apiKey).use { client =>
     client
       .ask(Ask(urgency, team, frustration), ticket)
       .map { (urgent, dept, mood) => s"${dept.choice} (urgent=${urgent.isTrue()})" }
@@ -63,7 +63,7 @@ deliberately does not ship one.
 final class TriageService(apiKey: ApiKey)(using IORuntime):
   def triage(ticket: String): Future[(Boolean, Dept)] =
     Verdict4s
-      .default[IO](apiKey)
+      .jev[IO](apiKey)
       .use(_.ask(questions, ticket))
       .map((urgent, dept) => (urgent.isTrue(), dept.choice))
       .unsafeToFuture()
@@ -87,11 +87,11 @@ No dependencies at all — the JDK's own client moves the bytes:
 ```scala
 def triage(apiKey: ApiKey, ticket: String, http: HttpClient): Either[Verdict4sError, (Boolean, Dept)] =
   for
-    body     <- SystemOne.renderAsk(questions, ticket)
+    body     <- Vendor.Jev.renderAsk(questions, ticket)
     response <- send(http, apiKey, body)   // HttpRequest + http.send
     answers  <- if response.statusCode >= 400
-                then Left(SystemOne.parseError(response.statusCode, response.body))
-                else SystemOne.parseAsk(questions, response.body)
+                then Left(Vendor.Jev.parseError(response.statusCode, response.body))
+                else Vendor.Jev.parseAsk(questions, response.body)
   yield
     val (urgent, dept) = answers
     (urgent.isTrue(), dept.choice)
@@ -101,6 +101,10 @@ Every failure — an invalid question, a network error, a rejected request, an
 unexpected body — comes back as a `Verdict4sError`. For a non-blocking call,
 `HttpClient.sendAsync` returns a `CompletableFuture`; rendering and parsing
 stay exactly the same.
+
+The example calls Jev. For OpenAI Decisions, replace `Vendor.Jev` with
+`Vendor.OpenAI`, send to `Vendor.OpenAI.evaluateUrl` with an OpenAI key, and
+change nothing else.
 
 ### Anything else
 

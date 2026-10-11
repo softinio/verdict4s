@@ -20,13 +20,8 @@ import scala.collection.immutable.SortedMap
 
 import cats.Eq
 import cats.Show
-import io.circe.Decoder
-import io.circe.DecodingFailure
-import io.circe.Encoder
-import io.circe.Json
-import io.circe.syntax.*
 
-/** One answer, exactly as it comes off the wire.
+/** One answer, as the service reported it.
   *
   * Untyped in the sense that a Choice answer carries the option as a `String`:
   * this is the honest shape of the response, and it is what
@@ -64,69 +59,29 @@ enum Answer:
       confidence: Confidence
   )
 
-  /** The value of the wire `type` field. */
+  /** The service declined to answer this one question.
+    *
+    * Other questions in the same request can still be answered. Jev never
+    * refuses; OpenAI Decisions may, without saying why. `Ask` turns a refusal
+    * into `Verdict4sError.Refused` unless the question opted in with
+    * `Question#orRefused`.
+    */
+  case Refused
+
+  /** The name of this answer's shape, for error messages. */
   def wireType: String = this match
     case _: Noul   => "noul"
     case _: Choice => "choice"
     case _: Score  => "score"
+    case Refused   => "refusal"
 
-/** Codecs and instances for [[Answer]]. */
+/** Instances for [[Answer]]. The wire codecs live with each vendor's protocol:
+  * see `com.softinio.verdict4s.jev.JevCodecs` and
+  * `com.softinio.verdict4s.openai.OpenAICodecs`.
+  */
 object Answer:
-
-  given Decoder[Answer] = Decoder.instance: c =>
-    c.downField("type")
-      .as[String]
-      .flatMap:
-        case "noul" =>
-          c.downField("noul").as[Probability].map(Noul.apply)
-
-        case "choice" =>
-          for
-            choice <- c.downField("choice").as[OptionName]
-            probs <- c
-              .downField("probabilities")
-              .as[SortedMap[OptionName, Probability]]
-            conf <- c.downField("confidence").as[Confidence]
-          yield Choice(choice, probs, conf)
-
-        case "score" =>
-          for
-            score <- c.downField("score").as[Double]
-            legend <- c.downField("legend").as[SortedMap[Int, String]]
-            probs <- c
-              .downField("probabilities")
-              .as[SortedMap[Int, Probability]]
-            conf <- c.downField("confidence").as[Confidence]
-          yield Score(score, legend, probs, conf)
-
-        case other =>
-          Left(
-            DecodingFailure(s"unknown answer type '$other'", c.history)
-          )
-
-  given Encoder[Answer] = Encoder.instance:
-    case Noul(noul) =>
-      Json.obj("type" -> "noul".asJson, "noul" -> noul.asJson)
-
-    case Choice(choice, probabilities, confidence) =>
-      Json.obj(
-        "type" -> "choice".asJson,
-        "choice" -> choice.asJson,
-        "probabilities" -> probabilities.asJson,
-        "confidence" -> confidence.asJson
-      )
-
-    case Score(score, legend, probabilities, confidence) =>
-      Json.obj(
-        "type" -> "score".asJson,
-        "score" -> score.asJson,
-        "legend" -> legend.asJson,
-        "probabilities" -> probabilities.asJson,
-        "confidence" -> confidence.asJson
-      )
-
   given Eq[Answer] = Eq.fromUniversalEquals
-  given Show[Answer] = Show.show(_.asJson.noSpaces)
+  given Show[Answer] = Show.fromToString
 
 /** A Noul answer: how likely the answer is yes.
   *

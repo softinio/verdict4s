@@ -17,19 +17,42 @@
 package com.softinio.verdict4s
 
 import cats.effect.kernel.Temporal
-import cats.syntax.all.*
 import com.softinio.verdict4s.algebra.*
-import com.softinio.verdict4s.internal.RetryLoop
-import com.softinio.verdict4s.internal.Wire
-import io.circe.Decoder
+import com.softinio.verdict4s.internal.Engine
 import io.circe.Encoder
-import io.circe.Json
-import io.circe.syntax.*
 import org.http4s.Uri
 import org.http4s.client.Client
 import org.http4s.implicits.*
 
-/** A client for the TypeSafe evaluation API.
+/** A client for a decision API: Jev, OpenAI Decisions, or any other [[Vendor]].
+  *
+  * Code written against this trait works with every vendor. The questions,
+  * [[Ask]] and the typed answers are the same whichever one answers them:
+  *
+  * ```scala
+  * def triage[F[_]](
+  *     client: Verdict4sClient[F]
+  * ): F[(NoulAnswer, ChoiceAnswer[Dept])] =
+  *   client.ask(
+  *     Ask(
+  *       Question.noul("Does this convey urgency?"),
+  *       Question.choice[Dept]("Which team should handle this?")
+  *     ),
+  *     "Help! My payouts have been failing for 3 days."
+  *   )
+  *
+  * triage(Verdict4sClient.jev[IO](httpClient, typesafeKey))
+  * triage(Verdict4sClient.openAI[IO](httpClient, openAIKey))
+  * ```
+  *
+  * What only one vendor offers is a separate capability trait, mixed into that
+  * vendor's client: [[ModelCatalog]] on [[JevClient]], [[SafetyIdentity]] on
+  * [[OpenAIClient]]. Ask for exactly what you use, and the compiler stops a
+  * call the chosen vendor cannot serve:
+  *
+  * ```scala
+  * def report[F[_]](using c: Verdict4sClient[F] & ModelCatalog[F]) = c.models
+  * ```
   *
   * Takes an http4s `Client[F]` rather than building one. That single decision
   * buys every backend and every platform without this library owning any of
@@ -37,97 +60,88 @@ import org.http4s.implicits.*
   * suite needs no network: `Client.fromHttpApp` serves routes in memory, so the
   * same tests run on the JVM and on Node.
   *
-  * ```scala
-  * val client = Verdict4sClient[IO](httpClient, apiKey)
-  *
-  * val (urgent, dept) = client.ask(
-  *   Ask(
-  *     Question.noul("Does this convey urgency?"),
-  *     Question.choice[Dept]("Which team should handle this?")
-  *   ),
-  *   "Help! My payouts have been failing for 3 days."
-  * )
-  * ```
-  *
   * Retries are on by default, matching the official SDKs; see
   * [[algebra.RetryPolicy]] to tune or disable them.
   *
   * @group Client
   */
-final class Verdict4sClient[F[_]: Temporal] private (
-    client: Client[F],
-    baseUri: Uri,
-    apiKey: ApiKey,
-    /** The settings this client applies to every request. */
-    val config: ClientConfig,
-    jitter: Jitter[F]
-):
+trait Verdict4sClient[F[_]]:
+
+  /** The vendor this client speaks to. */
+  def vendor: Vendor
+
+  /** The settings this client applies to every request. */
+  def config: ClientConfig
 
   /** Evaluate a request built by hand.
     *
     * The escape hatch: answers come back in the map-based
     * [[algebra.Evaluation]], keyed by whatever question names you chose. Use
-    * [[ask]] when the questions are known statically.
+    * [[ask]] when the questions are known statically. The request is checked
+    * against the vendor's own limits before it is sent.
     */
-  def evaluate(request: EvaluationRequest): F[Evaluation] =
-    send[Evaluation](request.asJson)
+  def evaluate(request: EvaluationRequest): F[Evaluation]
 
   /** Ask a set of questions and get back exactly typed answers.
     *
     * ```scala
     * val (urgent, dept, mood) = client.ask(Ask(q1, q2, q3), state)
     * ```
+    *
+    * Fails with [[Verdict4sError.Refused]] if the vendor declines a question
+    * that was not built with `orRefused`.
     */
   def ask[Q <: Tuple, S: Encoder](
       questions: Ask[Q],
       state: S
-  ): F[Ask.Answers[Q]] =
-    for
-      request <- Temporal[F].fromEither(
-        questions
-          .request(state, config.model)
-          .toEither
-          .leftMap(Verdict4sError.Invalid(_))
-      )
-      evaluation <- evaluate(request)
-      answers <- Temporal[F].fromEither(questions.answers(evaluation))
-    yield answers
-
-  /** The models available to this account. */
-  def models: F[List[ModelCard]] =
-    // The endpoint wraps its array in a `models` field; this shadows circe's
-    // derived list decoder, which would expect a bare array.
-    given Decoder[List[ModelCard]] = ModelCard.listDecoder
-    RetryLoop.run[F, List[ModelCard]](
-      client,
-      Wire.get[F](Wire.modelsUri(baseUri), apiKey),
-      config.retry,
-      jitter
-    )(Wire.decode[F, List[ModelCard]])
+  ): F[Ask.Answers[Q]]
 
   /** A copy with different settings. */
-  def withConfig(f: ClientConfig => ClientConfig): Verdict4sClient[F] =
-    new Verdict4sClient(client, baseUri, apiKey, f(config), jitter)
+  def withConfig(f: ClientConfig => ClientConfig): Verdict4sClient[F]
 
   /** A copy drawing retry jitter differently. Mostly useful in tests. */
-  def withJitter(j: Jitter[F]): Verdict4sClient[F] =
-    new Verdict4sClient(client, baseUri, apiKey, config, j)
+  def withJitter(j: Jitter[F]): Verdict4sClient[F]
 
-  private def send[A: io.circe.Decoder](body: Json): F[A] =
-    RetryLoop.run[F, A](
-      client,
-      Wire.post[F](Wire.evaluateUri(baseUri), apiKey, body),
-      config.retry,
-      jitter
-    )(Wire.decode[F, A])
+/** A vendor that lists the models available to the account. Jev does.
+  *
+  * @group Client
+  */
+trait ModelCatalog[F[_]]:
 
-/** Constructing a [[Verdict4sClient]] over a transport you supply. */
+  /** The models available to this account. */
+  def models: F[List[ModelCard]]
+
+/** A vendor that accepts an identifier for your end user, to help it detect
+  * abuse. OpenAI Decisions does, as `safety_identifier`.
+  *
+  * @group Client
+  */
+trait SafetyIdentity[F[_]]:
+
+  /** The identifier sent with every request, if any. */
+  def safetyIdentifier: Option[String]
+
+  /** A copy sending this identifier with every request. At most 128 characters,
+    * and never your own account identity; an invalid one fails each request
+    * with [[Verdict4sError.Invalid]] before it is sent.
+    */
+  def withSafetyIdentifier(id: String): Verdict4sClient[F] & SafetyIdentity[F]
+
+/** Constructing a client over a transport you supply.
+  *
+  * @group Client
+  */
 object Verdict4sClient:
 
-  /** The service's own address, checked at compile time. */
-  val DefaultBaseUri: Uri = uri"https://api.typesafe.ai"
+  /** Jev's address, checked at compile time. */
+  val JevBaseUri: Uri = uri"https://api.typesafe.ai"
 
-  /** A client over a transport you supply.
+  /** OpenAI's address, checked at compile time. It includes `/v1`, as it does
+    * in OpenAI's own SDKs, so a base URL configured for them works here.
+    */
+  val OpenAIBaseUri: Uri = uri"https://api.openai.com/v1"
+
+  /** A Jev client over a transport you supply.
     *
     * @param client
     *   any http4s client, including an in-memory fake
@@ -138,16 +152,91 @@ object Verdict4sClient:
     * @param config
     *   model, retry policy and timeouts
     */
-  def apply[F[_]: Temporal](
+  def jev[F[_]: Temporal](
       client: Client[F],
       apiKey: ApiKey,
-      baseUri: Uri = DefaultBaseUri,
+      baseUri: Uri = JevBaseUri,
+      config: ClientConfig = ClientConfig.default
+  ): JevClient[F] =
+    new JevClient(
+      Engine(
+        client,
+        Vendor.Jev,
+        baseUri,
+        apiKey,
+        config,
+        Jitter.scalaUtilRandom[F]
+      )
+    )
+
+  /** An OpenAI Decisions client over a transport you supply.
+    *
+    * @param client
+    *   any http4s client, including an in-memory fake
+    * @param apiKey
+    *   your OpenAI API key
+    * @param baseUri
+    *   override for testing or a proxy; includes `/v1`
+    * @param config
+    *   model, retry policy and timeouts
+    */
+  def openAI[F[_]: Temporal](
+      client: Client[F],
+      apiKey: ApiKey,
+      baseUri: Uri = OpenAIBaseUri,
+      config: ClientConfig = ClientConfig.default
+  ): OpenAIClient[F] =
+    new OpenAIClient(
+      Engine(
+        client,
+        Vendor.OpenAI,
+        baseUri,
+        apiKey,
+        config,
+        Jitter.scalaUtilRandom[F]
+      ),
+      Vendor.OpenAI
+    )
+
+  /** A client for any [[Vendor]], when the vendor is chosen at runtime.
+    *
+    * Exposes only what every vendor shares. Use [[jev]] or [[openAI]] for a
+    * client with that vendor's own capabilities.
+    *
+    * @param baseUri
+    *   the vendor's own address when absent. A custom vendor whose
+    *   `defaultBaseUrl` is not a valid URI fails here, when the client is
+    *   built, rather than on the first request
+    */
+  def of[F[_]: Temporal](
+      client: Client[F],
+      vendor: Vendor,
+      apiKey: ApiKey,
+      baseUri: Option[Uri] = None,
       config: ClientConfig = ClientConfig.default
   ): Verdict4sClient[F] =
-    new Verdict4sClient(
-      client,
-      baseUri,
-      apiKey,
-      config,
-      Jitter.scalaUtilRandom[F]
-    )
+    val base = baseUri.getOrElse(Uri.unsafeFromString(vendor.defaultBaseUrl))
+    val engine =
+      Engine(client, vendor, base, apiKey, config, Jitter.scalaUtilRandom[F])
+    vendor match
+      case p: com.softinio.verdict4s.openai.OpenAIVendor =>
+        new OpenAIClient(engine, p)
+      case Vendor.Jev => new JevClient(engine)
+      case _          => new GenericClient(engine)
+
+/** A client for a vendor with no capabilities beyond the shared ones. */
+private final class GenericClient[F[_]](engine: Engine[F])
+    extends Verdict4sClient[F]:
+  def vendor: Vendor = engine.vendor
+  def config: ClientConfig = engine.config
+  def evaluate(request: EvaluationRequest): F[Evaluation] =
+    engine.evaluate(request)
+  def ask[Q <: Tuple, S: Encoder](
+      questions: Ask[Q],
+      state: S
+  ): F[Ask.Answers[Q]] =
+    engine.ask(questions, state)
+  def withConfig(f: ClientConfig => ClientConfig): Verdict4sClient[F] =
+    new GenericClient(engine.withConfig(f(engine.config)))
+  def withJitter(j: Jitter[F]): Verdict4sClient[F] =
+    new GenericClient(engine.withJitter(j))

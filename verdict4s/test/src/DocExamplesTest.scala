@@ -16,6 +16,8 @@
 
 package com.softinio.verdict4s
 
+import scala.annotation.unused
+
 import cats.effect.IO
 import com.softinio.verdict4s.algebra.*
 import munit.CatsEffectSuite
@@ -68,7 +70,7 @@ class DocExamplesTest extends CatsEffectSuite:
       .of[IO] { case POST -> Root / "v1" / "systemone" => Ok(cannedResponse) }
       .orNotFound
     val client =
-      Verdict4sClient[IO](
+      Verdict4sClient.jev[IO](
         Client.fromHttpApp(routes),
         key,
         uri"https://example.invalid"
@@ -85,7 +87,7 @@ class DocExamplesTest extends CatsEffectSuite:
       .of[IO] { case POST -> Root / "v1" / "systemone" => Ok(cannedResponse) }
       .orNotFound
     val client =
-      Verdict4sClient[IO](
+      Verdict4sClient.jev[IO](
         Client.fromHttpApp(routes),
         key,
         uri"https://example.invalid"
@@ -113,9 +115,9 @@ class DocExamplesTest extends CatsEffectSuite:
 
   // docs/core-module.md -- no effect system
   test("the no-effect-system example compiles and round trips"):
-    val body = SystemOne.renderAsk(questions, "Help! My payouts are failing.")
+    val body = Vendor.Jev.renderAsk(questions, "Help! My payouts are failing.")
     assert(body.isRight)
-    SystemOne.parseAsk(questions, cannedResponse) match
+    Vendor.Jev.parseAsk(questions, cannedResponse) match
       case Right((urgent, dept)) =>
         assert(urgent.isTrue())
         assertEquals(dept.choice, Dept.Billing)
@@ -139,6 +141,7 @@ class DocExamplesTest extends CatsEffectSuite:
         s"could not reach service: ${e.details}"
       case e: Verdict4sError.Validation => s"bad question: ${e.getMessage}"
       case e: Verdict4sError.Invalid    => s"${e.errors.length} problems"
+      case e: Verdict4sError.Refused    => s"declined ${e.keys.length}"
     assert(describe(Verdict4sError.Api(503, "down")).contains("503"))
 
   // docs/errors-and-retries.md -- tuning retries
@@ -149,3 +152,71 @@ class DocExamplesTest extends CatsEffectSuite:
     )
     assertEquals(config.retry.maxRetries, 5)
     assertEquals(ClientConfig.default.withoutRetries.retry.maxRetries, 0)
+
+  // docs/choosing-a-vendor.md
+  private val openAIResponse = """
+    {"model":"gpt-6-luna",
+     "answers":[
+       {"type":"predicate","name":"q00","probability":0.95},
+       {"type":"choice","name":"q01","choice":"Billing",
+        "probabilities":[{"value":"Billing","probability":0.9},
+                         {"value":"Technical","probability":0.1},
+                         {"value":"Sales","probability":0.0}],
+        "confidence":0.81}],
+     "usage":{"input_tokens":10,"input_tokens_details":{"cached_tokens":0,"cache_write_tokens":0},
+              "output_tokens":0,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":10}}
+  """
+
+  private def triage[F[_]](client: Verdict4sClient[F]) =
+    client.ask(questions, "Help! My payouts have been failing for 3 days.")
+
+  test("the vendor-agnostic triage example runs against either vendor"):
+    val jev = Verdict4sClient.jev[IO](
+      Client.fromHttpApp(
+        HttpRoutes
+          .of[IO] { case POST -> Root / "v1" / "systemone" =>
+            Ok(cannedResponse)
+          }
+          .orNotFound
+      ),
+      key,
+      uri"https://example.invalid"
+    )
+    val openAI = Verdict4sClient.openAI[IO](
+      Client.fromHttpApp(
+        HttpRoutes
+          .of[IO] { case POST -> Root / "v1" / "decisions" =>
+            Ok(openAIResponse)
+          }
+          .orNotFound
+      ),
+      key,
+      uri"https://example.invalid/v1"
+    )
+    for
+      a <- triage(jev)
+      b <- triage(openAI)
+    yield
+      assertEquals(a._2.choice, b._2.choice)
+      assertEquals(a._1.isTrue(), b._1.isTrue())
+
+  test("capabilities are checked by the compiler, as documented"):
+    // These are used only inside compileErrors' strings, which the unused
+    // check cannot see.
+    @unused def listModels[F[_]](client: Verdict4sClient[F] & ModelCatalog[F]) =
+      client.models
+    val http = Client.fromHttpApp(HttpApp.notFound[IO])
+    @unused val jevClient = Verdict4sClient.jev[IO](http, key)
+    @unused val openAIClient = Verdict4sClient.openAI[IO](http, key)
+    assert(compileErrors("listModels(jevClient)").isEmpty)
+    assert(compileErrors("listModels(openAIClient)").nonEmpty)
+
+  test("the orRefused example answers in Option"):
+    val q: Question[Option[NoulAnswer]] =
+      Question.noul("Is this abusive?").orRefused
+    assert(q.spec.isDefined)
+
+  test("the runtime vendor choice example compiles"):
+    val useOpenAI = true
+    val vendor: Vendor = if useOpenAI then Vendor.OpenAI else Vendor.Jev
+    assertEquals(vendor.defaultModel, Model.GptLuna)

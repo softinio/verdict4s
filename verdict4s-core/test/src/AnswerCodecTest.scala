@@ -18,6 +18,7 @@ package com.softinio.verdict4s.algebra
 
 import scala.collection.immutable.SortedMap
 
+import com.softinio.verdict4s.jev.JevCodecs.given
 import io.circe.Json
 import io.circe.parser.parse
 import io.circe.syntax.*

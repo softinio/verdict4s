@@ -103,7 +103,16 @@ trait Verdict4sModule
   }
 
   def scalacOptions =
-    val common = Seq("-explain", "-explain-types", "-deprecation", "-feature")
+    // Unused code is an error; other warnings, such as an upstream
+    // deprecation after a dependency bump, stay warnings.
+    val common = Seq(
+      "-explain",
+      "-explain-types",
+      "-deprecation",
+      "-feature",
+      "-Wunused:all",
+      "-Wconf:name=UnusedSymbol:e"
+    )
     // `-Xkind-projector` landed after the 3.3 LTS line, which only has `-Ykind-projector`.
     if crossScalaVersion.startsWith("3.3.") then common
     else common :+ "-Xkind-projector:underscores"
@@ -309,6 +318,9 @@ object `verdict4s-examples` extends ScalaModule:
   def scalaVersion = "3.3.8"
   def moduleDeps   = Seq(verdict4s.jvm("3.3.8"))
 
+  // The same rule as the library: these are the sources users copy from.
+  def scalacOptions = Seq("-deprecation", "-feature", "-Wunused:all", "-Wconf:name=UnusedSymbol:e")
+
   def mvnDeps = Seq(
     mvn"dev.zio::zio:2.1.19",
     mvn"dev.zio::zio-interop-cats:23.1.0.5"
@@ -390,11 +402,17 @@ object docs extends Module:
     renderSite(apiDocs(), siteVersion())
   }
 
+  /** The scripts pin their dependencies on purpose, so scala-cli's check for
+    * newer versions is noise: it queries Maven Central on every run and prints
+    * an "outdated" hint per dependency.
+    */
+  private val ScalaCliQuiet = "--suppress-outdated-dependency-warning"
+
   def preview() = Task.Command {
     val projectRoot = mill.api.BuildCtx.workspaceRoot
     renderSite(apiDocs(), siteVersion())
     mill.api.BuildCtx.withFilesystemCheckerDisabled {
-      os.proc("scala-cli", "run", (projectRoot / "scripts" / "LaikaPreview.scala").toString)
+      os.proc("scala-cli", "run", ScalaCliQuiet, (projectRoot / "scripts" / "LaikaPreview.scala").toString)
         .call(cwd = projectRoot, stdout = os.Inherit, stderr = os.Inherit)
     }
     ()
@@ -406,7 +424,7 @@ object docs extends Module:
 
     mill.api.BuildCtx.withFilesystemCheckerDisabled {
       println("Rendering the narrative site...")
-      os.proc("scala-cli", "run", (projectRoot / "scripts" / "LaikaBuild.scala").toString)
+      os.proc("scala-cli", "run", ScalaCliQuiet, (projectRoot / "scripts" / "LaikaBuild.scala").toString)
         .call(
           cwd = projectRoot,
           env = Map("VERDICT4S_DOC_VERSION" -> version),

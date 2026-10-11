@@ -20,6 +20,7 @@ import scala.concurrent.duration.*
 
 import cats.effect.IO
 import com.softinio.verdict4s.algebra.*
+import com.softinio.verdict4s.jev.JevVendor
 import munit.CatsEffectSuite
 
 /** Integration tests against the real TypeSafe service.
@@ -39,15 +40,15 @@ class LiveApiIT extends CatsEffectSuite:
 
   private val key: Option[ApiKey] =
     sys.env
-      .get(Defaults.ApiKeyEnv)
+      .get(JevVendor.ApiKeyEnv)
       .filterNot(_.isBlank)
       .flatMap(ApiKey.fromString(_).toOption)
 
   override def munitIgnore: Boolean = key.isEmpty
-  override def munitTimeout: Duration = 60.seconds
+  override def munitIOTimeout: Duration = 60.seconds
 
-  private def withClient[A](f: Verdict4sClient[IO] => IO[A]): IO[A] =
-    Verdict4s.default[IO](key.get).use(f)
+  private def withClient[A](f: JevClient[IO] => IO[A]): IO[A] =
+    Verdict4s.jev[IO](key.get).use(f)
 
   enum Dept derives Options:
     case Billing, Technical, Sales
@@ -127,10 +128,11 @@ class LiveApiIT extends CatsEffectSuite:
   test("a bad key is reported as Unauthorized, with a request id"):
     val bogus = ApiKey.fromString("sk-definitely-not-a-real-key").toOption.get
     Verdict4s
-      .default[IO](bogus)
+      .jev[IO](bogus)
       .use(_.ask(Ask(Question.noul("urgent?")), ticket))
       .attempt
       .map:
         case Left(e: Verdict4sError.Api) =>
           assertEquals(e.failure, ApiFailure.Unauthorized)
+          assert(e.requestId.isDefined, "x-typesafe-request-id should be read")
         case other => fail(s"expected an Unauthorized Api error, got $other")

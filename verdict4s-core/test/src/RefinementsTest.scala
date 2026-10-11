@@ -57,8 +57,3 @@ class RefinementsTest extends munit.FunSuite:
 
   test("every non-blank identifier shares that rule"):
     assert(QuestionKey.either(" ").isLeft)
-    assert(ModelId.either("").isLeft)
-    assertEquals(
-      ModelId.either("jev-1.13.0").toOption.map(m => (m.value: String)),
-      Some("jev-1.13.0")
-    )

@@ -44,7 +44,7 @@ class ModelTest extends munit.FunSuite:
 
   test("ordering does not recurse"):
     // Guards the opaque-type trap: `Order.by(identity)` would stack overflow.
-    val sorted = List(Model.JevPreview, Model.JevLatest).sorted(
+    val sorted = List(Model.JevPreview, Model.JevLatest).sorted(using
       summon[cats.Order[Model]].toOrdering
     )
     assertEquals(sorted.map(_.name), List("jev-latest", "jev-preview"))

@@ -1,8 +1,9 @@
 # Verdict4s
 
-A Scala 3 client for [TypeSafe AI](https://typesafe.ai)'s **Jev**, a decision
-model that answers typed questions about your program state with choices,
-scores and calibrated probabilities instead of text.
+A Scala 3 client for typed decision models: [TypeSafe AI](https://typesafe.ai)'s
+**Jev** and **OpenAI Decisions**. A decision model answers typed questions about
+your program state with choices, scores and calibrated probabilities instead of
+text.
 
 You describe the decision; your code keeps control of what happens next.
 
@@ -21,14 +22,18 @@ val (urgent, team, mood) = client.ask(
 `ScoreAnswer` — destructured positionally, at exactly the right types, with no
 casts and no lookups by string.
 
+The same code works with either vendor: the vendor is a value you pass in, not
+a different API. See [choosing a vendor](choosing-a-vendor.md).
+
 Verdict4s cross-builds for the **JVM** and **Scala.js** from the same sources
 and at the same version.
 
 ## Why the types matter here
 
-The service enforces real limits: a Choice takes 1 to 255 options, a Score
+The services enforce real limits: a Choice takes at most 255 options, a Score
 takes 2 to 10 ordered levels, probabilities live in the unit interval. Those
-are carried by the types rather than discovered a network round trip later.
+are carried by the types rather than discovered a network round trip later, and
+each vendor's own stricter rules are checked before a request is sent.
 
 ```scala
 Probability(0.95)   // fine
@@ -73,10 +78,11 @@ platform you are building, so the same line works for JVM and Scala.js.
 ## Where to next
 
 - [Getting started](getting-started.md) — your first request, on JVM and Scala.js
+- [Choosing a vendor](choosing-a-vendor.md) — Jev or OpenAI Decisions, and what differs
 - [Typed questions](typed-questions.md) — `Ask`, enum derivation, your own answer types
 - [Errors and retries](errors-and-retries.md) — what can fail, and what is retried
 - [Bring your own client](client-module.md) — any http4s backend, or an in-memory fake
-- [No effect system](core-module.md) — driving the protocol by hand
+- [No effect system](core-module.md) — driving either vendor by hand
 - [Other effect systems](effect-systems.md) — ZIO, Future, and anything else
 - [API reference](api-reference.md) — generated Scaladoc for each module
 

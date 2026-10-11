@@ -4,16 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A Scala 3 client for typed decision models (TypeSafe AI's Jev), cross-built for
-**JVM and Scala.js** from one source tree. Published to Maven Central as three
-layered artifacts.
+A Scala 3 client for typed decision models -- TypeSafe AI's Jev and OpenAI
+Decisions -- cross-built for **JVM and Scala.js** from one source tree.
+Published to Maven Central as three layered artifacts.
 
-The Jev protocol is implemented across all three layers: models, codecs and the
-`Ask` tuple builder in core, an http4s client with retries on top, and a
-batteries-included bundle. The suite is green on all twelve targets. Releases
-are cut by pushing a `v*` tag (see the README's "Releasing" section); run
-`LiveApiIT` before each one, since it is the only check that the wire format
-matches the service rather than its documentation.
+Both vendors are implemented across all three layers: models, the `Vendor`
+trait and each vendor's codecs and `Ask` in core, an http4s client with
+retries on top, and a batteries-included bundle. The suite is green on all
+twelve targets. Releases are cut by pushing a `v*` tag (see the README's
+"Releasing" section); run `LiveApiIT` and `LiveOpenAIIT` before each one, since
+they are the only check that the wire formats match the services rather than
+their documentation.
 
 ## Commands
 
@@ -37,8 +38,9 @@ testJvm25                                 # JVM tests on Java 25, as CI does
 buildDocs / previewDocs                   # Laika site -> site/target/docs/site, or serve on :4242
 mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient interop examples
 
-# against the real service; ignored without a key, so it is safe to run blind
+# against the real services; ignored without a key, so it is safe to run blind
 TYPESAFE_API_KEY=… mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveApiIT
+OPENAI_API_KEY=…   mill "verdict4s.jvm[3.3.8].test.testOnly" com.softinio.verdict4s.LiveOpenAIIT
 ```
 
 Module path segments are `<module>.<platform>[<scalaVersion>]`. A bare class
@@ -57,11 +59,11 @@ take exactly as much as they want:
 
 | Module | Deps | Holds |
 |---|---|---|
-| `verdict4s-core` | cats-core, circe, Iron | Effect-free. Models, codecs, request building, response parsing, `Ask`. |
-| `verdict4s-client` | + http4s-client, fs2, cats-effect-kernel | `Verdict4sClient[F]` over a caller-supplied `Client[F]`. |
-| `verdict4s` | + ember (JVM) / http4s-dom (JS) | `Verdict4s.default[F]` — picks a transport for you. |
+| `verdict4s-core` | cats-core, circe, Iron | Effect-free. Models, `Ask`, the `Vendor` trait, `jev/` and `openai/` codecs. |
+| `verdict4s-client` | + http4s-client, fs2, cats-effect-kernel | `Verdict4sClient[F]` (with `JevClient`, `OpenAIClient`) over a caller-supplied `Client[F]`. |
+| `verdict4s` | + ember (JVM) / http4s-dom (JS) | `Verdict4s.jev` / `openAI` / `of` — picks a transport for you. |
 
-Three invariants hold this together. Breaking any of them defeats the design:
+Four invariants hold this together. Breaking any of them defeats the design:
 
 **`verdict4s-core` stays effect-free.** cats-core, circe, Iron and stdlib only.
 No effect type, no HTTP client, and deliberately no fs2 — fs2-core pulls in `cats-effect-kernel`, which would
@@ -78,7 +80,19 @@ in memory, so the suite runs identically on JVM and Node.
 TCP sockets, which browsers do not expose, so `src-js/Transport.scala` uses the
 Fetch API (works in browsers and Node 18+) while `src-jvm/Transport.scala` uses
 Ember. `Network[F]` is derived inside the JVM transport rather than demanded
-from callers, so both platforms share one `Verdict4s.default` signature.
+from callers, so both platforms share one signature per entry point.
+
+**The vendor is a value; the protocol types are vendor-neutral.** `QuestionSpec`,
+`Answer`, `EvaluationRequest` and `Evaluation` describe what Jev and OpenAI
+Decisions share, and carry **no codecs in their companions** -- each vendor's
+wire format lives in `jev.JevCodecs` / `openai.OpenAICodecs`, reached through a
+`Vendor`. An implicit codec in a companion would silently pick one vendor's
+format. `Ask`, `Question` and the derivations know nothing of vendors. What only
+one vendor offers is a capability trait on that vendor's client
+(`ModelCatalog` on `JevClient`, `SafetyIdentity` on `OpenAIClient`), never a
+method on `Verdict4sClient`; per-vendor limits go in `Vendor.validate`, not in
+the shared Iron types. `internal/Engine` is the one implementation behind all
+clients.
 
 ### Source layout
 
@@ -113,6 +127,17 @@ clean and then fail at runtime.
 
 **`.mill-version` tracks what nixpkgs ships** (currently 1.1.8), not the latest
 Mill release. A mismatch makes the wrapper warn on every invocation.
+
+**Unused code fails the build; nothing else does.** `-Wunused:all` with
+`-Wconf:name=UnusedSymbol:e` makes unused imports, privates, locals and
+parameters errors, on every module including tests and examples. Deprecations
+and other warnings stay warnings on purpose, so a dependency bump that
+deprecates something does not break the build the same day. Scala 3 has no
+`cat=unused` filter: that is Scala 2's spelling, and Scala 3 answers it with
+"unknown category" as an easily missed warning, leaving the rule silently
+off. A genuinely unused parameter, such as a default implementation's, takes
+`@unused`; one used only inside `compileErrors("...")` strings needs it too,
+because the check cannot see into them.
 
 **`-Xkind-projector` is gated on "not 3.3.x"**, because the LTS only has
 `-Ykind-projector`. Gating on a specific newer version silently drops the flag
@@ -239,6 +264,37 @@ environment variable changes, so `VERDICT4S_DOC_VERSION=… mill docs.build`
 silently rendered the previous build's version. CI never notices, because it
 starts without a cache. `docs.versionOverride` and `jvmVersion` are inputs for
 this reason; anything else that reads the environment should depend on one.
+
+**The abstraction is `Vendor`, not `Protocol`, because of http4s.**
+`org.http4s.Protocol` exists, so a user with `import org.http4s.*` and
+`import com.softinio.verdict4s.*` got an ambiguity, and one in package
+`com.softinio.verdict4s` silently got http4s' type. Found by `DocExamplesTest`.
+
+**A given defined later in the same object resolves on 3.3.8 but not on
+3.9.0.** `OpenAICodecs` once had `given Decoder[Evaluation]` above the
+`Decoder[Usage]` it uses; the LTS compiled it and 3.9.0 reported "No given
+instance". Keep givens ordered by dependency.
+
+**OpenAI's docs guide lags its OpenAPI spec.** The guide omitted `model`,
+`usage`, the `refusal` answer and `safety_identifier`; the spec
+(`openai/openai-openapi`, schemas `DecisionRequest`, `AnswerResource*`,
+`DecisionResponse`) and the generated SDK types have them. Read those, raw.
+
+**OpenAI validates a body before it checks credit.** An account with no
+credits gets `400` for a malformed request and `429 insufficient_quota` for a
+well-formed one, which is why `LiveOpenAIIT` can check the request format
+without credits, and why `insufficient_quota` is never retried (it is a `429`
+with no `x-should-retry` header). Response decoding needs credits; it was
+confirmed live on 2026-10-06, when a raw response matched the fakes field for
+field.
+
+**Mill reports a skipped munit test as a pass.** A failed `assume` shows up as
+`Success` with "0 ignored", in the console, `out.json` and `test-report.xml`
+alike. `LiveOpenAIIT` once skipped its answer tests on `insufficient_quota`,
+and a run with no credits looked fully green while decoding nothing. It now
+fails instead. Never gate a check on `assume` where a silent skip would hide
+that the check did not run; `munitIgnore`, used for a missing key, is reported
+honestly as ignored.
 
 **Every `.scala` and `.mill` file carries the Apache header**, dated by year, and
 CI fails without it. Non-Scala files deliberately have none -- see the licence

@@ -21,11 +21,6 @@ import scala.compiletime.constValueTuple
 import scala.compiletime.summonAll
 import scala.deriving.Mirror
 
-import scala.compiletime.constValue
-import scala.compiletime.constValueTuple
-import scala.compiletime.summonAll
-import scala.deriving.Mirror
-
 import cats.Eq
 import cats.Show
 import cats.data.NonEmptyChain

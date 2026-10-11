@@ -19,7 +19,7 @@ package com.softinio.verdict4s
 import scala.collection.immutable.SortedMap
 
 import com.softinio.verdict4s.algebra.*
-import io.circe.Json
+import com.softinio.verdict4s.jev.JevCodecs.given
 import io.circe.syntax.*
 
 /** The tuple builder.
@@ -256,3 +256,57 @@ class AskTest extends munit.FunSuite:
         val first: NoulAnswer = t.head
         assertEquals(first.value, p(0.95))
       case Left(e) => fail(s"projection failed: $e")
+
+  // -- Refusals ----------------------------------------------------------------
+
+  test(
+    "a refused question fails the whole ask, naming it and keeping the rest"
+  ):
+    val e = evaluation("q00" -> noulAnswer, "q01" -> Answer.Refused)
+    Ask(urgency, team).answers(e) match
+      case Left(Verdict4sError.Refused(keys, evaluation)) =>
+        assertEquals(keys.toList, List(k("q01")))
+        assertEquals(evaluation, e)
+        assertEquals(evaluation.answer(k("q00")), Some(noulAnswer))
+      case other => fail(s"expected Refused, got $other")
+
+  test("every refused question is named at once"):
+    val e = evaluation(
+      "q00" -> Answer.Refused,
+      "q01" -> choiceAnswer,
+      "q02" -> Answer.Refused
+    )
+    Ask(urgency, team, frustration).answers(e) match
+      case Left(Verdict4sError.Refused(keys, _)) =>
+        assertEquals(keys.toList, List(k("q00"), k("q02")))
+      case other => fail(s"expected Refused, got $other")
+
+  test("orRefused reads a refusal as None and an answer as Some"):
+    val e = evaluation("q00" -> Answer.Refused, "q01" -> choiceAnswer)
+    Ask(urgency.orRefused, team.orRefused).answers(e) match
+      case Right((u, d)) =>
+        val un: Option[NoulAnswer] = u
+        val dn: Option[ChoiceAnswer[Dept]] = d
+        assertEquals(un, None)
+        assertEquals(dn.map(_.choice), Some(Dept.Billing))
+      case Left(err) => fail(s"expected answers, got $err")
+
+  test("orRefused on one question does not excuse a refusal on another"):
+    val e = evaluation("q00" -> Answer.Refused, "q01" -> Answer.Refused)
+    Ask(urgency.orRefused, team).answers(e) match
+      case Left(Verdict4sError.Refused(keys, _)) =>
+        assertEquals(keys.toList, List(k("q01")))
+      case other => fail(s"expected Refused, got $other")
+
+  test("orRefused composes with map"):
+    val e = evaluation("q00" -> noulAnswer)
+    assertEquals(
+      Ask(urgency.map(_.isTrue()).orRefused).answers(e),
+      Right(Tuple1(Some(true)))
+    )
+
+  test("predicate is noul under OpenAI's name"):
+    assertEquals(
+      Question.predicate("urgent?").spec,
+      Question.noul("urgent?").spec
+    )
