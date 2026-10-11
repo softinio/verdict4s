@@ -8,7 +8,7 @@
 [![CI](https://github.com/softinio/verdict4s/actions/workflows/ci.yml/badge.svg)](https://github.com/softinio/verdict4s/actions/workflows/ci.yml)
 [![Release](https://github.com/softinio/verdict4s/actions/workflows/release.yml/badge.svg)](https://github.com/softinio/verdict4s/actions/workflows/release.yml)
 [![Documentation](https://github.com/softinio/verdict4s/actions/workflows/docs.yml/badge.svg)](https://verdict4s.softinio.dev)
-[![Maven Central](https://img.shields.io/maven-central/v/com.softinio/verdict4s_3)](https://central.sonatype.com/artifact/com.softinio/verdict4s_3)
+[![Maven Central](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fcom%2Fsoftinio%2Fverdict4s_3%2Fmaven-metadata.xml&label=maven%20central)](https://central.sonatype.com/artifact/com.softinio/verdict4s_3)
 
 A Scala 3 client for typed decision models: [TypeSafe AI](https://typesafe.ai)'s
 **Jev** and **OpenAI Decisions**. A decision model answers typed questions about
