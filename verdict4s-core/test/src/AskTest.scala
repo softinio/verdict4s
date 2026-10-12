@@ -105,17 +105,6 @@ class AskTest extends munit.FunSuite:
     val keys = (0 to 12).map(Ask.defaultKey)
     assertEquals(keys.sorted, keys, "lexicographic order must match positional")
 
-  test("the encoded request uses those keys"):
-    val req = Ask(urgency, team)
-      .request("Help! My payouts have been failing.", Model.JevLatest)
-      .toOption
-      .get
-    assertEquals(
-      req.asJson.hcursor.downField("questions").keys.map(_.toList),
-      Some(List("q00", "q01"))
-    )
-    assertEquals(req.model, Model.JevLatest)
-
   test("withKeys lets the caller name the questions"):
     val ask = Ask(urgency, team).withKeys(i => s"question-$i")
     val req = ask.request("s", Model.JevLatest).toOption.get
@@ -127,6 +116,49 @@ class AskTest extends munit.FunSuite:
       evaluation("question-0" -> noulAnswer, "question-1" -> choiceAnswer)
     )
     assert(result.isRight, result.toString)
+
+  test("repeated keys are rejected rather than merging two questions"):
+    val ask = Ask(urgency, Question.noul("Is it a refund?")).withKeys(_ => "k")
+    ask.request("s", Model.JevLatest).toEither match
+      case Left(errors) =>
+        assertEquals(errors.toChain.toList.map(_.field), List("questions"))
+        assertEquals(
+          errors.head.details,
+          "question keys must be distinct, but 'k' is used more than once"
+        )
+      case Right(req) => fail(s"expected a rejection, got $req")
+    assert(ask.answers(evaluation("k" -> noulAnswer)).isLeft)
+
+  test("several repeated keys are named together, in the plural"):
+    val ask = Ask(urgency, urgency, team, team)
+      .withKeys(i => if i < 2 then "a" else "b")
+    ask.request("s", Model.JevLatest).toEither match
+      case Left(errors) =>
+        assertEquals(
+          errors.head.details,
+          "question keys must be distinct, but 'a', 'b' are used more than once"
+        )
+      case Right(req) => fail(s"expected a rejection, got $req")
+
+  test("an unusable key is rejected when building and when reading"):
+    val ask = Ask(urgency, team).withKeys(i => if i == 0 then " " else "ok")
+    ask.request("s", Model.JevLatest).toEither match
+      case Left(errors) =>
+        assertEquals(
+          errors.toChain.toList.map(e => e.field -> e.details),
+          List("questions" -> "' ' is not a usable question key")
+        )
+      case Right(req) => fail(s"expected a rejection, got $req")
+    ask.answers(evaluation("ok" -> choiceAnswer)) match
+      case Left(Verdict4sError.Invalid(errors)) =>
+        assertEquals(errors.head.field, "questions")
+      case other => fail(s"expected Invalid, got $other")
+
+  test("an Ask of no questions is rejected rather than sent empty"):
+    Ask(EmptyTuple).request("s", Model.JevLatest).toEither match
+      case Left(errors) =>
+        assertEquals(errors.head.details, "ask at least one question")
+      case Right(req) => fail(s"expected a rejection, got $req")
 
   test("withModel overrides the client default"):
     val pinned = Model.fromString("jev-1.13.0").toOption.get
@@ -168,25 +200,6 @@ class AskTest extends munit.FunSuite:
         assertEquals(u.value, p(0.95))
       case Left(e) => fail(s"projection failed: $e")
 
-  test("arity 8 works, and keys stay ordered past the padding boundary"):
-    val ask = Ask(
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency
-    )
-    val ev = evaluation((0 until 8).map(i => Ask.defaultKey(i) -> noulAnswer)*)
-    ask.answers(ev) match
-      case Right(t) =>
-        assertEquals(t.size, 8)
-        val first: NoulAnswer = t.head
-        assertEquals(first.value, p(0.95))
-      case Left(e) => fail(s"projection failed: $e")
-
   test("a tuple built elsewhere can be passed directly"):
     val ask = Ask((urgency, team))
     assert(
@@ -204,25 +217,6 @@ class AskTest extends munit.FunSuite:
       .toOption
       .get
     assertEquals(req.state.hcursor.downField("role").as[String], Right("user"))
-
-  test("arity 13 works, as the service's own batching examples use"):
-    val ask = Ask(
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency,
-      urgency
-    )
-    val ev = evaluation((0 until 13).map(i => Ask.defaultKey(i) -> noulAnswer)*)
-    assertEquals(ask.answers(ev).map(_.size), Right(13))
 
   test("arity 22 is supported through apply"):
     val ask = Ask(
@@ -255,6 +249,43 @@ class AskTest extends munit.FunSuite:
         assertEquals(t.size, 22)
         val first: NoulAnswer = t.head
         assertEquals(first.value, p(0.95))
+      case Left(e) => fail(s"projection failed: $e")
+
+  test("past 22, a tuple built with *: still projects positionally"):
+    val twentyTwo = (
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency,
+      urgency
+    )
+    val ask = Ask(team *: twentyTwo)
+    val ev = evaluation(
+      ("q00" -> choiceAnswer) +:
+        (1 until 23).map(i => Ask.defaultKey(i) -> noulAnswer)*
+    )
+    ask.answers(ev) match
+      case Right(t) =>
+        assertEquals(t.size, 23)
+        val first: ChoiceAnswer[Dept] = t.head
+        assertEquals(first.choice, Dept.Billing)
       case Left(e) => fail(s"projection failed: $e")
 
   // -- Refusals ----------------------------------------------------------------

@@ -66,6 +66,50 @@ class RetryPolicyTest extends munit.FunSuite:
   test("Retry-After wins when it asks for longer than the backoff"):
     assertEquals(p.delayFor(1, Some(3.seconds), 0.5), Some(3.seconds))
 
+  test("a Retry-After of totalTimeout or more ends the retries at once"):
+    // Waiting it out could only end in a timeout, never in a response.
+    assertEquals(p.delayFor(1, Some(p.totalTimeout), 0.5), None)
+    assertEquals(p.delayFor(1, Some(Long.MaxValue.nanos), 0.5), None)
+    assertEquals(
+      p.delayFor(1, Some(p.totalTimeout - 1.milli), 0.5),
+      Some(p.totalTimeout - 1.milli)
+    )
+
+  test("a computed backoff of totalTimeout or more ends the retries too"):
+    // The same rule as the header: no header, but the backoff alone would
+    // sleep through the whole budget.
+    val slow = RetryPolicy(
+      backoffInitial = 10.seconds,
+      backoffMax = 10.seconds,
+      jitter = 0.0,
+      totalTimeout = 10.seconds
+    ).toOption.get
+    assertEquals(slow.delayFor(1, None, 0.5), None)
+    val justInside = RetryPolicy(
+      backoffInitial = 10.seconds,
+      backoffMax = 10.seconds,
+      jitter = 0.0,
+      totalTimeout = 10.seconds + 1.milli
+    ).toOption.get
+    assertEquals(justInside.delayFor(1, None, 0.5), Some(10.seconds))
+
+  test("jitter that pushes the backoff to totalTimeout ends the retries"):
+    val jittery = RetryPolicy(
+      backoffInitial = 8.seconds,
+      backoffMax = 8.seconds,
+      jitter = 0.25,
+      totalTimeout = 10.seconds
+    ).toOption.get
+    assertEquals(jittery.delayFor(1, None, 0.0), Some(6.seconds))
+    assertEquals(jittery.delayFor(1, None, 1.0), None)
+
+  test("respectRetryAfter = false ignores even a huge Retry-After"):
+    val ignoring = RetryPolicy(respectRetryAfter = false).toOption.get
+    assertEquals(
+      ignoring.delayFor(1, Some(Long.MaxValue.nanos), 0.5),
+      Some(500.millis)
+    )
+
   test("Retry-After is ignored when it asks for less than the backoff"):
     // Backing off less than we already planned to would defeat the point.
     assertEquals(p.delayFor(1, Some(10.millis), 0.5), Some(500.millis))
@@ -89,6 +133,7 @@ class RetryPolicyTest extends munit.FunSuite:
     assertEquals(RetryPolicy.retryAfterDelay(100L, 105L), 5.seconds)
     assertEquals(RetryPolicy.retryAfterDelay(100L, 100L), Duration.Zero)
     assertEquals(RetryPolicy.retryAfterDelay(100L, 90L), Duration.Zero)
+    assert(RetryPolicy.retryAfterDelay(0L, 300000000000L).toDays > 100000L)
 
   test("the smart constructor accumulates every bad field at once"):
     val bad = RetryPolicy(

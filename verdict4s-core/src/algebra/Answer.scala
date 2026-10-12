@@ -23,11 +23,11 @@ import cats.Show
 
 /** One answer, as the service reported it.
   *
-  * Untyped in the sense that a Choice answer carries the option as a `String`:
-  * this is the honest shape of the response, and it is what
-  * `Evaluation.answers` exposes. The typed views below — [[NoulAnswer]],
-  * [[ChoiceAnswer]], [[ScoreAnswer]] — are what the question builders project
-  * this into once the question's own type is known.
+  * Untyped in the sense that a Choice answer carries the option as an
+  * [[OptionName]], not the caller's own type: this is the honest shape of the
+  * response, and it is what `Evaluation.answers` exposes. The typed views below
+  * — [[NoulAnswer]], [[ChoiceAnswer]], [[ScoreAnswer]] — are what the question
+  * builders project this into once the question's own type is known.
   *
   * @group Protocol
   */
@@ -115,7 +115,7 @@ final case class ChoiceAnswer[A](
 
   /** The probability assigned to one particular option. */
   def probabilityFor(value: A)(using options: Options[A]): Option[Probability] =
-    probabilities.get(options.render(value))
+    options.nameOf(value).flatMap(probabilities.get)
 
 /** Instances for [[ChoiceAnswer]]. */
 object ChoiceAnswer:

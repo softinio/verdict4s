@@ -52,7 +52,11 @@ import com.softinio.verdict4s.Verdict4sError
   *   whether a `Retry-After` header wins when it asks for longer than the
   *   computed backoff
   * @param totalTimeout
-  *   ceiling on the whole call, retries included
+  *   ceiling on the whole call, retries included. Exceeding it fails the call
+  *   with a [[com.softinio.verdict4s.Verdict4sError.Transport]]. A delay, from
+  *   the header or the backoff, of at least the time left in it ends the
+  *   retries instead, with the server's own error, since that wait could only
+  *   end in a timeout.
   *
   * @group Configuration
   */
@@ -70,6 +74,17 @@ final case class RetryPolicy private (
   def retriesStatus(status: Int): Boolean = retryableStatuses.contains(status)
 
   /** How long to wait before `attempt`, or `None` when retries are exhausted.
+    *
+    * The delay is the jittered backoff, or the server's `Retry-After` when it
+    * is honoured and asks for longer. Also `None` when that delay is at least
+    * `totalTimeout`, by the same rule whether it came from the header or the
+    * backoff: the call could never outlive that wait, so sleeping through it
+    * would only trade the server's error for a timeout. Giving up returns the
+    * server's own error, with its `retryAfter`, at once.
+    *
+    * This is pure, so it can only compare against the whole budget. The client
+    * applies the same rule to the budget left: it also gives up when the delay
+    * is at least `totalTimeout` minus the time the call has already taken.
     *
     * @param attempt
     *   1-based: the attempt about to be made, so the first retry is attempt 1
@@ -92,8 +107,12 @@ final case class RetryPolicy private (
       val capped = math.min(doubled, backoffMax.toNanos.toDouble)
       val spread = capped * (1.0 + jitter * (2.0 * jitterSample - 1.0))
       val base = FiniteDuration(math.max(0.0, spread).toLong, NANOSECONDS)
-      val honoured = retryAfter.filter(_ => respectRetryAfter)
-      Some(honoured.fold(base)(after => if after > base then after else base))
+      val delay = retryAfter.filter(_ => respectRetryAfter) match
+        case Some(after) if after > base => after
+        case _                           => base
+      // The same cutoff whichever of the two the delay came from: a wait of
+      // the whole budget or more could only end in a timeout.
+      Option.when(delay < totalTimeout)(delay)
 
   /** The whole schedule, for documentation and one-assertion tests. */
   def schedule(jitterSamples: LazyList[Double]): List[FiniteDuration] =
@@ -168,7 +187,20 @@ object RetryPolicy:
       nowEpochSecond: Long,
       targetEpochSecond: Long
   ): FiniteDuration =
-    math.max(0L, targetEpochSecond - nowEpochSecond).seconds
+    serverDelay(targetEpochSecond - nowEpochSecond, SECONDS)
+
+  /** A delay the server asked for, clamped between zero and the longest
+    * `FiniteDuration`, so that neither clock skew nor an absurd header value
+    * can make it negative or throw.
+    */
+  private[verdict4s] def serverDelay(
+      length: Long,
+      unit: TimeUnit
+  ): FiniteDuration =
+    FiniteDuration(
+      math.min(math.max(0L, length), unit.convert(Long.MaxValue, NANOSECONDS)),
+      unit
+    )
 
   private def check(
       ok: Boolean,

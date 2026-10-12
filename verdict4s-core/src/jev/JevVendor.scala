@@ -22,7 +22,6 @@ import com.softinio.verdict4s.Verdict4sError
 import com.softinio.verdict4s.algebra.*
 import com.softinio.verdict4s.jev.JevCodecs.given
 import io.circe.Json
-import io.circe.parser
 import io.circe.syntax.*
 
 /** TypeSafe AI's Jev.
@@ -75,12 +74,7 @@ object JevVendor extends Vendor:
 
   /** Parse the models endpoint's response, unwrapping its `models` envelope. */
   def parseModels(body: String): Either[Verdict4sError, List[ModelCard]] =
-    parser
-      .parse(body)
-      .leftMap(f =>
-        Verdict4sError.Decoding(s"the body was not JSON: ${f.message}")
-      )
-      .flatMap(decodeModels)
+    Vendor.parseWith(body)(decodeModels)
 
   /** Read the models endpoint's response, unwrapping its `models` envelope. */
   def decodeModels(body: Json): Either[Verdict4sError, List[ModelCard]] =

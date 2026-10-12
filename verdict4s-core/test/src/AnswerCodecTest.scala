@@ -129,7 +129,8 @@ class AnswerCodecTest extends munit.FunSuite:
         SortedMap(0 -> "Calm"),
         SortedMap(0 -> p(1.0)),
         c(0.92)
-      )
+      ),
+      Answer.Refused
     )
     answers.foreach(a => assertEquals(a.asJson.as[Answer], Right(a)))
 
@@ -158,3 +159,10 @@ class AnswerCodecTest extends munit.FunSuite:
     )
     assertEquals(a.probabilityFor("billing"), Some(p(0.88)))
     assertEquals(a.probabilityFor("sales"), Some(p(0.12)))
+
+  test("a value that is not an option has no probability, even a blank one"):
+    given Options[String] = Options.of("billing", "sales").toOption.get
+    val a =
+      ChoiceAnswer("billing", SortedMap.empty[OptionName, Probability], c(0.5))
+    assertEquals(a.probabilityFor(""), None)
+    assertEquals(a.probabilityFor("nope"), None)

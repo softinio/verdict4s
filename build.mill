@@ -93,15 +93,6 @@ trait Verdict4sModule
   /** Blurb for the published POM. */
   def docDescription: String
 
-  /** All Scala 3.x releases are mutually binary compatible, so everything
-    * publishes under the `_3` suffix regardless of which 3.x compiled it.
-    */
-  override def artifactScalaVersion: T[String] = Task {
-    val v = crossScalaVersion
-    if v.startsWith("3.") then "3"
-    else v.split('.').take(2).mkString(".")
-  }
-
   def scalacOptions =
     // Unused code is an error; other warnings, such as an upstream
     // deprecation after a dependency bump, stay warnings.
@@ -118,8 +109,7 @@ trait Verdict4sModule
     else common :+ "-Xkind-projector:underscores"
 
   def scalaDocOptions = Task {
-    val version = docs.versionOverride().getOrElse(publishVersion())
-    withoutDefaultProject(super.scalaDocOptions()) ++ docOptions(docTitle, version)
+    withoutDefaultProject(super.scalaDocOptions()) ++ docOptions(docTitle, docs.siteVersion())
   }
 
   /** Emits `<info.versionScheme>early-semver</info.versionScheme>` into the POM.
@@ -262,7 +252,7 @@ object verdict4s extends Module:
     def artifactName   = "verdict4s"
     def docTitle       = "Verdict4s"
     def docDescription =
-      "A Scala client for typed decision models, which answer questions about your program state with typed choices, scores, and probabilities instead of text. Supports TypeSafe AI's Jev."
+      "A Scala client for typed decision models, which answer questions about your program state with typed choices, scores, and probabilities instead of text. Supports TypeSafe AI's Jev and OpenAI Decisions."
 
     def mvnDeps = Seq(mvn"org.typelevel::cats-effect::$catsEffectVersion")
 
@@ -358,8 +348,7 @@ object unidoc extends ScalaModule:
   }
 
   def scalaDocOptions = Task {
-    val version = docs.versionOverride().getOrElse(verdict4s.jvm("3.3.8").publishVersion())
-    withoutDefaultProject(super.scalaDocOptions()) ++ docOptions("Verdict4s", version)
+    withoutDefaultProject(super.scalaDocOptions()) ++ docOptions("Verdict4s", docs.siteVersion())
   }
 
 /** Documentation site: the Laika narrative pages plus the scaladoc API
@@ -391,8 +380,8 @@ object docs extends Module:
   }
 
   /** The version the pages show in their dependency lines, in place of
-    * `@VERSION@`: the override if set, otherwise the git-derived version, as
-    * for the Scaladoc.
+    * `@VERSION@`, and in the Scaladoc: the override if set, otherwise the
+    * git-derived version.
     */
   def siteVersion: T[String] = Task {
     versionOverride().getOrElse(verdict4s.jvm("3.3.8").publishVersion())

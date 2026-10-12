@@ -50,28 +50,9 @@ class QuestionValidationTest extends munit.FunSuite:
     assert(Question.noul("   ").validated.isInvalid)
     assert(Question.score("  ", Seq("a", "b")).validated.isInvalid)
 
-  test("validation accumulates across every field of one question"):
+  test("toEither collapses accumulated failures into one Invalid"):
     // Three blanks must yield three errors, not one: fail-fast here would make
     // the caller fix them one network round trip at a time.
-    val q = Question.noul("", "", "")
-    assertEquals(q.validated.swap.toOption.get.length, 3L)
-
-  test("choice cardinality is enforced at construction"):
-    def choice(n: Int) =
-      Question.choiceOfStrings("pick", (1 to n).map(i => s"o$i" -> None))
-    assert(choice(1).validated.isValid)
-    assert(choice(255).validated.isValid)
-    assert(choice(0).validated.isInvalid)
-    assert(choice(256).validated.isInvalid)
-
-  test("score level bounds are enforced at construction"):
-    def score(n: Int) = Question.score("rate", (1 to n).map(i => s"l$i"))
-    assert(score(1).validated.isInvalid)
-    assert(score(2).validated.isValid)
-    assert(score(10).validated.isValid)
-    assert(score(11).validated.isInvalid)
-
-  test("toEither collapses accumulated failures into one Invalid"):
     Question.noul("", "", "").toEither match
       case Left(Verdict4sError.Invalid(errors)) =>
         assertEquals(errors.length, 3L)
@@ -80,14 +61,6 @@ class QuestionValidationTest extends munit.FunSuite:
   test("a noul answer decodes to NoulAnswer"):
     val decode = Question.noul("urgent?").toEither.toOption.get.decode
     assertEquals(decode(Answer.Noul(p(0.95))), Right(NoulAnswer(p(0.95))))
-
-  test("the wrong answer shape is a decoding failure naming both types"):
-    val decode = Question.noul("urgent?").toEither.toOption.get.decode
-    val err = decode(
-      Answer.Score(1.0, SortedMap(0 -> "a"), SortedMap(0 -> p(1.0)), c(1.0))
-    ).swap.toOption.get
-    assert(err.getMessage.contains("noul"), err.getMessage)
-    assert(err.getMessage.contains("score"), err.getMessage)
 
   test("a choice answer decodes into the option type"):
     val q =

@@ -131,6 +131,19 @@ class OpenAIVendorTest extends munit.FunSuite:
     val err = openAI.parseError(503, "", Map("Retry-After" -> "3"))
     assertEquals(err.retryAfter.map(_.toSeconds), Some(3L))
 
+  test("an absurd retry-after-ms is clamped to the longest duration"):
+    val err = openAI.parseError(503, "", Map("retry-after-ms" -> "1e300"))
+    assert(err.retryAfter.exists(_.toDays > 100000L))
+
+  test("an unusable retry-after-ms falls back to Retry-After"):
+    List("soon", "-1", "Infinity", "NaN").foreach: ms =>
+      val err = openAI.parseError(
+        503,
+        "",
+        Map("retry-after-ms" -> ms, "Retry-After" -> "3")
+      )
+      assertEquals(err.retryAfter.map(_.toSeconds), Some(3L), s"for '$ms'")
+
   test("Jev ignores retry-after-ms, which it never sends"):
     val err = Vendor.Jev.parseError(429, "", Map("retry-after-ms" -> "1500"))
     assertEquals(err.retryAfter, None)

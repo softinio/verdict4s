@@ -131,19 +131,23 @@ class JevVendorTest extends munit.FunSuite:
     assertEquals(err.requestId, Some("req-123"))
     assertEquals(err.retryAfter.map(_.toSeconds), Some(2L))
 
+  test("parseError clamps Retry-After to zero and to the longest duration"):
+    def after(value: String) =
+      Vendor.Jev.parseError(503, "", Map("Retry-After" -> value)).retryAfter
+    assertEquals(after("-5"), Some(scala.concurrent.duration.Duration.Zero))
+    assert(after("99999999999999").exists(_.toDays > 100000L))
+
+  test("parseError takes a Retry-After of 0, and ignores one it cannot read"):
+    def after(value: String) =
+      Vendor.Jev.parseError(503, "", Map("Retry-After" -> value)).retryAfter
+    assertEquals(after(" 0 "), Some(scala.concurrent.duration.Duration.Zero))
+    assertEquals(after("soon"), None)
+
   test("parseError copes with a non-JSON error body"):
     val err = Vendor.Jev.parseError(502, "<html>Bad Gateway</html>")
     assertEquals(err.status, 502)
     assertEquals(err.failure, ApiFailure.Server)
     assert(err.body.isDefined)
-
-  test("render and parse round trip through the wire format"):
-    val body = Vendor.Jev.renderAsk(ask, "state").toOption.get
-    assert(parser.parse(body).isRight)
-    assertEquals(
-      Vendor.Jev.parse(responseBody).map(_.answers.size),
-      Right(2)
-    )
 
   test("Jev adds no validation of its own"):
     val one = Ask(Question.choiceOfStrings("Only one?", Seq("only" -> None)))

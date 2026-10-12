@@ -119,14 +119,16 @@ object JevCodecs:
             conf <- c.downField("confidence").as[Confidence]
           yield Answer.Score(score, legend, probs, conf)
 
+        case "refusal" => Right(Answer.Refused)
+
         case other =>
           Left(
             DecodingFailure(s"unknown answer type '$other'", c.history)
           )
 
-  /** Jev never refuses, so [[Answer.Refused]] has no documented encoding; it is
-    * written as a bare `{"type": "refusal"}` so that a fake can still serve
-    * one.
+  /** Jev never refuses, so [[com.softinio.verdict4s.algebra.Answer.Refused]]
+    * has no documented encoding; it is written as a bare `{"type": "refusal"}`
+    * so that a fake can still serve one, and read back by the decoder.
     */
   given Encoder[Answer] = Encoder.instance:
     case Answer.Noul(noul) =>

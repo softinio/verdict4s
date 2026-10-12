@@ -16,8 +16,6 @@
 
 package com.softinio.verdict4s.internal
 
-import scala.concurrent.duration.*
-
 import cats.effect.kernel.Concurrent
 import cats.syntax.all.*
 import com.softinio.verdict4s.Vendor
@@ -61,56 +59,25 @@ private[verdict4s] object Wire:
   private def authorization(apiKey: ApiKey): Authorization =
     Authorization(Credentials.Token(AuthScheme.Bearer, apiKey.bearer))
 
-  /** The vendor's request id header, for support and for error reports. */
-  def requestId(response: Response[?], vendor: Vendor): Option[String] =
-    response.headers.get(CIString(vendor.requestIdHeader)).map(_.head.value)
-
-  /** How long the server asked us to wait.
-    *
-    * The vendor's millisecond header wins when it sends one; otherwise
-    * `Retry-After`, whether the server sent seconds or an HTTP date. The date
-    * form needs the current time to become a delay, which is why the caller
-    * passes it in rather than this reaching for a clock.
-    */
-  def retryAfter(
-      response: Response[?],
-      vendor: Vendor,
-      nowEpochSecond: Long
-  ): Option[FiniteDuration] =
-    val millis = vendor.retryAfterMsHeader.flatMap(name =>
-      response.headers
-        .get(CIString(name))
-        .map(h => Map(name.toLowerCase -> h.head.value))
-        .flatMap(vendor.retryAfterMillis)
-    )
-    millis.orElse(
-      response.headers.get[headers.`Retry-After`].map { header =>
-        header.retry match
-          case Left(date) =>
-            RetryPolicy.retryAfterDelay(nowEpochSecond, date.epochSecond)
-          case Right(delta) => math.max(0L, delta).seconds
-      }
-    )
-
   /** Read a successful body as JSON, then hand it to the vendor. */
   def decode[F[_]: Concurrent, A](response: Response[F])(
       f: Json => Either[Verdict4sError, A]
-  ): F[Either[Verdict4sError, A]] =
+  ): F[A] =
     response
       .attemptAs[Json]
-      .value
-      .map:
-        case Left(failure) =>
-          Left(
-            Verdict4sError
-              .Decoding(s"the body was not JSON: ${failure.message}")
-          )
-        case Right(json) => f(json)
+      .leftMap(failure =>
+        Verdict4sError.Decoding(s"the body was not JSON: ${failure.message}")
+      )
+      .subflatMap(f)
+      .rethrowT
 
   /** Turn an unsuccessful response into a typed error.
     *
     * The body is read here, inside the caller's `use` block, because it is
     * needed to build the error; reading it later would be a use-after-release.
+    * The vendor reads everything but a `Retry-After` given as an HTTP date,
+    * which needs the current time to become a delay, so the caller passes it in
+    * rather than this reaching for a clock.
     */
   def error[F[_]: Concurrent](
       response: Response[F],
@@ -118,10 +85,14 @@ private[verdict4s] object Wire:
       nowEpochSecond: Long
   ): F[Verdict4sError.Api] =
     response.bodyText.compile.string.map: raw =>
-      val json = io.circe.parser.parse(raw).getOrElse(Json.fromString(raw))
-      Verdict4sError.fromResponse(
+      vendor.errorFrom(
         response.status.code,
-        json,
-        requestId(response, vendor),
-        retryAfter(response, vendor, nowEpochSecond)
+        raw,
+        name => response.headers.get(CIString(name)).map(_.head.value),
+        response.headers
+          .get[headers.`Retry-After`]
+          .flatMap(_.retry.left.toOption)
+          .map(date =>
+            RetryPolicy.retryAfterDelay(nowEpochSecond, date.epochSecond)
+          )
       )

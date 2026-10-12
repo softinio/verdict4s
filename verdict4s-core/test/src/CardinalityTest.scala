@@ -28,17 +28,14 @@ class CardinalityTest extends munit.FunSuite:
   private def levels(n: Int) =
     Levels.descriptionsOf((1 to n).map(i => s"level $i"))
 
-  test("choice accepts 1 option"):
-    assert(options(1).isValid)
+  // One test per boundary, so a failure names the boundary that broke.
+  for n <- List(1, 255) do
+    test(s"choice accepts $n option${if n == 1 then "" else "s"}"):
+      assert(options(n).isValid)
 
-  test("choice accepts 255 options"):
-    assert(options(255).isValid)
-
-  test("choice rejects 0 options"):
-    assert(options(0).isInvalid)
-
-  test("choice rejects 256 options"):
-    assert(options(256).isInvalid)
+  for n <- List(0, 256) do
+    test(s"choice rejects $n options"):
+      assert(options(n).isInvalid)
 
   test(
     "the choice cardinality message names the real limit and the actual size"
@@ -48,17 +45,13 @@ class CardinalityTest extends munit.FunSuite:
     assert(err.details.contains("255"), err.details)
     assert(err.details.contains("256"), err.details)
 
-  test("score rejects 1 level"):
-    assert(levels(1).isInvalid)
+  for n <- List(2, 10) do
+    test(s"score accepts $n levels"):
+      assert(levels(n).isValid)
 
-  test("score accepts 2 levels"):
-    assert(levels(2).isValid)
-
-  test("score accepts 10 levels"):
-    assert(levels(10).isValid)
-
-  test("score rejects 11 levels"):
-    assert(levels(11).isInvalid)
+  for n <- List(1, 11) do
+    test(s"score rejects $n level${if n == 1 then "" else "s"}"):
+      assert(levels(n).isInvalid)
 
   test("the score cardinality message names the real limits and actual size"):
     val err = levels(11).swap.toOption.get.head
@@ -95,6 +88,11 @@ class CardinalityTest extends munit.FunSuite:
     assertEquals(o.parse("billing"), Some("billing"))
     assertEquals(o.parse("nope"), None)
     assertEquals(o.render("sales").value: String, "sales")
+
+  test("Options[String] renders an unknown name as itself, but not a blank"):
+    val o = Options.of("billing", "sales").toOption.get
+    assertEquals(o.render("other").value: String, "other")
+    intercept[IllegalArgumentException](o.render(""))
 
   test("Levels indexes by position, not by sort order"):
     val l = Levels.strings(Seq("Zebra", "Apple", "Mango")).toOption.get
