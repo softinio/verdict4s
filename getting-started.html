@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 active nav-leaf"><a href="#">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -103,10 +106,12 @@
         <h1 id="getting-started" class="title">Getting started</h1>
         
         <h2 id="add-the-dependency" class="section"><a class="anchor-link left" href="#add-the-dependency"><i class="icofont-laika link">&#xef71;</i></a>Add the dependency</h2>
-        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">mvn&quot;com.softinio::verdict4s::0.1.0&quot;</span><span>)</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">mvn&quot;com.softinio::verdict4s::0.2.0&quot;</span><span>)</span></code></pre>
         
         <h2 id="get-an-api-key" class="section"><a class="anchor-link left" href="#get-an-api-key"><i class="icofont-laika link">&#xef71;</i></a>Get an API key</h2>
-        <p>Every request carries a key. Wrap it once, at the edge of your application:</p>
+        <p>Every request carries a key from the vendor you use: <code>TYPESAFE_API_KEY</code> for
+        Jev, <code>OPENAI_API_KEY</code> for OpenAI Decisions. Wrap it once, at the edge of your
+        application:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">com</span><span>.</span><span class="identifier">softinio</span><span>.</span><span class="identifier">verdict4s</span><span>.</span><span class="identifier">algebra</span><span>.</span><span class="type-name">ApiKey</span><span>
 
 </span><span class="keyword">val</span><span> </span><span class="identifier">apiKey</span><span> = </span><span class="type-name">ApiKey</span><span>.</span><span class="identifier">fromString</span><span>(</span><span class="identifier">sys</span><span>.</span><span class="identifier">env</span><span>(</span><span class="string-literal">&quot;TYPESAFE_API_KEY&quot;</span><span>))</span></code></pre>
@@ -116,9 +121,12 @@
         http4s redacts the <code>Authorization</code> header too.</p>
         <p>On the JVM you can skip the boilerplate:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">Verdict4sEnv</span><span>.</span><span class="keyword">default</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">use</span><span> { </span><span class="identifier">client</span><span> =&gt; ??? }</span></code></pre>
-        <p>which reads <code>TYPESAFE_API_KEY</code>, <code>TYPESAFE_BASE_URL</code> and
-        <code>TYPESAFE_DEFAULT_MODEL</code>, matching the official SDKs. That object is JVM-only,
-        because Scala.js has no environment to read.</p>
+        <p>This picks the vendor from <code>VERDICT4S_VENDOR</code> (<code>jev</code>, the default, or
+        <code>openai</code>). It then reads <code>TYPESAFE_API_KEY</code>, <code>TYPESAFE_BASE_URL</code> and
+        <code>TYPESAFE_DEFAULT_MODEL</code> for Jev, or <code>OPENAI_API_KEY</code> and <code>OPENAI_BASE_URL</code> for
+        OpenAI, matching each vendor&#39;s official SDKs. <code>Verdict4sEnv.jev</code> and
+        <code>Verdict4sEnv.openAI</code> pin the vendor. The object is JVM-only, because Scala.js
+        has no environment to read.</p>
         
         <h2 id="your-first-request" class="section"><a class="anchor-link left" href="#your-first-request"><i class="icofont-laika link">&#xef71;</i></a>Your first request</h2>
         <pre><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">effect</span><span>.{</span><span class="type-name">IO</span><span>, </span><span class="type-name">IOApp</span><span>}
@@ -133,7 +141,7 @@
   </span><span class="keyword">def</span><span> </span><span class="declaration-name">run</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">Unit</span><span>] =
     </span><span class="keyword">val</span><span> </span><span class="identifier">key</span><span> = </span><span class="type-name">ApiKey</span><span>.</span><span class="identifier">fromString</span><span>(</span><span class="identifier">sys</span><span>.</span><span class="identifier">env</span><span>(</span><span class="string-literal">&quot;TYPESAFE_API_KEY&quot;</span><span>)).</span><span class="identifier">toOption</span><span>.</span><span class="identifier">get</span><span>
 
-    </span><span class="type-name">Verdict4s</span><span>.</span><span class="keyword">default</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">key</span><span>).</span><span class="identifier">use</span><span> { </span><span class="identifier">client</span><span> =&gt;
+    </span><span class="type-name">Verdict4s</span><span>.</span><span class="identifier">jev</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">key</span><span>).</span><span class="identifier">use</span><span> { </span><span class="identifier">client</span><span> =&gt;
       </span><span class="identifier">client</span><span>
         .</span><span class="identifier">ask</span><span>(
           </span><span class="type-name">Ask</span><span>(
@@ -146,11 +154,13 @@
           </span><span class="type-name">IO</span><span>.</span><span class="identifier">println</span><span>(</span><span class="string-literal">s&quot;urgent=</span><span class="substitution">${urgent.isTrue()}</span><span class="string-literal"> team=</span><span class="substitution">${team.choice}</span><span class="string-literal">&quot;</span><span>)
         }
     }</span></code></pre>
+        <p>For OpenAI Decisions, use <code>Verdict4s.openAI[IO](key)</code> with an OpenAI key.
+        Nothing else changes.</p>
         <p>The <code>Resource</code> owns the connection pool, so allocate it once for the lifetime
         of your application rather than once per call.</p>
         
         <h2 id="the-same-code-on-scala-js" class="section"><a class="anchor-link left" href="#the-same-code-on-scala-js"><i class="icofont-laika link">&#xef71;</i></a>The same code on Scala.js</h2>
-        <p>There is nothing to change. <code>Verdict4s.default</code> has one signature on both
+        <p>There is nothing to change. <code>Verdict4s.jev</code> and <code>Verdict4s.openAI</code> have one signature on both
         platforms and picks the transport for you — Ember on the JVM, the Fetch API on
         Scala.js, which works in the browser and on Node 18+.</p>
         <p>Ember is deliberately not used on Scala.js: it needs raw TCP sockets, which a
@@ -161,8 +171,8 @@
         
         <h2 id="batch-your-questions" class="section"><a class="anchor-link left" href="#batch-your-questions"><i class="icofont-laika link">&#xef71;</i></a>Batch your questions</h2>
         <p>Asking three questions in one request is markedly cheaper and faster than three
-        requests, and it is the shape the service is designed around. <code>Ask</code> takes up to
-        twelve, and each keeps its own answer type.</p>
+        requests, and it is the shape both services are designed around. Each question
+        keeps its own answer type.</p>
         <p>Speculative questions are cheap: ask something you <em>might</em> need and let your
         code decide whether to read it.</p>
         

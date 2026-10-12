@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -99,7 +102,7 @@
         <p><strong><a href="api/">Open the API reference</a></strong> — generated Scaladoc for all three
         modules in one place, so a type from one layer links through to where it is
         defined in another, and a single search covers everything.</p>
-        <p>Everything lives under two packages:</p>
+        <p>Everything lives under four packages:</p>
         <table>
           <thead>
             <tr>
@@ -114,7 +117,15 @@
             </tr>
             <tr>
               <td><a href="api/com/softinio/verdict4s.html"><code>com.softinio.verdict4s</code></a></td>
-              <td>The entry points: <code>Ask</code>, <code>Verdict4sClient</code>, <code>Verdict4s.default</code>, <code>SystemOne</code>, <code>Verdict4sError</code>, and <code>Verdict4sEnv</code> on the JVM</td>
+              <td>The entry points: <code>Ask</code>, <code>Vendor</code>, <code>Verdict4sClient</code> with <code>JevClient</code> and <code>OpenAIClient</code>, <code>Verdict4s</code>, <code>Verdict4sError</code>, and <code>Verdict4sEnv</code> on the JVM</td>
+            </tr>
+            <tr>
+              <td><a href="api/com/softinio/verdict4s/jev.html"><code>com.softinio.verdict4s.jev</code></a></td>
+              <td>Jev&#39;s wire format: <code>JevVendor</code> and <code>JevCodecs</code></td>
+            </tr>
+            <tr>
+              <td><a href="api/com/softinio/verdict4s/openai.html"><code>com.softinio.verdict4s.openai</code></a></td>
+              <td>OpenAI Decisions&#39; wire format: <code>OpenAIVendor</code> and <code>OpenAICodecs</code></td>
             </tr>
           </tbody>
         </table>
@@ -133,11 +144,11 @@
           <tbody>
             <tr>
               <td><code>verdict4s-core</code></td>
-              <td>everything in <code>algebra</code>, plus <code>Ask</code>, <code>SystemOne</code> and <code>Verdict4sError</code></td>
+              <td>everything in <code>algebra</code>, <code>jev</code> and <code>openai</code>, plus <code>Ask</code>, <code>Vendor</code> and <code>Verdict4sError</code></td>
             </tr>
             <tr>
               <td><code>verdict4s-client</code></td>
-              <td><code>Verdict4sClient</code>, <code>Jitter</code>, and the opt-in <code>syntax</code> for <code>.run</code></td>
+              <td><code>Verdict4sClient</code>, <code>JevClient</code>, <code>OpenAIClient</code>, the <code>ModelCatalog</code> and <code>SafetyIdentity</code> capabilities, <code>Jitter</code>, and the opt-in <code>syntax</code> for <code>.run</code></td>
             </tr>
             <tr>
               <td><code>verdict4s</code></td>

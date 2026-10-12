@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 active nav-leaf"><a href="#">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -98,7 +101,7 @@
       <main class="content">
 
         <h1 id="errors-and-retries" class="title">Errors and retries</h1>
-        <p>Everything that can go wrong is one of five cases of <code>Verdict4sError</code>, all of
+        <p>Everything that can go wrong is one of six cases of <code>Verdict4sError</code>, all of
         which live in <code>verdict4s-core</code> so you can match on them without depending on
         cats-effect or http4s.</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">com</span><span>.</span><span class="identifier">softinio</span><span>.</span><span class="identifier">verdict4s</span><span>.</span><span class="type-name">Verdict4sError</span><span>
@@ -109,7 +112,10 @@
   </span><span class="keyword">case</span><span> </span><span class="identifier">e</span><span>: </span><span class="type-name">Verdict4sError</span><span>.</span><span class="type-name">Decoding</span><span>   =&gt; </span><span class="string-literal">s&quot;unexpected response: </span><span class="substitution">${e.getMessage}</span><span class="string-literal">&quot;</span><span>
   </span><span class="keyword">case</span><span> </span><span class="identifier">e</span><span>: </span><span class="type-name">Verdict4sError</span><span>.</span><span class="type-name">Transport</span><span>  =&gt; </span><span class="string-literal">s&quot;could not reach the service: </span><span class="substitution">${e.details}</span><span class="string-literal">&quot;</span><span>
   </span><span class="keyword">case</span><span> </span><span class="identifier">e</span><span>: </span><span class="type-name">Verdict4sError</span><span>.</span><span class="type-name">Validation</span><span> =&gt; </span><span class="string-literal">s&quot;bad question: </span><span class="substitution">${e.getMessage}</span><span class="string-literal">&quot;</span><span>
-  </span><span class="keyword">case</span><span> </span><span class="identifier">e</span><span>: </span><span class="type-name">Verdict4sError</span><span>.</span><span class="type-name">Invalid</span><span>    =&gt; </span><span class="string-literal">s&quot;</span><span class="substitution">${e.errors.length}</span><span class="string-literal"> problems with the request&quot;</span></code></pre>
+  </span><span class="keyword">case</span><span> </span><span class="identifier">e</span><span>: </span><span class="type-name">Verdict4sError</span><span>.</span><span class="type-name">Invalid</span><span>    =&gt; </span><span class="string-literal">s&quot;</span><span class="substitution">${e.errors.length}</span><span class="string-literal"> problems with the request&quot;</span><span>
+  </span><span class="keyword">case</span><span> </span><span class="identifier">e</span><span>: </span><span class="type-name">Verdict4sError</span><span>.</span><span class="type-name">Refused</span><span>    =&gt; </span><span class="string-literal">s&quot;the service declined </span><span class="substitution">${e.keys.length}</span><span class="string-literal"> question(s)&quot;</span></code></pre>
+        <p><code>Refused</code> only comes from OpenAI Decisions, which may decline a single question.
+        See <a href="choosing-a-vendor.html#refusals">refusals</a>.</p>
         
         <h2 id="validation-happens-before-the-network" class="section"><a class="anchor-link left" href="#validation-happens-before-the-network"><i class="icofont-laika link">&#xef71;</i></a>Validation happens before the network</h2>
         <p><code>Validation</code> is a single broken rule; <code>Invalid</code> is the accumulated set. A
@@ -128,14 +134,14 @@
   </span><span class="keyword">case</span><span> </span><span class="identifier">other</span><span>                   =&gt; </span><span class="identifier">giveUp</span><span>(</span><span class="identifier">other</span><span>)</span></code></pre>
         <p>Every <code>Api</code> error also carries <code>requestId</code> — the service&#39;s own correlation id,
         which is what to quote in a support request — and <code>retryAfter</code> when the server
-        sent one.</p>
+        sent one. For OpenAI, <code>retry-after-ms</code> is read ahead of <code>Retry-After</code>.</p>
         <p>An error body this version does not recognise is <strong>never</strong> downgraded into a
         decoding failure: the raw payload is preserved on the error, because it is
         usually the only diagnostic you have.</p>
         
         <h2 id="retries-are-on-by-default" class="section"><a class="anchor-link left" href="#retries-are-on-by-default"><i class="icofont-laika link">&#xef71;</i></a>Retries are on by default</h2>
-        <p>The API documents <code>429</code> and <code>529</code> with an explicit instruction to retry with
-        exponential backoff, so verdict4s does, matching the official SDKs: two
+        <p>Jev documents <code>429</code> and <code>529</code> with an explicit instruction to retry with
+        exponential backoff, so verdict4s does, for both vendors, matching the official SDKs: two
         retries, 500ms doubling to a five second ceiling, 25% jitter, honouring
         <code>Retry-After</code>, with a thirty second ceiling on the whole call.</p>
         <p>Jitter is what stops many clients that were rate-limited together from all
@@ -147,9 +153,23 @@
         <p>To turn it off:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">ClientConfig</span><span>.</span><span class="keyword">default</span><span>.</span><span class="identifier">withoutRetries</span></code></pre>
         <p>Only <code>408</code>, <code>429</code> and <code>5xx</code> are retried. <code>401</code>, <code>403</code>, <code>404</code> and <code>422</code> are not:
-        retrying them would just be slower failure.</p>
+        retrying them would just be slower failure. Nor is OpenAI&#39;s
+        <code>insufficient_quota</code>, which arrives as a <code>429</code> like a rate limit but means
+        the account has no credits, so no amount of waiting fixes it.</p>
+        <p>Each attempt is also capped by <code>ClientConfig.requestTimeout</code>, 10 seconds by
+        default. An attempt that exceeds it fails as a <code>Transport</code> error and is not
+        retried. The whole call, retries and their waits included, is capped by the
+        policy&#39;s <code>totalTimeout</code>, 30 seconds by default; a call still running when it
+        expires fails as a <code>Transport</code> error too. The two read differently: &quot;no
+        response from Jev within 10 seconds&quot; for one attempt, &quot;gave up on Jev after
+        totalTimeout 30 seconds, retries included&quot; for the whole call.</p>
         <p><code>Retry-After</code> wins only when it asks for <strong>longer</strong> than the computed backoff —
-        waiting less than you already planned to would defeat the purpose.</p>
+        waiting less than you already planned to would defeat the purpose. Whichever
+        of the two sets the delay, a delay at least as long as what is left of
+        <code>totalTimeout</code> ends the retries at once, with the server&#39;s error and its
+        <code>retryAfter</code>, because the call could only time out waiting. With 15 of 30
+        seconds already spent, a <code>Retry-After</code> of 20 seconds gives up rather than
+        sleeping into the timeout.</p>
 
         
 <hr class="footer-rule"/>

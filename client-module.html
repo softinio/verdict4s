@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 active nav-leaf"><a href="#">Bring your own client</a></li>
@@ -102,23 +105,29 @@
         <p><code>verdict4s-client</code> takes an http4s <code>Client[F]</code> rather than building one. That
         single decision buys every backend and every platform without this library
         owning any of them.</p>
-        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">mvn&quot;com.softinio::verdict4s-client::0.1.0&quot;</span><span>)</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">mvn&quot;com.softinio::verdict4s-client::0.2.0&quot;</span><span>)</span></code></pre>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">com</span><span>.</span><span class="identifier">softinio</span><span>.</span><span class="identifier">verdict4s</span><span>.</span><span class="type-name">Verdict4sClient</span><span>
 
-</span><span class="keyword">val</span><span> </span><span class="identifier">client</span><span> = </span><span class="type-name">Verdict4sClient</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">myHttpClient</span><span>, </span><span class="identifier">apiKey</span><span>)</span></code></pre>
+</span><span class="keyword">val</span><span> </span><span class="identifier">jev</span><span>    = </span><span class="type-name">Verdict4sClient</span><span>.</span><span class="identifier">jev</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">myHttpClient</span><span>, </span><span class="identifier">typesafeKey</span><span>)
+</span><span class="keyword">val</span><span> </span><span class="identifier">openAI</span><span> = </span><span class="type-name">Verdict4sClient</span><span>.</span><span class="identifier">openAI</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">myHttpClient</span><span>, </span><span class="identifier">openAIKey</span><span>)
+</span><span class="keyword">val</span><span> </span><span class="identifier">either</span><span> = </span><span class="type-name">Verdict4sClient</span><span>.</span><span class="identifier">of</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">myHttpClient</span><span>, </span><span class="identifier">vendor</span><span>, </span><span class="identifier">key</span><span>)  </span><span class="comment">// vendor chosen at runtime</span></code></pre>
         <p>Ember, Fetch, Blaze, Netty, the JDK client — anything with an http4s backend
         works, and so does anything you write yourself.</p>
         
         <h2 id="configuration" class="section"><a class="anchor-link left" href="#configuration"><i class="icofont-laika link">&#xef71;</i></a>Configuration</h2>
-        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">Verdict4sClient</span><span>[</span><span class="type-name">IO</span><span>](
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">Verdict4sClient</span><span>.</span><span class="identifier">jev</span><span>[</span><span class="type-name">IO</span><span>](
   </span><span class="identifier">myHttpClient</span><span>,
   </span><span class="identifier">apiKey</span><span>,
   </span><span class="identifier">baseUri</span><span> = </span><span class="string-literal">uri&quot;https://api.typesafe.ai&quot;</span><span>,
   </span><span class="identifier">config</span><span>  = </span><span class="type-name">ClientConfig</span><span>.</span><span class="keyword">default</span><span>.</span><span class="identifier">withModel</span><span>(</span><span class="type-name">Model</span><span>.</span><span class="type-name">JevPreview</span><span>)
 )</span></code></pre>
-        <p><code>ClientConfig</code> covers the default model, the retry policy and the per-request
-        timeout. Note it holds no base URI: that belongs to the client layer, because
-        <code>verdict4s-core</code> has no http4s types in it at all.</p>
+        <p><code>ClientConfig</code> covers the default model, the retry policy and the per-attempt
+        timeout. Leave the model unset and each vendor uses its own default:
+        <code>jev-latest</code> for Jev, <code>gpt-6-luna</code> for OpenAI.</p>
+        <p><code>ClientConfig</code> holds no base URI: that belongs to the client layer, because
+        <code>verdict4s-core</code> has no http4s types in it at all. Each constructor defaults to
+        its vendor&#39;s address. OpenAI&#39;s includes <code>/v1</code> (<code>https://api.openai.com/v1</code>), as
+        it does in OpenAI&#39;s own SDKs.</p>
         
         <h2 id="testing-without-a-network" class="section"><a class="anchor-link left" href="#testing-without-a-network"><i class="icofont-laika link">&#xef71;</i></a>Testing without a network</h2>
         <p>This is the real reason the client takes its transport. <code>Client.fromHttpApp</code>
@@ -132,18 +141,21 @@
   .</span><span class="identifier">of</span><span>[</span><span class="type-name">IO</span><span>] { </span><span class="keyword">case</span><span> </span><span class="type-name">POST</span><span> -&gt; </span><span class="type-name">Root</span><span> / </span><span class="string-literal">&quot;v1&quot;</span><span> / </span><span class="string-literal">&quot;systemone&quot;</span><span> =&gt; </span><span class="type-name">Ok</span><span>(</span><span class="identifier">cannedResponse</span><span>) }
   .</span><span class="identifier">orNotFound</span><span>
 
-</span><span class="keyword">val</span><span> </span><span class="identifier">fake</span><span> = </span><span class="type-name">Verdict4sClient</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="type-name">Client</span><span>.</span><span class="identifier">fromHttpApp</span><span>(</span><span class="identifier">routes</span><span>), </span><span class="identifier">apiKey</span><span>, </span><span class="string-literal">uri&quot;https://example.invalid&quot;</span><span>)</span></code></pre>
+</span><span class="keyword">val</span><span> </span><span class="identifier">fake</span><span> = </span><span class="type-name">Verdict4sClient</span><span>.</span><span class="identifier">jev</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="type-name">Client</span><span>.</span><span class="identifier">fromHttpApp</span><span>(</span><span class="identifier">routes</span><span>), </span><span class="identifier">apiKey</span><span>, </span><span class="string-literal">uri&quot;https://example.invalid&quot;</span><span>)</span></code></pre>
         <p>Capture the request in a <code>Ref</code> if you want to assert what was actually sent:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">for</span><span>
   </span><span class="identifier">seen</span><span> &lt;- </span><span class="type-name">Ref</span><span>[</span><span class="type-name">IO</span><span>].</span><span class="identifier">of</span><span>(</span><span class="type-name">Option</span><span>.</span><span class="identifier">empty</span><span>[</span><span class="type-name">Json</span><span>])
   </span><span class="identifier">app</span><span> = </span><span class="type-name">HttpRoutes</span><span>.</span><span class="identifier">of</span><span>[</span><span class="type-name">IO</span><span>] { </span><span class="keyword">case</span><span> </span><span class="identifier">req</span><span> @ </span><span class="type-name">POST</span><span> -&gt; </span><span class="type-name">Root</span><span> / </span><span class="string-literal">&quot;v1&quot;</span><span> / </span><span class="string-literal">&quot;systemone&quot;</span><span> =&gt;
           </span><span class="identifier">req</span><span>.</span><span class="identifier">as</span><span>[</span><span class="type-name">Json</span><span>].</span><span class="identifier">flatMap</span><span>(</span><span class="identifier">j</span><span> =&gt; </span><span class="identifier">seen</span><span>.</span><span class="identifier">set</span><span>(</span><span class="type-name">Some</span><span>(</span><span class="identifier">j</span><span>))) *&gt; </span><span class="type-name">Ok</span><span>(</span><span class="identifier">cannedResponse</span><span>)
         }.</span><span class="identifier">orNotFound</span><span>
-  </span><span class="identifier">_</span><span>    &lt;- </span><span class="type-name">Verdict4sClient</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="type-name">Client</span><span>.</span><span class="identifier">fromHttpApp</span><span>(</span><span class="identifier">app</span><span>), </span><span class="identifier">apiKey</span><span>).</span><span class="identifier">ask</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">state</span><span>)
+  </span><span class="identifier">_</span><span>    &lt;- </span><span class="type-name">Verdict4sClient</span><span>.</span><span class="identifier">jev</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="type-name">Client</span><span>.</span><span class="identifier">fromHttpApp</span><span>(</span><span class="identifier">app</span><span>), </span><span class="identifier">apiKey</span><span>).</span><span class="identifier">ask</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">state</span><span>)
   </span><span class="identifier">body</span><span> &lt;- </span><span class="identifier">seen</span><span>.</span><span class="identifier">get</span><span>
 </span><span class="keyword">yield</span><span> </span><span class="identifier">assert</span><span>(</span><span class="identifier">body</span><span>.</span><span class="identifier">isDefined</span><span>)</span></code></pre>
+        <p>For an OpenAI fake, route <code>POST -&gt; Root / &quot;v1&quot; / &quot;decisions&quot;</code> under a base of
+        <code>uri&quot;https://example.invalid/v1&quot;</code>, and serve OpenAI&#39;s response shape.</p>
         <p>No mocking library is needed for any of this. Verdict4s&#39; own test suite is
-        built exactly this way.</p>
+        built exactly this way. It runs one shared contract suite against a fake of each
+        vendor, and checks that the same <code>Ask</code> gets the same typed answers from both.</p>
         
         <h3 id="testing-your-own-logic-instead" class="section"><a class="anchor-link left" href="#testing-your-own-logic-instead"><i class="icofont-laika link">&#xef71;</i></a>Testing your own logic instead</h3>
         <p>If you only care that <em>your</em> code reacts correctly to an answer, you do not

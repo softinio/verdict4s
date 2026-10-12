@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -99,9 +102,9 @@
 
         <h1 id="no-effect-system" class="title">No effect system</h1>
         <p><code>verdict4s-core</code> carries only cats-core, circe and Iron. No effect type, no
-        HTTP client, deliberately no fs2. You can drive the protocol with whatever you
+        HTTP client, deliberately no fs2. You can drive either vendor with whatever you
         already use — including nothing at all.</p>
-        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">mvn&quot;com.softinio::verdict4s-core::0.1.0&quot;</span><span>)</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">mvn&quot;com.softinio::verdict4s-core::0.2.0&quot;</span><span>)</span></code></pre>
         <p>This style — the library builds and reads the messages, you do the I/O — is
         sometimes called <em>sans-IO</em>.</p>
         
@@ -114,17 +117,21 @@
   </span><span class="type-name">Question</span><span>.</span><span class="identifier">choice</span><span>[</span><span class="type-name">Dept</span><span>](</span><span class="string-literal">&quot;Which team should handle this?&quot;</span><span>)
 )
 
-</span><span class="comment">// 1. render
+</span><span class="keyword">val</span><span> </span><span class="identifier">vendor</span><span> = </span><span class="type-name">Vendor</span><span>.</span><span class="type-name">Jev</span><span>   </span><span class="comment">// or Vendor.OpenAI
+</span><span>
+</span><span class="comment">// 1. render, checked against the vendor&#39;s own limits
 </span><span class="keyword">val</span><span> </span><span class="identifier">body</span><span>: </span><span class="type-name">Either</span><span>[</span><span class="type-name">Verdict4sError</span><span>, </span><span class="type-name">String</span><span>] =
-  </span><span class="type-name">SystemOne</span><span>.</span><span class="identifier">renderAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="string-literal">&quot;Help! My payouts are failing.&quot;</span><span>)
+  </span><span class="identifier">vendor</span><span>.</span><span class="identifier">renderAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="string-literal">&quot;Help! My payouts are failing.&quot;</span><span>)
 
 </span><span class="comment">// 2. send it however you like -- your code, your HTTP client
-//    POST to SystemOne.evaluateUrl with SystemOne.headers(apiKey)
+//    POST to vendor.evaluateUrl with vendor.headers(apiKey)
 </span><span>
 </span><span class="comment">// 3. read the answers back, at exactly the right types
-</span><span class="keyword">val</span><span> </span><span class="identifier">answers</span><span> = </span><span class="type-name">SystemOne</span><span>.</span><span class="identifier">parseAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">responseBody</span><span>)</span></code></pre>
-        <p><code>SystemOne</code> also gives you <code>evaluateUrl</code>, <code>modelsUrl</code>, <code>headers</code>, and
-        <code>parseError</code> for turning a failed response into a typed error.</p>
+</span><span class="keyword">val</span><span> </span><span class="identifier">answers</span><span> = </span><span class="identifier">vendor</span><span>.</span><span class="identifier">parseAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">responseBody</span><span>)</span></code></pre>
+        <p>Every <code>Vendor</code> also gives you <code>evaluateUrl</code>, <code>headers</code>, and <code>parseError</code>, which
+        turns a failed response into a typed error. <code>Vendor.Jev</code> adds <code>modelsUrl</code> and
+        <code>parseModels</code>. (In 0.1 this was the <code>SystemOne</code> object; <code>Vendor.Jev</code> replaces
+        it.)</p>
         
         <h2 id="why-this-layer-exists" class="section"><a class="anchor-link left" href="#why-this-layer-exists"><i class="icofont-laika link">&#xef71;</i></a>Why this layer exists</h2>
         <p>Three things fall out of keeping it effect-free:</p>
@@ -143,7 +150,10 @@
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> </span><span class="identifier">result</span><span> = </span><span class="type-name">Ask</span><span>(</span><span class="type-name">Question</span><span>.</span><span class="identifier">score</span><span>(</span><span class="string-literal">&quot;How frustrated?&quot;</span><span>, </span><span class="identifier">levels</span><span>))
   .</span><span class="identifier">request</span><span>(</span><span class="identifier">state</span><span>, </span><span class="type-name">Model</span><span>.</span><span class="type-name">JevLatest</span><span>)
 
-</span><span class="identifier">result</span><span>.</span><span class="identifier">isValid</span><span>  </span><span class="comment">// false if `levels` is not 2..10 entries</span></code></pre>
+</span><span class="identifier">result</span><span>.</span><span class="identifier">isValid</span><span>  </span><span class="comment">// false if `levels` is not 2..10 entries
+</span><span>
+</span><span class="comment">// and against a particular vendor&#39;s stricter rules:
+</span><span class="identifier">result</span><span>.</span><span class="identifier">toEither</span><span>.</span><span class="identifier">flatMap</span><span>(</span><span class="type-name">Vendor</span><span>.</span><span class="type-name">OpenAI</span><span>.</span><span class="identifier">validate</span><span>(</span><span class="identifier">_</span><span>).</span><span class="identifier">toEither</span><span>)</span></code></pre>
 
         
 <hr class="footer-rule"/>

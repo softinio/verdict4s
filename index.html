@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="#"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="#"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 active nav-leaf"><a href="#">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -101,9 +104,10 @@
       <main class="content">
 
         <h1 id="verdict4s" class="title">Verdict4s</h1>
-        <p>A Scala 3 client for <a href="https://typesafe.ai">TypeSafe AI</a>&#39;s <strong>Jev</strong>, a decision
-        model that answers typed questions about your program state with choices,
-        scores and calibrated probabilities instead of text.</p>
+        <p>A Scala 3 client for typed decision models: <a href="https://typesafe.ai">TypeSafe AI</a>&#39;s
+        <strong>Jev</strong> and <strong>OpenAI Decisions</strong>. A decision model answers typed questions about
+        your program state with choices, scores and calibrated probabilities instead of
+        text.</p>
         <p>You describe the decision; your code keeps control of what happens next.</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">val</span><span> (</span><span class="identifier">urgent</span><span>, </span><span class="identifier">team</span><span>, </span><span class="identifier">mood</span><span>) = </span><span class="identifier">client</span><span>.</span><span class="identifier">ask</span><span>(
   </span><span class="type-name">Ask</span><span>(
@@ -116,13 +120,16 @@
         <p><code>urgent</code> is a <code>NoulAnswer</code>, <code>team</code> a <code>ChoiceAnswer[Dept]</code>, <code>mood</code> a
         <code>ScoreAnswer</code> — destructured positionally, at exactly the right types, with no
         casts and no lookups by string.</p>
+        <p>The same code works with either vendor: the vendor is a value you pass in, not
+        a different API. See <a href="choosing-a-vendor.html">choosing a vendor</a>.</p>
         <p>Verdict4s cross-builds for the <strong>JVM</strong> and <strong>Scala.js</strong> from the same sources
         and at the same version.</p>
         
         <h2 id="why-the-types-matter-here" class="section"><a class="anchor-link left" href="#why-the-types-matter-here"><i class="icofont-laika link">&#xef71;</i></a>Why the types matter here</h2>
-        <p>The service enforces real limits: a Choice takes 1 to 255 options, a Score
+        <p>The services enforce real limits: a Choice takes at most 255 options, a Score
         takes 2 to 10 ordered levels, probabilities live in the unit interval. Those
-        are carried by the types rather than discovered a network round trip later.</p>
+        are carried by the types rather than discovered a network round trip later, and
+        each vendor&#39;s own stricter rules are checked before a request is sent.</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">Probability</span><span>(</span><span class="number-literal">0.95</span><span>)   </span><span class="comment">// fine
 </span><span class="type-name">Probability</span><span>(</span><span class="number-literal">1.5</span><span>)    </span><span class="comment">// does not compile</span></code></pre>
         <p>Questions are validated before anything is sent, and failures accumulate, so
@@ -159,21 +166,22 @@
         
         <h3 id="mill" class="section"><a class="anchor-link left" href="#mill"><i class="icofont-laika link">&#xef71;</i></a>Mill</h3>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">mvnDeps</span><span> = </span><span class="type-name">Seq</span><span>(
-  </span><span class="string-literal">mvn&quot;com.softinio::verdict4s::0.1.0&quot;</span><span>
+  </span><span class="string-literal">mvn&quot;com.softinio::verdict4s::0.2.0&quot;</span><span>
 )</span></code></pre>
         
         <h3 id="sbt" class="section"><a class="anchor-link left" href="#sbt"><i class="icofont-laika link">&#xef71;</i></a>sbt</h3>
-        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">libraryDependencies</span><span> += </span><span class="string-literal">&quot;com.softinio&quot;</span><span> %%% </span><span class="string-literal">&quot;verdict4s&quot;</span><span> % </span><span class="string-literal">&quot;0.1.0&quot;</span></code></pre>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">libraryDependencies</span><span> += </span><span class="string-literal">&quot;com.softinio&quot;</span><span> %%% </span><span class="string-literal">&quot;verdict4s&quot;</span><span> % </span><span class="string-literal">&quot;0.2.0&quot;</span></code></pre>
         <p>The <code>::</code> (Mill) and <code>%%%</code> (sbt) forms resolve the right artifact for whichever
         platform you are building, so the same line works for JVM and Scala.js.</p>
         
         <h2 id="where-to-next" class="section"><a class="anchor-link left" href="#where-to-next"><i class="icofont-laika link">&#xef71;</i></a>Where to next</h2>
         <ul>
           <li><a href="getting-started.html">Getting started</a> — your first request, on JVM and Scala.js</li>
+          <li><a href="choosing-a-vendor.html">Choosing a vendor</a> — Jev or OpenAI Decisions, and what differs</li>
           <li><a href="typed-questions.html">Typed questions</a> — <code>Ask</code>, enum derivation, your own answer types</li>
           <li><a href="errors-and-retries.html">Errors and retries</a> — what can fail, and what is retried</li>
           <li><a href="client-module.html">Bring your own client</a> — any http4s backend, or an in-memory fake</li>
-          <li><a href="core-module.html">No effect system</a> — driving the protocol by hand</li>
+          <li><a href="core-module.html">No effect system</a> — driving either vendor by hand</li>
           <li><a href="effect-systems.html">Other effect systems</a> — ZIO, Future, and anything else</li>
           <li><a href="api-reference.html">API reference</a> — generated Scaladoc for each module</li>
         </ul>

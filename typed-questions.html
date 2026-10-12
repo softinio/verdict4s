@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 active nav-leaf"><a href="#">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -93,6 +96,7 @@
     <li class="level1 nav-leaf"><a href="#your-own-answer-types">Your own answer types</a></li>
     <li class="level1 nav-leaf"><a href="#when-the-questions-are-not-known-statically">When the questions are not known statically</a></li>
     <li class="level1 nav-leaf"><a href="#a-question-type-this-release-does-not-model">A question type this release does not model</a></li>
+    <li class="level1 nav-leaf"><a href="#vendor-differences">Vendor differences</a></li>
   </ul>
 
   <p class="footer"></p>
@@ -102,14 +106,16 @@
       <main class="content">
 
         <h1 id="typed-questions" class="title">Typed questions</h1>
-        <p>The service offers exactly three question types. This page is about getting
+        <p>Both vendors offer exactly the same three question types. This page is about getting
         answers back in <em>your</em> types rather than in strings and numbers.</p>
         
         <h2 id="the-three-shapes" class="section"><a class="anchor-link left" href="#the-three-shapes"><i class="icofont-laika link">&#xef71;</i></a>The three shapes</h2>
         <p><strong>Noul</strong> is a yes/no question, answered with the probability that the answer is
         yes. It carries no confidence — the probability <em>is</em> the answer.</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">Question</span><span>.</span><span class="identifier">noul</span><span>(</span><span class="string-literal">&quot;Does this convey urgency?&quot;</span><span>)
-</span><span class="type-name">Question</span><span>.</span><span class="identifier">noul</span><span>(</span><span class="string-literal">&quot;Is this urgent?&quot;</span><span>, </span><span class="identifier">ifTrue</span><span> = </span><span class="string-literal">&quot;Time-sensitive&quot;</span><span>, </span><span class="identifier">ifFalse</span><span> = </span><span class="string-literal">&quot;Routine&quot;</span><span>)</span></code></pre>
+</span><span class="type-name">Question</span><span>.</span><span class="identifier">noul</span><span>(</span><span class="string-literal">&quot;Is this urgent?&quot;</span><span>, </span><span class="identifier">ifTrue</span><span> = </span><span class="string-literal">&quot;Time-sensitive&quot;</span><span>, </span><span class="identifier">ifFalse</span><span> = </span><span class="string-literal">&quot;Routine&quot;</span><span>)  </span><span class="comment">// Jev only</span></code></pre>
+        <p>The second form says what a yes and a no mean. Only Jev supports that; see
+        <a href="#vendor-differences">vendor differences</a>.</p>
         <p><strong>Choice</strong> picks one option from a set you define, and returns the chosen
         option, the full distribution, and a confidence.</p>
         <p><strong>Score</strong> rates against ordered levels and returns a probability-weighted
@@ -154,7 +160,8 @@
 )</span></code></pre>
         <p>Answers come back positionally at exactly the right types. Question keys are
         generated for you (<code>q00</code>, <code>q01</code>, …); use <code>withKeys</code> if they need to match
-        something else, and <code>withModel</code> to pin one request to a specific model.</p>
+        something else (keys must be distinct, or the request is rejected before it is
+        sent), and <code>withModel</code> to pin one request to a specific model.</p>
         
         <h2 id="your-own-answer-types" class="section"><a class="anchor-link left" href="#your-own-answer-types"><i class="icofont-laika link">&#xef71;</i></a>Your own answer types</h2>
         <p><code>Question[A]</code> is a functor over its answer, so you can fold post-processing
@@ -177,11 +184,28 @@
     </span><span class="keyword">case</span><span> </span><span class="type-name">Answer</span><span>.</span><span class="type-name">Noul</span><span>(</span><span class="identifier">p</span><span>)                       =&gt; ???
     </span><span class="keyword">case</span><span> </span><span class="type-name">Answer</span><span>.</span><span class="type-name">Choice</span><span>(</span><span class="identifier">choice</span><span>, </span><span class="identifier">probs</span><span>, </span><span class="identifier">conf</span><span>)   =&gt; ???
     </span><span class="keyword">case</span><span> </span><span class="type-name">Answer</span><span>.</span><span class="type-name">Score</span><span>(</span><span class="identifier">score</span><span>, </span><span class="identifier">legend</span><span>, </span><span class="identifier">_</span><span>, </span><span class="identifier">conf</span><span>) =&gt; ???
-}</span></code></pre>
+    </span><span class="keyword">case</span><span> </span><span class="type-name">Answer</span><span>.</span><span class="type-name">Refused</span><span>                       =&gt; ???  </span><span class="comment">// OpenAI declined this one
+</span><span>}</span></code></pre>
         
         <h2 id="a-question-type-this-release-does-not-model" class="section"><a class="anchor-link left" href="#a-question-type-this-release-does-not-model"><i class="icofont-laika link">&#xef71;</i></a>A question type this release does not model</h2>
-        <p>If the service grows a fourth type, you do not have to wait for a release:</p>
+        <p>If a vendor grows a fourth type, you do not have to wait for a release:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="type-name">Question</span><span>.</span><span class="identifier">raw</span><span>[</span><span class="type-name">MyAnswer</span><span>](</span><span class="string-literal">&quot;ranking&quot;</span><span>, </span><span class="identifier">body</span><span>) { </span><span class="identifier">answer</span><span> =&gt; ??? }</span></code></pre>
+        
+        <h2 id="vendor-differences" class="section"><a class="anchor-link left" href="#vendor-differences"><i class="icofont-laika link">&#xef71;</i></a>Vendor differences</h2>
+        <p>Everything on this page works with both vendors, except for three things,
+        which OpenAI Decisions treats differently from Jev:</p>
+        <ul>
+          <li><strong>Noul criteria.</strong> <code>Question.noul(instructions, ifTrue, ifFalse)</code> is Jev only.
+          Against OpenAI the request fails with <code>Verdict4sError.Invalid</code> before it is
+          sent. Describe what yes and no mean in the instructions instead.</li>
+          <li><strong>One-option choices.</strong> OpenAI needs at least two options, so an enum with a
+          single case compiles but is rejected the same way. Jev accepts one.</li>
+          <li><strong><code>Question.raw</code>.</strong> The body is sent as it is, apart from <code>type</code> and, on
+          OpenAI, <code>name</code>, which verdict4s sets. Write it in the format of the vendor
+          you are calling.</li>
+        </ul>
+        <p>All three are checked before anything is sent, with every problem reported at
+        once. The full comparison is in <a href="choosing-a-vendor.html">choosing a vendor</a>.</p>
 
         
 <hr class="footer-rule"/>

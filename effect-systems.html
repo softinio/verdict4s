@@ -11,6 +11,8 @@
   
   
   
+  <link rel="icon" sizes="any" type="image/svg+xml" href="img/logo.svg"/>
+  
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700">
   
@@ -36,7 +38,7 @@
     
   </div>
 
-  <a class="icon-link glyph-link" href="index.html"><i class="icofont-laika home" title="Home">&#xef47;</i></a>
+  <a class="image-link" href="index.html"><img src="img/logo.svg" alt="verdict4s" width="36" height="36"></a>
 
   <div class="row links">
     
@@ -69,6 +71,7 @@
   <ul class="nav-list">
     <li class="level1 nav-leaf"><a href="index.html">Verdict4s</a></li>
     <li class="level1 nav-leaf"><a href="getting-started.html">Getting started</a></li>
+    <li class="level1 nav-leaf"><a href="choosing-a-vendor.html">Choosing a vendor</a></li>
     <li class="level1 nav-leaf"><a href="typed-questions.html">Typed questions</a></li>
     <li class="level1 nav-leaf"><a href="errors-and-retries.html">Errors and retries</a></li>
     <li class="level1 nav-leaf"><a href="client-module.html">Bring your own client</a></li>
@@ -151,8 +154,8 @@
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">zio</span><span>.</span><span class="type-name">Task</span><span>
 </span><span class="keyword">import</span><span> </span><span class="identifier">zio</span><span>.</span><span class="identifier">interop</span><span>.</span><span class="identifier">catz</span><span>.*
 
-</span><span class="keyword">def</span><span> </span><span class="declaration-name">triage</span><span>(</span><span class="identifier">apiKey</span><span>: </span><span class="type-name">ApiKey</span><span>, </span><span class="identifier">ticket</span><span>: </span><span class="type-name">String</span><span>): </span><span class="type-name">Task</span><span>[</span><span class="type-name">String</span><span>] =
-  </span><span class="type-name">Verdict4s</span><span>.</span><span class="keyword">default</span><span>[</span><span class="type-name">Task</span><span>](</span><span class="identifier">apiKey</span><span>).</span><span class="identifier">use</span><span> { </span><span class="identifier">client</span><span> =&gt;
+</span><span class="keyword">def</span><span> </span><span class="declaration-name">triage</span><span>(</span><span class="identifier">vendor</span><span>: </span><span class="type-name">Vendor</span><span>, </span><span class="identifier">apiKey</span><span>: </span><span class="type-name">ApiKey</span><span>, </span><span class="identifier">ticket</span><span>: </span><span class="type-name">String</span><span>): </span><span class="type-name">Task</span><span>[</span><span class="type-name">String</span><span>] =
+  </span><span class="type-name">Verdict4s</span><span>.</span><span class="identifier">of</span><span>[</span><span class="type-name">Task</span><span>](</span><span class="identifier">vendor</span><span>, </span><span class="identifier">apiKey</span><span>).</span><span class="identifier">use</span><span> { </span><span class="identifier">client</span><span> =&gt;
     </span><span class="identifier">client</span><span>
       .</span><span class="identifier">ask</span><span>(</span><span class="type-name">Ask</span><span>(</span><span class="identifier">urgency</span><span>, </span><span class="identifier">team</span><span>, </span><span class="identifier">frustration</span><span>), </span><span class="identifier">ticket</span><span>)
       .</span><span class="identifier">map</span><span> { (</span><span class="identifier">urgent</span><span>, </span><span class="identifier">dept</span><span>, </span><span class="identifier">mood</span><span>) =&gt; </span><span class="string-literal">s&quot;</span><span class="substitution">${dept.choice}</span><span class="string-literal"> (urgent=</span><span class="substitution">${urgent.isTrue()}</span><span class="string-literal">)&quot;</span><span> }
@@ -171,7 +174,7 @@
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">final</span><span> </span><span class="keyword">class</span><span> </span><span class="type-name">TriageService</span><span>(</span><span class="identifier">apiKey</span><span>: </span><span class="type-name">ApiKey</span><span>)(</span><span class="identifier">using</span><span> </span><span class="type-name">IORuntime</span><span>):
   </span><span class="keyword">def</span><span> </span><span class="declaration-name">triage</span><span>(</span><span class="identifier">ticket</span><span>: </span><span class="type-name">String</span><span>): </span><span class="type-name">Future</span><span>[(</span><span class="type-name">Boolean</span><span>, </span><span class="type-name">Dept</span><span>)] =
     </span><span class="type-name">Verdict4s</span><span>
-      .</span><span class="keyword">default</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">apiKey</span><span>)
+      .</span><span class="identifier">jev</span><span>[</span><span class="type-name">IO</span><span>](</span><span class="identifier">apiKey</span><span>)
       .</span><span class="identifier">use</span><span>(</span><span class="identifier">_</span><span>.</span><span class="identifier">ask</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">ticket</span><span>))
       .</span><span class="identifier">map</span><span>((</span><span class="identifier">urgent</span><span>, </span><span class="identifier">dept</span><span>) =&gt; (</span><span class="identifier">urgent</span><span>.</span><span class="identifier">isTrue</span><span>(), </span><span class="identifier">dept</span><span>.</span><span class="identifier">choice</span><span>))
       .</span><span class="identifier">unsafeToFuture</span><span>()</span></code></pre>
@@ -188,11 +191,11 @@
         <p>No dependencies at all — the JDK&#39;s own client moves the bytes:</p>
         <pre class="keep-together pdf epub"><code class="nohighlight"><span class="keyword">def</span><span> </span><span class="declaration-name">triage</span><span>(</span><span class="identifier">apiKey</span><span>: </span><span class="type-name">ApiKey</span><span>, </span><span class="identifier">ticket</span><span>: </span><span class="type-name">String</span><span>, </span><span class="identifier">http</span><span>: </span><span class="type-name">HttpClient</span><span>): </span><span class="type-name">Either</span><span>[</span><span class="type-name">Verdict4sError</span><span>, (</span><span class="type-name">Boolean</span><span>, </span><span class="type-name">Dept</span><span>)] =
   </span><span class="keyword">for</span><span>
-    </span><span class="identifier">body</span><span>     &lt;- </span><span class="type-name">SystemOne</span><span>.</span><span class="identifier">renderAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">ticket</span><span>)
+    </span><span class="identifier">body</span><span>     &lt;- </span><span class="type-name">Vendor</span><span>.</span><span class="type-name">Jev</span><span>.</span><span class="identifier">renderAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">ticket</span><span>)
     </span><span class="identifier">response</span><span> &lt;- </span><span class="identifier">send</span><span>(</span><span class="identifier">http</span><span>, </span><span class="identifier">apiKey</span><span>, </span><span class="identifier">body</span><span>)   </span><span class="comment">// HttpRequest + http.send
 </span><span>    </span><span class="identifier">answers</span><span>  &lt;- </span><span class="keyword">if</span><span> </span><span class="identifier">response</span><span>.</span><span class="identifier">statusCode</span><span> &gt;= </span><span class="number-literal">400</span><span>
-                </span><span class="identifier">then</span><span> </span><span class="type-name">Left</span><span>(</span><span class="type-name">SystemOne</span><span>.</span><span class="identifier">parseError</span><span>(</span><span class="identifier">response</span><span>.</span><span class="identifier">statusCode</span><span>, </span><span class="identifier">response</span><span>.</span><span class="identifier">body</span><span>))
-                </span><span class="keyword">else</span><span> </span><span class="type-name">SystemOne</span><span>.</span><span class="identifier">parseAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">response</span><span>.</span><span class="identifier">body</span><span>)
+                </span><span class="identifier">then</span><span> </span><span class="type-name">Left</span><span>(</span><span class="type-name">Vendor</span><span>.</span><span class="type-name">Jev</span><span>.</span><span class="identifier">parseError</span><span>(</span><span class="identifier">response</span><span>.</span><span class="identifier">statusCode</span><span>, </span><span class="identifier">response</span><span>.</span><span class="identifier">body</span><span>))
+                </span><span class="keyword">else</span><span> </span><span class="type-name">Vendor</span><span>.</span><span class="type-name">Jev</span><span>.</span><span class="identifier">parseAsk</span><span>(</span><span class="identifier">questions</span><span>, </span><span class="identifier">response</span><span>.</span><span class="identifier">body</span><span>)
   </span><span class="keyword">yield</span><span>
     </span><span class="keyword">val</span><span> (</span><span class="identifier">urgent</span><span>, </span><span class="identifier">dept</span><span>) = </span><span class="identifier">answers</span><span>
     (</span><span class="identifier">urgent</span><span>.</span><span class="identifier">isTrue</span><span>(), </span><span class="identifier">dept</span><span>.</span><span class="identifier">choice</span><span>)</span></code></pre>
@@ -200,6 +203,9 @@
         unexpected body — comes back as a <code>Verdict4sError</code>. For a non-blocking call,
         <code>HttpClient.sendAsync</code> returns a <code>CompletableFuture</code>; rendering and parsing
         stay exactly the same.</p>
+        <p>The example calls Jev. For OpenAI Decisions, replace <code>Vendor.Jev</code> with
+        <code>Vendor.OpenAI</code>, send to <code>Vendor.OpenAI.evaluateUrl</code> with an OpenAI key, and
+        change nothing else.</p>
         
         <h3 id="anything-else" class="section"><a class="anchor-link left" href="#anything-else"><i class="icofont-laika link">&#xef71;</i></a>Anything else</h3>
         <p>The same shape works for Twitter <code>Future</code>, Akka HTTP, Pekko HTTP and sttp: only
