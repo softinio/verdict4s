@@ -16,7 +16,7 @@ jobs:
         scala-version: ["3.3.8", "3.9.0"]
         platform: ["jvm", "js"]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - uses: cachix/install-nix-action@v31
       with:
@@ -24,7 +24,7 @@ jobs:
 
     # Cache Mill dependencies
     - name: Cache Mill
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cache/mill
@@ -87,7 +87,7 @@ jobs:
     # which fails the job even when every test has passed.
     - name: Upload test results
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-results-${{ matrix.platform }}-${{ matrix.scala-version }}
         path: |
@@ -109,14 +109,14 @@ jobs:
     env:
       VERDICT4S_JVM: "temurin:${{ matrix.jdk }}"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - uses: cachix/install-nix-action@v31
       with:
         github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Cache Mill
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cache/mill
@@ -141,7 +141,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
@@ -151,7 +151,7 @@ jobs:
 
     # Cache Mill dependencies
     - name: Cache Mill
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cache/mill
