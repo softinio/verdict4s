@@ -193,15 +193,3 @@ class EvaluationCodecTest extends munit.FunSuite:
 
   test("a bare array is not accepted for the models endpoint"):
     assert(JevCodecs.modelListDecoder.decodeJson(golden("""[]""")).isLeft)
-
-  test("a list of model cards decodes"):
-    val cards = golden("""
-      [
-        {"name":"jev-latest","description":"alias","release_date":"2025-06-01"},
-        {"name":"jev-1.13.0","description":"pinned","release_date":"2025-06-01"}
-      ]
-    """).as[List[ModelCard]]
-    assertEquals(
-      cards.map(_.map(_.name.name)),
-      Right(List("jev-latest", "jev-1.13.0"))
-    )

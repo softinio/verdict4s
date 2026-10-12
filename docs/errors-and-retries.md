@@ -83,7 +83,16 @@ the account has no credits, so no amount of waiting fixes it.
 
 Each attempt is also capped by `ClientConfig.requestTimeout`, 10 seconds by
 default. An attempt that exceeds it fails as a `Transport` error and is not
-retried.
+retried. The whole call, retries and their waits included, is capped by the
+policy's `totalTimeout`, 30 seconds by default; a call still running when it
+expires fails as a `Transport` error too. The two read differently: "no
+response from Jev within 10 seconds" for one attempt, "gave up on Jev after
+totalTimeout 30 seconds, retries included" for the whole call.
 
 `Retry-After` wins only when it asks for **longer** than the computed backoff —
-waiting less than you already planned to would defeat the purpose.
+waiting less than you already planned to would defeat the purpose. Whichever
+of the two sets the delay, a delay at least as long as what is left of
+`totalTimeout` ends the retries at once, with the server's error and its
+`retryAfter`, because the call could only time out waiting. With 15 of 30
+seconds already spent, a `Retry-After` of 20 seconds gives up rather than
+sleeping into the timeout.

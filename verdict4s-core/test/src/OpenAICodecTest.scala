@@ -23,6 +23,7 @@ import com.softinio.verdict4s.Vendor
 import com.softinio.verdict4s.Verdict4sError
 import com.softinio.verdict4s.algebra.*
 import io.circe.Json
+import io.circe.JsonObject
 import io.circe.parser.parse
 
 /** OpenAI Decisions' wire format.
@@ -140,6 +141,13 @@ class OpenAICodecTest extends munit.FunSuite:
         .downField("instructions")
         .as[String],
       Right("""{"ask":"urgent?"}""")
+    )
+
+  test("a raw question is named by its key, whatever name its body carries"):
+    val body = JsonObject("name" -> Json.fromString("other"))
+    assertEquals(
+      OpenAICodecs.encodeQuestion(k("q00"), QuestionSpec.Raw("ranking", body)),
+      golden("""{"type":"ranking","name":"q00"}""")
     )
 
   test("a safety identifier is sent when set, and omitted otherwise"):

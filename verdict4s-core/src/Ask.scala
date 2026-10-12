@@ -54,7 +54,7 @@ import io.github.iltotore.iron.*
   * @group Questions
   */
 final class Ask[Q <: Tuple] private (
-    private val questions: Q,
+    private val questions: List[Question[Any]],
     private val model: Option[Model],
     private val keyFor: Int => String
 ):
@@ -62,7 +62,11 @@ final class Ask[Q <: Tuple] private (
   /** Ask these questions of a specific model rather than the client default. */
   def withModel(m: Model): Ask[Q] = new Ask(questions, Some(m), keyFor)
 
-  /** Choose the question keys yourself, by position. */
+  /** Choose the question keys yourself, by position.
+    *
+    * Keys must be non-blank and distinct: a repeated key would merge two
+    * questions into one, so [[request]] rejects it before anything is sent.
+    */
   def withKeys(f: Int => String): Ask[Q] = new Ask(questions, model, f)
 
   /** The model override, if one was set. */
@@ -72,36 +76,57 @@ final class Ask[Q <: Tuple] private (
     * tuple rather than stopping at the first bad one.
     */
   def specs: ValidatedNec[Verdict4sError.Validation, List[Question.Spec[?]]] =
-    questions.productIterator.toList
-      .map(_.asInstanceOf[Question[Any]])
-      .traverse(_.validated)
+    questions.traverse(_.validated)
+
+  /** Each question's key and validated spec, checked once per `Ask`: every key
+    * usable and no two the same, since one map entry per key would silently
+    * merge two questions into one.
+    */
+  private lazy val entries: ValidatedNec[
+    Verdict4sError.Validation,
+    List[(QuestionKey, Question.Spec[?])]
+  ] =
+    questions.zipWithIndex
+      .traverse((q, i) => (q.validated, key(i)).mapN((s, k) => k -> s))
+      .andThen: es =>
+        val keys = es.map(_._1)
+        val repeated = keys.diff(keys.distinct).distinct
+        if repeated.isEmpty then es.validNec
+        else
+          Verdict4sError
+            .Validation(
+              "questions",
+              "question keys must be distinct, but " +
+                repeated.map(k => s"'${k.value: String}'").mkString(", ") +
+                (if repeated.sizeIs > 1 then " are" else " is") +
+                " used more than once"
+            )
+            .invalidNec
 
   /** Build the request, or report every problem with it at once. */
   def request[S: Encoder](
       state: S,
       defaultModel: Model
   ): ValidatedNec[Verdict4sError.Validation, EvaluationRequest] =
-    specs.andThen: ss =>
-      ss.zipWithIndex
-        .traverse((spec, i) => key(i).map(_ -> spec.wire))
-        .andThen: entries =>
-          SortedMap
-            .from(entries)
-            .refineEither[QuestionsC]
-            .leftMap(_ =>
-              NonEmptyChain.one(
-                Verdict4sError
-                  .Validation("questions", "ask at least one question")
-              )
+    entries
+      .andThen: es =>
+        SortedMap
+          .from(es.map((k, spec) => k -> spec.wire))
+          .refineEither[QuestionsC]
+          .leftMap(_ =>
+            NonEmptyChain.one(
+              Verdict4sError
+                .Validation("questions", "ask at least one question")
             )
-            .toValidated
-        .map(qs =>
-          EvaluationRequest(
-            Encoder[S].apply(state),
-            model.getOrElse(defaultModel),
-            qs
           )
+          .toValidated
+      .map(qs =>
+        EvaluationRequest(
+          Encoder[S].apply(state),
+          model.getOrElse(defaultModel),
+          qs
         )
+      )
 
   /** Project a response back into the positional answer tuple.
     *
@@ -111,20 +136,27 @@ final class Ask[Q <: Tuple] private (
     * `orRefused`, in which case it reads as `None`. Any other problem is
     * reported as the first one found.
     *
-    * This is the only place in the library that casts. Both are justified by
-    * the same fact: the list is built by walking the very tuple that
-    * [[Ask.Answers]] is computed from, in the same order, so element `i` has
-    * the type the match type assigns to position `i`.
+    * Its cast, and the one in [[Ask.apply]], are justified by the same fact:
+    * the list is built by walking the very tuple that [[Ask.Answers]] is
+    * computed from, in the same order, so element `i` has the type the match
+    * type assigns to position `i`.
     */
   def answers(evaluation: Evaluation): Either[Verdict4sError, Ask.Answers[Q]] =
-    specs.toEither
+    entries.toEither
       .leftMap(Verdict4sError.Invalid(_))
-      .flatMap: ss =>
-        val results =
-          ss.zipWithIndex.map((spec, i) => answerAt(evaluation, spec, i))
+      .flatMap: es =>
+        val results = es.map((k, spec) =>
+          k -> evaluation
+            .answer(k)
+            .toRight(
+              Verdict4sError.Decoding(
+                s"the service sent no answer for '${k.value: String}'"
+              )
+            )
+            .flatMap(spec.decode)
+        )
         val refused = results.collect:
-          case (Some(k), Left(_))
-              if evaluation.answer(k).contains(Answer.Refused) =>
+          case (k, Left(_)) if evaluation.answer(k).contains(Answer.Refused) =>
             k
         NonEmptyList.fromList(refused) match
           case Some(keys) => Left(Verdict4sError.Refused(keys, evaluation))
@@ -134,26 +166,6 @@ final class Ask[Q <: Tuple] private (
               .map(vs =>
                 Tuple.fromArray(vs.toArray).asInstanceOf[Ask.Answers[Q]]
               )
-
-  /** The answer at one position, with the key it was looked up under. */
-  private def answerAt(
-      evaluation: Evaluation,
-      spec: Question.Spec[?],
-      index: Int
-  ): (Option[QuestionKey], Either[Verdict4sError, Any]) =
-    val raw = keyFor(index)
-    QuestionKey.either(raw) match
-      case Left(_) =>
-        None -> Left(
-          Verdict4sError.Decoding(s"'$raw' is not a usable question key")
-        )
-      case Right(k) =>
-        Some(k) -> evaluation
-          .answer(k)
-          .toRight(
-            Verdict4sError.Decoding(s"the service sent no answer for '$raw'")
-          )
-          .flatMap(spec.decode)
 
   private def key(
       index: Int
@@ -169,21 +181,11 @@ final class Ask[Q <: Tuple] private (
       )
       .toValidated
 
-/** Building an [[Ask]] from one to twelve questions, and the type that computes
+/** Building an [[Ask]] from one or more questions, and the type that computes
   * its answers.
   */
 object Ask:
 
-  /** There is no arity limit of ours. Jev documents none either -- it caps
-    * Choice options and Score levels, not how many questions a request carries,
-    * and its own examples batch more than a dozen, since one request is
-    * markedly cheaper and faster than several. OpenAI Decisions caps a request
-    * at 200 questions, which its protocol checks before sending.
-    *
-    * In practice Scala's tuple-literal syntax stops at 22, which is also the
-    * largest result a caller can unpack with `val (a, b, ...) = `. Beyond that,
-    * build the tuple with `*:` and pass it to [[apply]].
-    */
   /** The positionally exact answer tuple for a tuple of questions.
     *
     * `Tuple.InverseMap` is what does the work: given
@@ -205,24 +207,39 @@ object Ask:
     *
     * `IsMappedBy` is what rejects a tuple holding something that is not a
     * question.
+    *
+    * There is no arity limit of ours. Jev documents none either -- it caps
+    * Choice options and Score levels, not how many questions a request carries,
+    * and its own examples batch more than a dozen, since one request is
+    * markedly cheaper and faster than several. OpenAI Decisions caps a request
+    * at 200 questions, which its protocol checks before sending.
+    *
+    * In practice Scala's tuple-literal syntax stops at 22, which is also the
+    * largest result a caller can unpack with `val (a, b, ...) = `. Beyond that,
+    * build the tuple with `*:` and pass it here.
     */
   def apply[Q <: Tuple](
       questions: Q
   )(using Tuple.IsMappedBy[Question][Q]): Ask[Q] =
-    new Ask(questions, None, defaultKey)
+    new Ask(
+      questions.productIterator.toList.map(_.asInstanceOf[Question[Any]]),
+      None,
+      defaultKey
+    )
 
   /** Ask a single question.
     *
     * Needed separately because one argument cannot be tupled into a 1-tuple.
     */
   def apply[A](question: Question[A]): Ask[Question[A] *: EmptyTuple] =
-    new Ask(question *: EmptyTuple, None, defaultKey)
+    apply(question *: EmptyTuple)
 
   /** Positional question keys.
     *
-    * Zero padded so that lexicographic order matches positional order, which
-    * keeps the encoded request readable and its golden tests stable. Padded by
-    * hand rather than with `f"q$i%02d"`, because Scala.js implements
+    * Zero padded so that lexicographic order matches positional order for the
+    * first hundred questions (`q100` sorts before `q11`), which keeps the
+    * encoded request readable and its golden tests stable. Padded by hand
+    * rather than with `f"q$i%02d"`, because Scala.js implements
     * `java.util.Formatter` only partially.
     */
   def defaultKey(index: Int): String =

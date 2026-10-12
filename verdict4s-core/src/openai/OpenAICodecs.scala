@@ -49,8 +49,9 @@ import io.circe.syntax.*
   */
 object OpenAICodecs:
 
-  /** The request body. Questions go in the order of their keys, which is the
-    * order `Ask` generated them in.
+  /** The request body. Questions go in the sorted order of their keys, which is
+    * the order `Ask` generated them in unless `withKeys` chose keys that sort
+    * differently, or the ask has more than a hundred questions.
     */
   def encodeRequest(
       request: EvaluationRequest,
@@ -59,7 +60,7 @@ object OpenAICodecs:
     Json.fromFields(
       List(
         "model" -> request.model.asJson,
-        "input" -> input(request.state),
+        "input" -> text(request.state).asJson,
         "questions" -> Json.fromValues(
           request.questions.toList.map(encodeQuestion)
         )
@@ -77,7 +78,7 @@ object OpenAICodecs:
     def head(tpe: String, instructions: Instructions) = List(
       "type" -> tpe.asJson,
       "name" -> name.asJson,
-      "instructions" -> text(instructions).asJson
+      "instructions" -> text(instructions.toJson).asJson
     )
     spec match
       case QuestionSpec.Noul(instructions, _) =>
@@ -89,7 +90,7 @@ object OpenAICodecs:
             options.toList.map((option, rubric) =>
               Json.fromFields(
                 List("value" -> (option.value: String).asJson) ++
-                  rubric.map(r => "description" -> text(r).asJson)
+                  rubric.map(r => "description" -> text(r.toJson).asJson)
               )
             )
           ))
@@ -98,16 +99,15 @@ object OpenAICodecs:
       case QuestionSpec.Score(instructions, levels) =>
         Json.fromFields(
           head("score", instructions) :+ ("levels" -> Json.fromValues(
-            levels.map(level => Json.obj("label" -> text(level).asJson))
+            levels.map(level => Json.obj("label" -> text(level.toJson).asJson))
           ))
         )
 
       case QuestionSpec.Raw(questionType, body) =>
-        val named =
-          if body.contains("name") then body else body.add("name", name.asJson)
         Json.fromJsonObject(
           JsonObject.fromIterable(
-            ("type" -> questionType.asJson) +: named.remove("type").toList
+            List("type" -> questionType.asJson, "name" -> name.asJson) ++
+              body.remove("type").remove("name").toList
           )
         )
 
@@ -213,13 +213,8 @@ object OpenAICodecs:
         p <- c.downField("probability").as[Probability]
       yield (value, label, p)
 
-  /** OpenAI takes `input` as a string. Text goes as it is; structured state is
-    * sent as its compact JSON rendering, which the model reads as well as any
-    * other text.
+  /** OpenAI takes `input`, instructions and descriptions as strings only. Text
+    * goes as it is; structured JSON is sent as its compact rendering, which the
+    * model reads as well as any other text.
     */
-  private def input(state: Json): Json =
-    Json.fromString(state.asString.getOrElse(state.noSpaces))
-
-  /** OpenAI takes instructions and descriptions as strings only. */
-  private def text(i: Instructions): String =
-    i.toJson.asString.getOrElse(i.toJson.noSpaces)
+  private def text(json: Json): String = json.asString.getOrElse(json.noSpaces)

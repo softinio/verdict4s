@@ -34,7 +34,9 @@ import cats.Show
   * @param retry
   *   how to back off and retry
   * @param requestTimeout
-  *   ceiling on one HTTP attempt
+  *   ceiling on one HTTP attempt, from sending to having read the body.
+  *   Exceeding it fails the call with a
+  *   [[com.softinio.verdict4s.Verdict4sError.Transport]], and is not retried.
   *
   * @group Configuration
   */

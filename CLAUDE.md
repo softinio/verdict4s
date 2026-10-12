@@ -35,7 +35,7 @@ fmt / fmtCheck                            # scalafmt (devshell aliases)
 testAll                                   # mill __.test
 testJvm17                                 # JVM tests on Java 17, the floor, as CI does
 testJvm25                                 # JVM tests on Java 25, as CI does
-buildDocs / previewDocs                   # Laika site -> site/target/docs/site, or serve on :4242
+buildDocs / previewDocs                   # Laika site -> site/target/docs/site, or serve on 127.0.0.1:4242 (loopback only)
 mill verdict4s-examples.compile           # the ZIO / Future / JDK HttpClient interop examples
 
 # against the real services; ignored without a key, so it is safe to run blind
@@ -101,6 +101,15 @@ a module share one directory: `src/` is common, `src-jvm/` and `src-js/` are
 platform-specific. Tests live in `<module>/test/src` and are shared across
 platforms.
 
+Client behaviour -- the wire format, error mapping, retries and timeouts -- is
+tested once in `VendorContractSuite` and run against every vendor through
+`JevContractTest` and `OpenAIContractTest`, each of which supplies its vendor's
+fake responses and expected request body. A behaviour test goes in the suite,
+not in one vendor's class, unless only that vendor has the behaviour. Adding a
+vendor means adding one more subclass. The expected bodies are hand-written
+JSON on purpose: comparing against the encoder the client itself calls could
+never fail.
+
 ## Build constraints
 
 These are non-obvious and were each established by testing. Do not "fix" them
@@ -145,8 +154,10 @@ the next time that version is bumped.
 
 ## Publishing
 
-`artifactScalaVersion` collapses every Scala 3.x to the `_3` suffix, so both
-cross-versions produce the *same* coordinate. Releases are therefore pinned:
+Mill's default `artifactScalaVersion` collapses every Scala 3.x to the `_3`
+suffix (the build no longer overrides it; a removed override was found to be
+redundant), so both cross-versions produce the *same* coordinate. Releases are
+therefore pinned:
 
 ```
 mill mill.scalalib.SonatypeCentralPublishModule/ --publishArtifacts "__[3.3.8].publishArtifacts"
@@ -157,6 +168,38 @@ between releases. TASTy is only backward compatible besides, so 3.9.0-built
 artifacts would lock out every 3.3 LTS consumer. The 3.9.0 build is compile
 verification, not a publish target. Six coordinates result: each module in `_3`
 and `_sjs1_3`.
+
+### The public API is a compatibility promise
+
+This is a published library, so everything public -- members, types, givens,
+the `syntax` object, constructors, default arguments, type bounds -- and every
+published dependency is something a downstream build may rely on. Keep it
+source- and binary-compatible with the last release unless a breaking release
+is the explicit goal, and changes already on `main` that broke the last release
+don't license further breaks.
+
+- **"Unused" means unused by consumers, and the repo can't see them.** A public
+  member nothing here calls is not dead code: cats `Eq`/`Show` instances, circe
+  codecs, Jev's response encoders and the accessors on `Ask` all have users
+  outside this repo. `-Wunused` only covers private and local symbols, which is
+  the only dead code it is safe to delete.
+- **Narrowing a signature is a break too**, even when it makes an invalid state
+  unrepresentable. Put the stricter type behind the unchanged public signature.
+- **The bodies of public `inline` methods are API.** `derives Options` and
+  `derives Levels` inline code into the caller, which then calls the
+  library's generated `inline$…` accessors; changing what such a body calls
+  breaks binary compatibility while every signature still matches. Only
+  TASTy-MiMa catches this.
+- **Dropping a published dependency is a break** for users who got it
+  transitively. `iron-cats` and `iron-circe` stay on core for that reason,
+  though nothing here imports them.
+- **Check mechanically, not by reading the diff.** No MiMa plugin is wired into
+  `build.mill`. Build the baseline in a throwaway `git worktree` of the tag (or
+  `main`) and compare: the MiMa CLI with `-g` on the JVM jars, the TASTy-MiMa
+  CLI on the JVM and JS jars (findings on `private[verdict4s]` members are
+  expected), and `mill show "__[3.3.8].mvnDeps"` and the generated POMs. Sanity
+  check MiMa on a deliberately mismatched jar pair, so a silent no-op cannot
+  pass for a clean result.
 
 `versionScheme` is set to `EarlySemVer` so the POM carries
 `info.versionScheme`; without it downstream sbt users get noisier eviction

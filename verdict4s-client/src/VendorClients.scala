@@ -29,8 +29,9 @@ import io.circe.Encoder
   *
   * @group Client
   */
-final class JevClient[F[_]] private[verdict4s] (engine: Engine[F])
-    extends Verdict4sClient[F],
+final class JevClient[F[_]] private[verdict4s] (
+    engine: Engine[F, JevVendor.type]
+) extends Verdict4sClient[F],
       ModelCatalog[F]:
 
   def vendor: Vendor = engine.vendor
@@ -63,12 +64,11 @@ final class JevClient[F[_]] private[verdict4s] (engine: Engine[F])
   * @group Client
   */
 final class OpenAIClient[F[_]] private[verdict4s] (
-    engine: Engine[F],
-    openAI: OpenAIVendor
+    engine: Engine[F, OpenAIVendor]
 ) extends Verdict4sClient[F],
       SafetyIdentity[F]:
 
-  def vendor: OpenAIVendor = openAI
+  def vendor: OpenAIVendor = engine.vendor
 
   def config: ClientConfig = engine.config
 
@@ -81,14 +81,13 @@ final class OpenAIClient[F[_]] private[verdict4s] (
   ): F[Ask.Answers[Q]] =
     engine.ask(questions, state)
 
-  def safetyIdentifier: Option[String] = openAI.safetyIdentifier
+  def safetyIdentifier: Option[String] = vendor.safetyIdentifier
 
   def withSafetyIdentifier(id: String): OpenAIClient[F] =
-    val p = openAI.withSafetyIdentifier(id)
-    new OpenAIClient(engine.withVendor(p), p)
+    new OpenAIClient(engine.withVendor(vendor.withSafetyIdentifier(id)))
 
   def withConfig(f: ClientConfig => ClientConfig): OpenAIClient[F] =
-    new OpenAIClient(engine.withConfig(f(engine.config)), openAI)
+    new OpenAIClient(engine.withConfig(f(engine.config)))
 
   def withJitter(j: Jitter[F]): OpenAIClient[F] =
-    new OpenAIClient(engine.withJitter(j), openAI)
+    new OpenAIClient(engine.withJitter(j))

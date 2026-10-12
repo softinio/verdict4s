@@ -82,7 +82,8 @@ val (urgent, team, mood) = client.ask(
 
 Answers come back positionally at exactly the right types. Question keys are
 generated for you (`q00`, `q01`, …); use `withKeys` if they need to match
-something else, and `withModel` to pin one request to a specific model.
+something else (keys must be distinct, or the request is rejected before it is
+sent), and `withModel` to pin one request to a specific model.
 
 ## Your own answer types
 
@@ -136,8 +137,9 @@ which OpenAI Decisions treats differently from Jev:
   sent. Describe what yes and no mean in the instructions instead.
 - **One-option choices.** OpenAI needs at least two options, so an enum with a
   single case compiles but is rejected the same way. Jev accepts one.
-- **`Question.raw`.** The body is sent as it is, so write it in the format of
-  the vendor you are calling.
+- **`Question.raw`.** The body is sent as it is, apart from `type` and, on
+  OpenAI, `name`, which verdict4s sets. Write it in the format of the vendor
+  you are calling.
 
 All three are checked before anything is sent, with every problem reported at
 once. The full comparison is in [choosing a vendor](choosing-a-vendor.md).

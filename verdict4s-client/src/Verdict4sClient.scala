@@ -158,16 +158,7 @@ object Verdict4sClient:
       baseUri: Uri = JevBaseUri,
       config: ClientConfig = ClientConfig.default
   ): JevClient[F] =
-    new JevClient(
-      Engine(
-        client,
-        Vendor.Jev,
-        baseUri,
-        apiKey,
-        config,
-        Jitter.scalaUtilRandom[F]
-      )
-    )
+    new JevClient(engine(client, Vendor.Jev, baseUri, apiKey, config))
 
   /** An OpenAI Decisions client over a transport you supply.
     *
@@ -186,17 +177,7 @@ object Verdict4sClient:
       baseUri: Uri = OpenAIBaseUri,
       config: ClientConfig = ClientConfig.default
   ): OpenAIClient[F] =
-    new OpenAIClient(
-      Engine(
-        client,
-        Vendor.OpenAI,
-        baseUri,
-        apiKey,
-        config,
-        Jitter.scalaUtilRandom[F]
-      ),
-      Vendor.OpenAI
-    )
+    new OpenAIClient(engine(client, Vendor.OpenAI, baseUri, apiKey, config))
 
   /** A client for any [[Vendor]], when the vendor is chosen at runtime.
     *
@@ -216,16 +197,24 @@ object Verdict4sClient:
       config: ClientConfig = ClientConfig.default
   ): Verdict4sClient[F] =
     val base = baseUri.getOrElse(Uri.unsafeFromString(vendor.defaultBaseUrl))
-    val engine =
-      Engine(client, vendor, base, apiKey, config, Jitter.scalaUtilRandom[F])
     vendor match
       case p: com.softinio.verdict4s.openai.OpenAIVendor =>
-        new OpenAIClient(engine, p)
-      case Vendor.Jev => new JevClient(engine)
-      case _          => new GenericClient(engine)
+        new OpenAIClient(engine(client, p, base, apiKey, config))
+      case Vendor.Jev =>
+        new JevClient(engine(client, Vendor.Jev, base, apiKey, config))
+      case _ => new GenericClient(engine(client, vendor, base, apiKey, config))
+
+  private def engine[F[_]: Temporal, V <: Vendor](
+      client: Client[F],
+      vendor: V,
+      baseUri: Uri,
+      apiKey: ApiKey,
+      config: ClientConfig
+  ): Engine[F, V] =
+    Engine(client, vendor, baseUri, apiKey, config, Jitter.scalaUtilRandom[F])
 
 /** A client for a vendor with no capabilities beyond the shared ones. */
-private final class GenericClient[F[_]](engine: Engine[F])
+private final class GenericClient[F[_]](engine: Engine[F, Vendor])
     extends Verdict4sClient[F]:
   def vendor: Vendor = engine.vendor
   def config: ClientConfig = engine.config

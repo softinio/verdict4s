@@ -159,21 +159,18 @@ object Question:
 
     /** Collapse accumulated failures into one raisable error. */
     def toEither: Either[Verdict4sError, Spec[A]] =
-      (q: ValidatedNec[Verdict4sError.Validation, Spec[A]]).toEither
-        .leftMap(Verdict4sError.Invalid(_))
+      q.validated.toEither.leftMap(Verdict4sError.Invalid(_))
 
     /** The question as it will be sent, if it is valid. */
     def spec: Option[QuestionSpec] =
-      (q: ValidatedNec[Verdict4sError.Validation, Spec[A]]).toOption.map(_.wire)
+      q.validated.toOption.map(_.wire)
 
     /** Post-process the answer into your own type.
       *
       * The wire request is untouched; only the way the answer is read changes.
       */
     def map[B](f: A => B): Question[B] =
-      (q: ValidatedNec[Verdict4sError.Validation, Spec[A]]).map(s =>
-        Spec(s.wire, a => s.decode(a).map(f))
-      )
+      q.redecode(s => s.decode(_).map(f))
 
     /** Post-process the answer, with the option to reject it.
       *
@@ -182,9 +179,7 @@ object Question:
       * response would.
       */
     def emap[B](f: A => Either[Verdict4sError, B]): Question[B] =
-      (q: ValidatedNec[Verdict4sError.Validation, Spec[A]]).map(s =>
-        Spec(s.wire, a => s.decode(a).flatMap(f))
-      )
+      q.redecode(s => s.decode(_).flatMap(f))
 
     /** Accept a refusal for this question, reading it as `None`.
       *
@@ -203,15 +198,16 @@ object Question:
       * Jev never refuses, so on Jev this is always `Some`.
       */
     def orRefused: Question[Option[A]] =
-      (q: ValidatedNec[Verdict4sError.Validation, Spec[A]]).map(s =>
-        Spec(
-          s.wire,
-          {
-            case Answer.Refused => Right(None)
-            case other          => s.decode(other).map(Some(_))
-          }
-        )
+      q.redecode(s =>
+        case Answer.Refused => Right(None)
+        case other          => s.decode(other).map(Some(_))
       )
+
+    /** The same wire question, read back through a new decoder. */
+    private def redecode[B](
+        f: Spec[A] => Answer => Either[Verdict4sError, B]
+    ): Question[B] =
+      q.validated.map(s => Spec(s.wire, f(s)))
 
   // -- Internals -----------------------------------------------------------
 

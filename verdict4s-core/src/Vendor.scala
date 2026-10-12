@@ -145,21 +145,23 @@ trait Vendor:
       state: S,
       model: Model = defaultModel
   ): Either[Verdict4sError, String] =
+    prepareAsk(ask, state, model).map(_.noSpaces)
+
+  /** [[renderAsk]] before rendering: the validated body as JSON. */
+  private[verdict4s] final def prepareAsk[Q <: Tuple, S: Encoder](
+      ask: Ask[Q],
+      state: S,
+      model: Model
+  ): Either[Verdict4sError, Json] =
     ask
       .request(state, model)
       .toEither
       .leftMap(Verdict4sError.Invalid(_))
       .flatMap(prepare)
-      .map(_.noSpaces)
 
   /** Parse a successful response body. */
   final def parse(body: String): Either[Verdict4sError, Evaluation] =
-    parser
-      .parse(body)
-      .leftMap(f =>
-        Verdict4sError.Decoding(s"the body was not JSON: ${f.message}")
-      )
-      .flatMap(decode)
+    Vendor.parseWith(body)(decode)
 
   /** Parse a response and project it through the questions that produced it. */
   final def parseAsk[Q <: Tuple](
@@ -182,28 +184,39 @@ trait Vendor:
       body: String,
       headers: Map[String, String] = Map.empty
   ): Verdict4sError.Api =
-    val json = parser.parse(body).getOrElse(Json.fromString(body))
     val lower = headers.map((k, v) => k.toLowerCase -> v)
-    Verdict4sError.fromResponse(
-      status,
-      json,
-      requestId = lower.get(requestIdHeader.toLowerCase),
-      retryAfter = retryAfterMillis(lower).orElse(
-        lower.get("retry-after").flatMap(_.trim.toLongOption).map(_.seconds)
-      )
-    )
+    errorFrom(status, body, name => lower.get(name.toLowerCase))
 
-  /** The delay from [[retryAfterMsHeader]], if this vendor sends one. Header
-    * names must already be lower case.
+  /** [[parseError]] over any header lookup, so the client can pass http4s'
+    * headers directly. The retry delay comes from [[retryAfterMsHeader]], then
+    * a `Retry-After` in seconds, then `retryAt`: the HTTP-date form needs a
+    * clock, which core does not have, so the client resolves it.
+    *
+    * @param header
+    *   a header's value by name, ignoring case
+    * @param retryAt
+    *   the delay a `Retry-After` HTTP date gives, if any
     */
-  private[verdict4s] final def retryAfterMillis(
-      lowerCaseHeaders: Map[String, String]
-  ): Option[FiniteDuration] =
-    retryAfterMsHeader
-      .flatMap(h => lowerCaseHeaders.get(h.toLowerCase))
+  private[verdict4s] final def errorFrom(
+      status: Int,
+      body: String,
+      header: String => Option[String],
+      retryAt: Option[FiniteDuration] = None
+  ): Verdict4sError.Api =
+    val millis = retryAfterMsHeader
+      .flatMap(header)
       .flatMap(_.trim.toDoubleOption)
       .filter(ms => ms >= 0 && !ms.isInfinite)
-      .map(ms => math.round(ms).millis)
+      .map(ms => RetryPolicy.serverDelay(math.round(ms), MILLISECONDS))
+    val seconds = header("retry-after")
+      .flatMap(_.trim.toLongOption)
+      .map(RetryPolicy.serverDelay(_, SECONDS))
+    Verdict4sError.fromResponse(
+      status,
+      parser.parse(body).getOrElse(Json.fromString(body)),
+      requestId = header(requestIdHeader),
+      retryAfter = millis.orElse(seconds).orElse(retryAt)
+    )
 
 /** The supported vendors. */
 object Vendor:
@@ -213,3 +226,14 @@ object Vendor:
 
   /** OpenAI Decisions: `POST https://api.openai.com/v1/decisions`. */
   val OpenAI: OpenAIVendor = OpenAIVendor.default
+
+  /** Parse a body as JSON, then read it with `f`. */
+  private[verdict4s] def parseWith[A](body: String)(
+      f: Json => Either[Verdict4sError, A]
+  ): Either[Verdict4sError, A] =
+    parser
+      .parse(body)
+      .leftMap(e =>
+        Verdict4sError.Decoding(s"the body was not JSON: ${e.message}")
+      )
+      .flatMap(f)

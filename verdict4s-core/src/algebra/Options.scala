@@ -47,16 +47,25 @@ final class Options[A] private (
     /** The option names and their rubrics, as they go on the wire. */
     val keys: Options.Keys,
     private val decodeKey: String => Option[A],
-    private val encodeKey: A => OptionName
+    /** The option name of a value, or `None` for a value that is not one of the
+      * options.
+      */
+    private[algebra] val nameOf: A => Option[OptionName]
 ):
 
   /** Read one of the service's `choice` strings back into `A`. */
   def parse(choice: String): Option[A] = decodeKey(choice)
 
-  /** Render a value as the option name that goes on the wire. */
-  def render(value: A): OptionName = encodeKey(value)
+  /** Render a value as the option name that goes on the wire.
+    *
+    * A value outside the set is sent under its own name, which is how an
+    * `Options[String]` passes a name through; a derived set holds every value
+    * of its type, so it never gets there.
+    */
+  def render(value: A): OptionName =
+    nameOf(value).getOrElse(OptionName.applyUnsafe(value.toString))
 
-  /** Every option name, in the order they were declared. */
+  /** Every option name, in sorted order, as on the wire. */
   def names: List[OptionName] = keys.keys.toList
 
   /** How many options this question offers. */
@@ -95,7 +104,7 @@ object Options:
         fromPairs[String](
           pairs,
           s => byName.get(s).map(n => n.value: String),
-          s => byName.getOrElse(s, OptionName.applyUnsafe(s))
+          byName.get
         )
 
   /** An option set with no rubric text, for when the names speak for
@@ -121,13 +130,13 @@ object Options:
     fromPairs(
       labels.map(l => l -> rubrics.get(l.value: String)),
       byName.get,
-      byValue.apply
+      byValue.get
     )
 
   private def fromPairs[A](
       pairs: List[(OptionName, Option[Instructions])],
       decodeKey: String => Option[A],
-      encodeKey: A => OptionName
+      nameOf: A => Option[OptionName]
   ): ValidatedNec[Verdict4sError.Validation, Options[A]] =
     val duplicates =
       pairs.groupBy(_._1).collect { case (k, vs) if vs.sizeIs > 1 => k }.toList
@@ -148,9 +157,7 @@ object Options:
         .leftMap(_ => NonEmptyChain.one(cardinality(sorted.size)))
         .toValidated
 
-    (distinct, bounded).mapN((_, keys) =>
-      new Options(keys, decodeKey, encodeKey)
-    )
+    (distinct, bounded).mapN((_, keys) => new Options(keys, decodeKey, nameOf))
 
   private def cardinality(n: Int): Verdict4sError.Validation =
     Verdict4sError.Validation(
