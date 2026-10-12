@@ -11,7 +11,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
@@ -21,7 +21,7 @@ jobs:
 
     # Cache Mill dependencies
     - name: Cache Mill
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cache/mill
@@ -50,7 +50,7 @@ jobs:
     # Create GitHub Release
     - name: Create GitHub Release
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         draft: false
         prerelease: false

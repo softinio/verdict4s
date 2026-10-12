@@ -27,7 +27,7 @@ jobs:
     steps:
     # Build from the tag, not from main: workflow_run otherwise checks out the
     # default branch, whose docs may already describe unreleased changes.
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         ref: ${{ env.TAG }}
         fetch-depth: 0
@@ -37,7 +37,7 @@ jobs:
         github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Cache Mill
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cache/mill
@@ -58,7 +58,7 @@ jobs:
     # `cname` rewrites the CNAME file on every deploy; without it the push
     # would delete the file and GitHub would drop the custom domain.
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4.0.0
+      uses: peaceiris/actions-gh-pages@v4.1.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: site/target/docs/site
